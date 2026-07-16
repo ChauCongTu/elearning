@@ -1,0 +1,287 @@
+{
+    "maintenance": {
+        "enabled": false,
+        "title": "Website đang bảo trì",
+        "message": "Học Viện Bông Nhài Trắng đang nâng cấp hệ thống. Vui lòng quay lại sau hoặc liên hệ hotline để được hỗ trợ."
+    },
+    "site": {
+        "name": "Học Viện Bông Nhài Trắng",
+        "short_name": "Bông Nhài Trắng",
+        "tagline": "Đào tạo thẩm mỹ uy tín — Học online mọi lúc, mọi nơi",
+        "logo_url": "/images/logo-hoc-vien-bong-nhai-trang.png",
+        "logo_alt": "Học Viện Bông Nhài Trắng"
+    },
+    "contact": {
+        "address": "TP. Hồ Chí Minh",
+        "hours": "8h – 20h (Thứ 2 – Chủ nhật)",
+        "primary_hotline": "0918.068.063",
+        "primary_hotline_href": "tel:0918068063",
+        "zalo_number": "0388018135",
+        "zalo_url": "https://zalo.me/0388018135",
+        "facebook_url": "https://www.facebook.com/hocvienbongnhaitrang",
+        "hotlines": [
+            {
+                "label": "Hotline tư vấn",
+                "number": "0918.068.063",
+                "href": "tel:0918068063"
+            },
+            {
+                "label": "CSKH",
+                "number": "0388.018.135",
+                "href": "tel:0388018135"
+            }
+        ],
+        "branches": [
+            {
+                "name": "CS1 — Bình Lợi",
+                "address": "281/2/10 Bình Lợi, Phường 13, Quận Bình Thạnh, TP.HCM"
+            },
+            {
+                "name": "CS2 — Nơ Trang Long",
+                "address": "311/2/5 Nơ Trang Long, Phường 13, Quận Bình Thạnh, TP.HCM"
+            }
+        ]
+    },
+    "navigation": [
+        { "href": "/", "label": "Trang chủ" },
+        { "href": "/courses", "label": "Khóa học" },
+        { "href": "/tin-tuc", "label": "Tin tức" },
+        { "href": "/bang-gia", "label": "Bảng giá" },
+        { "href": "/ve-chung-toi", "label": "Về chúng tôi" },
+        { "href": "/lien-he", "label": "Liên hệ" },
+        { "href": "/thong-tin", "label": "Thông tin" }
+    ],
+    "content": {
+        "about": {
+            "eyebrow": "Về Học Viện Bông Nhài Trắng",
+            "headline": "Trung tâm đào tạo phun xăm thẩm mỹ hàng đầu Hồ Chí Minh",
+            "story_title": "Câu chuyện của Bông Nhài Trắng",
+            "story": "Với tâm huyết muốn đóng góp và giúp đỡ những người đang đối mặt với khó khăn, đặc biệt là các chị em phụ nữ, Đỗ Thị Thu Hằng — nghệ danh \"Bông Nhài Trắng\" — đã mở các lớp học phun xăm thẩm mỹ giúp học viên có công việc ổn định, thu nhập cao trong môi trường an toàn và thân thiện.",
+            "mission": "Chương trình đào tạo được hướng dẫn bởi chuyên gia hàng đầu, khuyến khích sáng tạo và tư duy độc lập để học viên tự tin đối mặt mọi thách thức trong ngành thẩm mỹ."
+        },
+        "stats": [
+            { "value": "25+", "label": "Năm kinh nghiệm" },
+            { "value": "3.000+", "label": "Học viên đã đào tạo" },
+            { "value": "2.000+", "label": "Khách hàng mỗi năm" },
+            { "value": "100%", "label": "Cam kết đầu ra" }
+        ],
+        "hero_trust_stats": [
+            { "value": "25+", "label": "Năm kinh nghiệm" },
+            { "value": "3.000+", "label": "Học viên" },
+            { "value": "100%", "label": "Cam kết đầu ra" }
+        ],
+        "why_choose_us": [
+            {
+                "number": "01",
+                "title": "Thực Hành 70% — Lý Thuyết 30%",
+                "description": "Thực hành trên mẫu thật ngay từ tuần đầu. Không lý thuyết suông, chỉ kỹ năng thực chiến."
+            },
+            {
+                "number": "02",
+                "title": "Lớp Nhỏ, Kèm Sát 1:1",
+                "description": "Mỗi lớp chỉ 5–8 học viên, giảng viên trực tiếp hướng dẫn từng người."
+            },
+            {
+                "number": "03",
+                "title": "Cam Kết Đầu Ra – Học Lại Miễn Phí",
+                "description": "Chưa giỏi? Học lại miễn phí. Hỗ trợ giới thiệu việc làm tại hệ thống spa đối tác."
+            },
+            {
+                "number": "04",
+                "title": "Giảng Viên 25+ Năm Kinh Nghiệm",
+                "description": "Cập nhật kỹ thuật công nghệ Mỹ, Đức, Hàn Quốc — mang kiến thức quốc tế về giảng dạy."
+            }
+        ],
+        "founder": {
+            "name": "Đỗ Thị Thu Hằng",
+            "title": "Founder & Master Trainer",
+            "subtitle": "Nghệ nhân Bông Nhài Trắng",
+            "bio": "Với hơn 25 năm cống hiến trong ngành thẩm mỹ, nghệ nhân Thu Hằng không chỉ dạy nghề mà còn truyền cảm hứng cho hàng nghìn học viên tìm thấy sự nghiệp bền vững.",
+            "achievements": [
+                "Giám khảo cuộc thi phun xăm quốc tế",
+                "Tu nghiệp tại Mỹ, Đức, Hàn Quốc",
+                "Đào tạo hơn 3.000 học viên",
+                "Chứng chỉ sư phạm nghề thẩm mỹ"
+            ]
+        },
+        "category_showcase": [
+            {
+                "title": "Phun thêu thẩm mỹ",
+                "description": "Phun chân mày phong thủy, điêu khắc, phun môi, phun mí và thẩm mỹ vùng kín.",
+                "slug": "phun-xam-tham-my"
+            },
+            {
+                "title": "Chăm sóc da",
+                "description": "Điều trị mụn, điều trị thâm, chăm sóc da chuyên sâu.",
+                "slug": "cham-soc-da"
+            },
+            {
+                "title": "Gội đầu dưỡng sinh",
+                "description": "Kỹ thuật gội đầu dưỡng sinh, massage, ấn huyệt, đả thông kinh lạc.",
+                "slug": "goi-dau-duong-sinh"
+            },
+            {
+                "title": "Nối mi nhấn mí",
+                "description": "Nối mi volume, nối mi chập sợi — giúp đôi mắt rõ nét, cuốn hút.",
+                "slug": "phun-xam-tham-my"
+            }
+        ],
+        "services": [
+            {
+                "title": "Phun lông mày phong thủy",
+                "description": "Thiết kế dáng mày hài hòa, cải thiện vận diện tướng."
+            },
+            {
+                "title": "Phun môi collagen",
+                "description": "Màu môi tự nhiên, phục hồi và tái tạo làn môi."
+            },
+            {
+                "title": "Điều trị mụn chuyên sâu",
+                "description": "Liệu trình cá nhân hóa cho từng loại da."
+            },
+            {
+                "title": "Gội đầu dưỡng sinh",
+                "description": "Thư giãn, giảm căng thẳng, cải thiện tuần hoàn."
+            },
+            {
+                "title": "Nối mi volume",
+                "description": "Đôi mi cong dài, sắc nét theo phong cách cá nhân."
+            },
+            {
+                "title": "Đào tạo nghề spa",
+                "description": "Lộ trình từ cơ bản đến chuyên nghiệp, ra nghề nhanh."
+            }
+        ],
+        "videos": [
+            {
+                "title": "Dịch vụ chăm sóc sắc đẹp toàn diện",
+                "youtube_id": "YbJAKamEH4o"
+            },
+            {
+                "title": "Học nghề phun xăm — ổn định tương lai",
+                "youtube_id": "YbJAKamEH4o"
+            },
+            {
+                "title": "Đào tạo nhân viên spa chuyên nghiệp",
+                "youtube_id": "YbJAKamEH4o"
+            }
+        ],
+        "article_sections": [
+            {
+                "key": "featured",
+                "title": "Tin tức nổi bật",
+                "category_slug": "tin-tuc-noi-bat",
+                "limit": 2
+            },
+            {
+                "key": "career",
+                "title": "Hướng nghiệp",
+                "category_slug": "huong-nghiep",
+                "limit": 2
+            },
+            {
+                "key": "knowledge",
+                "title": "Kiến thức",
+                "category_slug": "kien-thuc",
+                "limit": 2
+            }
+        ],
+        "consultation": {
+            "intro": "Đội ngũ Học Viện Bông Nhài Trắng luôn sẵn sàng lắng nghe ý kiến của quý học viên. Liên hệ qua hotline, Zalo hoặc form bên dưới.",
+            "course_options": [
+                "Phun xăm thẩm mỹ cơ bản",
+                "Phun xăm thẩm mỹ nâng cao",
+                "Chăm sóc da cơ bản",
+                "Chăm sóc da nâng cao",
+                "Khóa học gội đầu dưỡng sinh",
+                "Nối mi - uốn mi"
+            ],
+            "branches": [
+                "281/2/10 Bình Lợi, P.13, Q. Bình Thạnh, TP.HCM",
+                "311/2/5 Nơ Trang Long, P.13, Q. Bình Thạnh, TP.HCM"
+            ]
+        },
+        "hero_slides": [
+            {
+                "title": "Khóa học đang tuyển sinh",
+                "subtitle": "Học online linh hoạt — thanh toán VietQR — mở khóa ngay sau chuyển khoản.",
+                "cta_label": "Xem khóa học",
+                "cta_url": "/courses"
+            },
+            {
+                "title": "Cam kết đầu ra — Học lại miễn phí",
+                "subtitle": "Thực hành 70% — Lớp nhỏ kèm sát 1:1 cùng chuyên gia hàng đầu.",
+                "cta_label": "Đăng ký tư vấn",
+                "cta_url": "/lien-he#tu-van"
+            }
+        ],
+        "pricing": {
+            "intro": "Bảng giá dịch vụ làm đẹp thẩm mỹ tại Học Viện Bông Nhài Trắng. Giá khóa học online xem tại trang Khóa học.",
+            "note": "Giá có thể thay đổi theo chương trình ưu đãi. Vui lòng liên hệ hotline để được tư vấn chi tiết.",
+            "groups": [
+                {
+                    "title": "Phun xăm môi",
+                    "items": [
+                        { "name": "Phun xăm môi Collagen", "price": "4.500.000" },
+                        { "name": "Phun xăm môi xí muội", "price": "2.500.000" },
+                        { "name": "Phun xăm môi tế bào gốc", "price": "6.000.000" },
+                        { "name": "Khử thâm môi nữ", "price": "1.600.000" },
+                        { "name": "Khử thâm môi nam", "price": "2.000.000" }
+                    ]
+                },
+                {
+                    "title": "Phun xăm lông mày",
+                    "items": [
+                        { "name": "Phun xăm lông mày phong thủy", "price": "6.000.000" },
+                        { "name": "Phun xăm lông mày tán bột/sợi", "price": "4.500.000" },
+                        { "name": "Phun xăm lông mày Ombre", "price": "3.000.000" },
+                        { "name": "Điêu khắc lông mày vi chạm sợi", "price": "3.500.000" }
+                    ]
+                },
+                {
+                    "title": "Gội đầu & chăm sóc",
+                    "items": [
+                        { "name": "Gội đầu bình thường", "price": "70.000" },
+                        { "name": "Gội đầu dưỡng sinh / 60 phút", "price": "250.000" },
+                        { "name": "Chăm sóc da", "price": "8.000.000" },
+                        { "name": "Chăm sóc da liệu trình 7 bước", "price": "255.000" },
+                        { "name": "Lấy nhân mụn", "price": "350.000/lần" },
+                        { "name": "Vi tảo điều trị mụn", "price": "450.000/lần" }
+                    ]
+                },
+                {
+                    "title": "Khác",
+                    "items": [
+                        { "name": "Uốn mi 6D", "price": "120.000" },
+                        { "name": "Phun hồng nhũ hoa", "price": "9.000.000" },
+                        { "name": "Làm hồng Bikini", "price": "15.000.000" }
+                    ]
+                }
+            ]
+        },
+        "info": {
+            "intro": "Thông tin chung về Học Viện Bông Nhài Trắng — quy định, chính sách và hướng dẫn học viên.",
+            "sections": [
+                {
+                    "title": "Giới thiệu học viện",
+                    "content": "Học Viện Bông Nhài Trắng là trung tâm đào tạo phun xăm thẩm mỹ uy tín tại TP.HCM, đồng thời cung cấp nền tảng học khóa học online với thanh toán VietQR và chứng chỉ điện tử."
+                },
+                {
+                    "title": "Chính sách học online",
+                    "content": "• Mua từng khóa học, thanh toán qua VietQR — tự động mở khóa sau khi chuyển khoản.\n• Tiến độ học được lưu tự động.\n• Hoàn thành 100% được cấp chứng chỉ PDF và mã tra cứu công khai."
+                },
+                {
+                    "title": "Bảo mật thông tin",
+                    "content": "Thông tin cá nhân và dữ liệu thanh toán được bảo mật. Chúng tôi không chia sẻ dữ liệu học viên cho bên thứ ba ngoài phạm vi vận hành hệ thống."
+                },
+                {
+                    "title": "Hỗ trợ học viên",
+                    "content": "Hotline và Zalo hỗ trợ 8h–20h hàng ngày. Gửi yêu cầu qua form tư vấn tại trang Liên hệ để được phản hồi sớm nhất."
+                }
+            ]
+        },
+        "contact_page": {
+            "intro": "Đội ngũ Học Viện Bông Nhài Trắng luôn sẵn sàng lắng nghe ý kiến của quý học viên. Liên hệ qua hotline, Zalo hoặc form bên dưới."
+        }
+    }
+}

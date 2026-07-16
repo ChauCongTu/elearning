@@ -1,0 +1,76 @@
+# Phase 4 — Online Learning
+
+**Mục tiêu:** Giao diện học theo chương, video S3 signed URL, lưu tiến độ.  
+**Phụ thuộc:** Phase 0, 3 (enrollment)  
+**Ước lượng:** 4–5 ngày
+
+## Checklist
+
+### AWS S3
+
+- [ ] Cấu hình `filesystems.php` disk `s3`
+- [ ] `VideoStreamService::signedUrl(lesson)` — TTL configurable (default 2h)
+- [ ] Policy: chỉ user có `enrollment.active` mới lấy URL (trừ `is_free_preview`)
+
+### Admin upload (minimal — full UI phase 5)
+
+- [ ] `POST /admin/lessons/{id}/upload-url` — presigned PUT cho admin
+- [ ] Callback confirm upload → save `video_s3_key`, probe duration (ffprobe local hoặc manual input tạm)
+
+### Learning routes
+
+```
+GET  /learn/{course:slug}                    → redirect lesson đang học dở hoặc first
+GET  /learn/{course:slug}/lessons/{lesson}   → player page
+PATCH /learn/progress                        → heartbeat watched_seconds
+```
+
+### Backend logic
+
+- [ ] `LearningController@show` — sidebar chapters/lessons, current lesson, signed video URL
+- [ ] `ProgressController@update` — validate enrollment, update `lesson_progress`
+- [ ] `EnrollmentProgressService::recalculate` — % hoàn thành course
+- [ ] Mark lesson `completed` khi watched >= 90% duration
+- [ ] Queue job debounce recalculate (optional)
+
+### Frontend
+
+- [ ] `pages/learn/player.tsx`
+  - Layout: sidebar curriculum (Mantine NavLink) + main video area
+  - Video player HTML5 — không download dễ (no controls download best-effort)
+  - Heartbeat mỗi 15–30s gửi `watched_seconds`
+  - Nút prev/next lesson
+  - Hiển thị % tiến độ course trên header
+- [ ] Mobile: sidebar collapse drawer
+
+### Tests
+
+- [ ] User without enrollment → 403
+- [ ] User with enrollment → receives signed URL
+- [ ] Progress update increases watched_seconds
+- [ ] 90% watch marks completed
+- [ ] Preview lesson accessible without enrollment
+
+## Acceptance criteria
+
+1. Học viên đã mua xem được video
+2. Reload trang resume từ `watched_seconds` gần nhất
+3. Hoàn thành tất cả bài → `progress_percent = 100`
+4. URL video hết hạn → request URL mới (player error handler)
+
+## Bảo mật video
+
+- Bucket private
+- Không đưa `video_s3_key` ra Inertia props client — chỉ signed URL
+- CORS S3 chỉ domain production
+
+## Không làm trong phase này
+
+- Chứng chỉ PDF (phase 7)
+- Quiz, bài tập
+- DRM chuyên sâu
+
+## Tiếp theo
+
+→ [phase-5-admin.md](./phase-5-admin.md)  
+→ [phase-7-certificates.md](./phase-7-certificates.md) (khi progress 100%)

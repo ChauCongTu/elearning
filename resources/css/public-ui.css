@@ -1,0 +1,223 @@
+/* Public marketing UI — gradients, glass, motion */
+
+:root {
+    --brand-gradient: linear-gradient(135deg, #e64980 0%, #be4bdb 45%, #7950f2 100%);
+    --brand-gradient-soft: linear-gradient(
+        145deg,
+        #fff5f8 0%,
+        #ffffff 35%,
+        #f6f0ff 70%,
+        #ffffff 100%
+    );
+    --brand-shadow: 0 22px 50px -18px rgba(230, 73, 128, 0.35);
+    --brand-shadow-soft: 0 12px 32px -12px rgba(121, 80, 242, 0.22);
+    --glass-border: rgba(255, 255, 255, 0.65);
+    --glass-surface: rgba(255, 255, 255, 0.78);
+}
+
+@keyframes public-float {
+    0%,
+    100% {
+        transform: translateY(0) scale(1);
+    }
+    50% {
+        transform: translateY(-10px) scale(1.02);
+    }
+}
+
+@keyframes public-shimmer {
+    0% {
+        background-position: 200% center;
+    }
+    100% {
+        background-position: -200% center;
+    }
+}
+
+@keyframes public-fade-up {
+    from {
+        opacity: 0;
+        transform: translateY(16px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.public-page-bg {
+    background: var(--brand-gradient-soft);
+}
+
+.public-mesh {
+    position: relative;
+    overflow: hidden;
+}
+
+.public-mesh::before,
+.public-mesh::after {
+    content: '';
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(60px);
+    pointer-events: none;
+    z-index: 0;
+}
+
+.public-mesh::before {
+    width: 420px;
+    height: 420px;
+    top: -120px;
+    right: -80px;
+    background: radial-gradient(circle, rgba(230, 73, 128, 0.28) 0%, transparent 70%);
+    animation: public-float 8s ease-in-out infinite;
+}
+
+.public-mesh::after {
+    width: 360px;
+    height: 360px;
+    bottom: -100px;
+    left: -60px;
+    background: radial-gradient(circle, rgba(121, 80, 242, 0.22) 0%, transparent 70%);
+    animation: public-float 10s ease-in-out infinite reverse;
+}
+
+.public-mesh > * {
+    position: relative;
+    z-index: 1;
+}
+
+.public-gradient-text {
+    background: var(--brand-gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+.public-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.35rem 0.85rem;
+    border-radius: 999px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #c2255c;
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(230, 73, 128, 0.18);
+    box-shadow: var(--brand-shadow-soft);
+}
+
+.public-glass {
+    background: var(--glass-surface);
+    backdrop-filter: blur(16px);
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--brand-shadow-soft);
+}
+
+.public-card-hover {
+    transition:
+        transform 220ms ease,
+        box-shadow 220ms ease,
+        border-color 220ms ease;
+}
+
+.public-card-hover:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--brand-shadow);
+    border-color: rgba(230, 73, 128, 0.25);
+}
+
+.public-section-divider {
+    width: 64px;
+    height: 4px;
+    border-radius: 999px;
+    background: var(--brand-gradient);
+    margin: 0 auto 1rem;
+}
+
+.public-fade-up {
+    animation: public-fade-up 0.6s ease both;
+}
+
+.public-search-float {
+    margin-top: -2rem;
+    position: relative;
+    z-index: 5;
+}
+
+.public-stat-pill {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0.65rem 1rem;
+    border-radius: 1rem;
+    background: rgba(255, 255, 255, 0.92);
+    border: 1px solid rgba(230, 73, 128, 0.12);
+    box-shadow: 0 8px 24px -12px rgba(230, 73, 128, 0.35);
+    min-width: 100px;
+}
+
+.public-cta-band {
+    position: relative;
+    overflow: hidden;
+    background: var(--brand-gradient);
+}
+
+.public-cta-band::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(
+            circle at 20% 50%,
+            rgba(255, 255, 255, 0.12) 0%,
+            transparent 50%
+        ),
+        radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.1) 0%, transparent 40%);
+    pointer-events: none;
+}
+
+.public-nav-link {
+    position: relative;
+    transition: color 180ms ease;
+}
+
+.public-nav-link::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -4px;
+    width: 0;
+    height: 2px;
+    border-radius: 999px;
+    background: var(--brand-gradient);
+    transition: width 220ms ease;
+}
+
+.public-nav-link:hover {
+    color: #c2255c;
+}
+
+.public-nav-link:hover::after {
+    width: 100%;
+}
+
+.public-feature-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--brand-gradient);
+    color: #fff;
+    box-shadow: 0 10px 24px -10px rgba(230, 73, 128, 0.55);
+}
+
+.public-post-accent {
+    height: 4px;
+    border-radius: 999px 999px 0 0;
+    background: var(--brand-gradient);
+}

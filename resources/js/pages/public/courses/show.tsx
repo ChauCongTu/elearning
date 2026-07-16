@@ -1,0 +1,321 @@
+import { Head, Link, usePage } from '@inertiajs/react';
+import {
+    Accordion,
+    Badge,
+    Box,
+    Button,
+    Container,
+    Grid,
+    Group,
+    List,
+    Paper,
+    Stack,
+    Text,
+    ThemeIcon,
+    Title,
+} from '@mantine/core';
+import {
+    CheckCircle2,
+    Clock,
+    GraduationCap,
+    Lock,
+    PlayCircle,
+    ShoppingCart,
+} from 'lucide-react';
+import {
+    courseGradient,
+    courseThumbnailUrl,
+    formatDuration,
+    formatPrice,
+} from '@/lib/format';
+import type { Auth, CourseDetail } from '@/types';
+
+type Props = {
+    course: CourseDetail;
+};
+
+export default function CourseShow({ course }: Props) {
+    const { auth } = usePage<{ auth: Auth }>().props;
+    const thumbnail = courseThumbnailUrl(course.thumbnail_path, course.slug);
+    const totalLessons = course.chapters.reduce(
+        (sum, chapter) => sum + chapter.lessons.length,
+        0,
+    );
+
+    return (
+        <>
+            <Head title={course.title} />
+
+            <Box
+                py={{ base: 32, md: 48 }}
+                style={{
+                    background: thumbnail
+                        ? `linear-gradient(180deg, rgba(0,0,0,0.55), rgba(0,0,0,0.75)), url(${thumbnail}) center/cover`
+                        : courseGradient(course.slug),
+                }}
+            >
+                <Container size="xl">
+                    <Grid align="center" gap="xl">
+                        <Grid.Col span={{ base: 12, md: 8 }}>
+                            <Stack gap="md">
+                                <Group gap="xs">
+                                    {course.is_featured && (
+                                        <Badge color="pink" variant="filled">
+                                            Nổi bật
+                                        </Badge>
+                                    )}
+                                    {course.category && (
+                                        <Badge variant="light" color="gray">
+                                            {course.category.name}
+                                        </Badge>
+                                    )}
+                                </Group>
+                                <Title
+                                    order={1}
+                                    c={thumbnail ? 'white' : undefined}
+                                    style={{ fontSize: 'clamp(1.75rem, 4vw, 2.75rem)' }}
+                                >
+                                    {course.title}
+                                </Title>
+                                {course.excerpt && (
+                                    <Text
+                                        size="lg"
+                                        c={thumbnail ? 'gray.2' : 'dimmed'}
+                                        maw={640}
+                                    >
+                                        {course.excerpt}
+                                    </Text>
+                                )}
+                                <Group gap="lg">
+                                    {course.duration_label && (
+                                        <Group gap={6} c={thumbnail ? 'gray.1' : 'dimmed'}>
+                                            <Clock size={16} />
+                                            <Text size="sm">{course.duration_label}</Text>
+                                        </Group>
+                                    )}
+                                    <Group gap={6} c={thumbnail ? 'gray.1' : 'dimmed'}>
+                                        <PlayCircle size={16} />
+                                        <Text size="sm">{totalLessons} bài học</Text>
+                                    </Group>
+                                </Group>
+                            </Stack>
+                        </Grid.Col>
+                    </Grid>
+                </Container>
+            </Box>
+
+            <Container size="xl" py={48}>
+                <Grid gap="xl">
+                    <Grid.Col span={{ base: 12, md: 8 }}>
+                        <Stack gap="xl">
+                            {course.description && (
+                                <section>
+                                    <Title order={3} mb="md">
+                                        Giới thiệu khóa học
+                                    </Title>
+                                    <Text c="dimmed" style={{ whiteSpace: 'pre-line' }}>
+                                        {course.description}
+                                    </Text>
+                                </section>
+                            )}
+
+                            <section>
+                                <Title order={3} mb="md">
+                                    Đề cương khóa học
+                                </Title>
+                                <Accordion variant="separated" radius="md">
+                                    {course.chapters.map((chapter, index) => (
+                                        <Accordion.Item
+                                            key={chapter.id}
+                                            value={String(chapter.id)}
+                                        >
+                                            <Accordion.Control>
+                                                <Group justify="space-between" pr="md">
+                                                    <Text fw={500}>
+                                                        {index + 1}. {chapter.title}
+                                                    </Text>
+                                                    <Badge variant="light" color="gray">
+                                                        {chapter.lessons.length} bài
+                                                    </Badge>
+                                                </Group>
+                                            </Accordion.Control>
+                                            <Accordion.Panel>
+                                                <Stack gap="sm">
+                                                    {chapter.lessons.map((lesson) => (
+                                                        <Group
+                                                            key={lesson.id}
+                                                            justify="space-between"
+                                                            wrap="nowrap"
+                                                        >
+                                                            <Group gap="sm" wrap="nowrap">
+                                                                <ThemeIcon
+                                                                    size={28}
+                                                                    radius="xl"
+                                                                    variant="light"
+                                                                    color={
+                                                                        lesson.is_free_preview
+                                                                            ? 'teal'
+                                                                            : 'gray'
+                                                                    }
+                                                                >
+                                                                    {lesson.is_free_preview ? (
+                                                                        <PlayCircle size={14} />
+                                                                    ) : (
+                                                                        <Lock size={14} />
+                                                                    )}
+                                                                </ThemeIcon>
+                                                                <Text size="sm">
+                                                                    {lesson.title}
+                                                                </Text>
+                                                                {lesson.is_free_preview && (
+                                                                    <Badge
+                                                                        size="xs"
+                                                                        color="teal"
+                                                                        variant="light"
+                                                                    >
+                                                                        Xem thử
+                                                                    </Badge>
+                                                                )}
+                                                            </Group>
+                                                            <Text size="xs" c="dimmed">
+                                                                {formatDuration(
+                                                                    lesson.duration_seconds,
+                                                                )}
+                                                            </Text>
+                                                        </Group>
+                                                    ))}
+                                                </Stack>
+                                            </Accordion.Panel>
+                                        </Accordion.Item>
+                                    ))}
+                                </Accordion>
+                            </section>
+
+                            {course.benefits && course.benefits.length > 0 && (
+                                <section>
+                                    <Title order={3} mb="md">
+                                        Lợi ích khóa học
+                                    </Title>
+                                    <List
+                                        spacing="sm"
+                                        icon={
+                                            <ThemeIcon color="pink" size={24} radius="xl">
+                                                <CheckCircle2 size={14} />
+                                            </ThemeIcon>
+                                        }
+                                    >
+                                        {course.benefits.map((benefit) => (
+                                            <List.Item key={benefit}>
+                                                <Text>{benefit}</Text>
+                                            </List.Item>
+                                        ))}
+                                    </List>
+                                </section>
+                            )}
+
+                            {course.faq && course.faq.length > 0 && (
+                                <section>
+                                    <Title order={3} mb="md">
+                                        Câu hỏi thường gặp
+                                    </Title>
+                                    <Accordion variant="contained" radius="md">
+                                        {course.faq.map((item, index) => (
+                                            <Accordion.Item
+                                                key={item.q}
+                                                value={`faq-${index}`}
+                                            >
+                                                <Accordion.Control>
+                                                    {item.q}
+                                                </Accordion.Control>
+                                                <Accordion.Panel>
+                                                    <Text c="dimmed">{item.a}</Text>
+                                                </Accordion.Panel>
+                                            </Accordion.Item>
+                                        ))}
+                                    </Accordion>
+                                </section>
+                            )}
+                        </Stack>
+                    </Grid.Col>
+
+                    <Grid.Col span={{ base: 12, md: 4 }}>
+                        <Paper
+                            p="lg"
+                            radius="lg"
+                            shadow="md"
+                            withBorder
+                            style={{ position: 'sticky', top: 96 }}
+                        >
+                            <Stack gap="md">
+                                <div>
+                                    <Text size="sm" c="dimmed">
+                                        Học phí
+                                    </Text>
+                                    <Text fw={700} size="xl" c="pink.7">
+                                        {formatPrice(course.price)}
+                                    </Text>
+                                    {course.compare_price && (
+                                        <Text size="sm" c="dimmed" td="line-through">
+                                            {formatPrice(course.compare_price)}
+                                        </Text>
+                                    )}
+                                </div>
+
+                                {course.instructor_name && (
+                                    <Group gap="sm">
+                                        <ThemeIcon
+                                            size={40}
+                                            radius="md"
+                                            color="pink"
+                                            variant="light"
+                                        >
+                                            <GraduationCap size={20} />
+                                        </ThemeIcon>
+                                        <div>
+                                            <Text fw={600} size="sm">
+                                                {course.instructor_name}
+                                            </Text>
+                                            {course.instructor_title && (
+                                                <Text size="xs" c="dimmed">
+                                                    {course.instructor_title}
+                                                </Text>
+                                            )}
+                                        </div>
+                                    </Group>
+                                )}
+
+                                {auth.user ? (
+                                    <Button
+                                        color="pink"
+                                        size="md"
+                                        fullWidth
+                                        leftSection={<ShoppingCart size={18} />}
+                                        disabled
+                                    >
+                                        Mua khóa (Phase 3)
+                                    </Button>
+                                ) : (
+                                    <Button
+                                        component={Link}
+                                        href="/login"
+                                        color="pink"
+                                        size="md"
+                                        fullWidth
+                                        leftSection={<ShoppingCart size={18} />}
+                                    >
+                                        Đăng nhập để mua khóa
+                                    </Button>
+                                )}
+
+                                <Text size="xs" c="dimmed" ta="center">
+                                    Thanh toán VietQR — tự động mở khóa sau khi
+                                    chuyển khoản
+                                </Text>
+                            </Stack>
+                        </Paper>
+                    </Grid.Col>
+                </Grid>
+            </Container>
+        </>
+    );
+}
