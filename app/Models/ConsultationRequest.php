@@ -14,7 +14,7 @@ use Illuminate\Database\Eloquent\Model;
     'note',
     'status',
 ])]
-class ConsultationRequest extends Model
+class ConsultationRequest extends BaseModel
 {
     protected function casts(): array
     {

@@ -18,7 +18,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
     'legacy_order_id',
     'expires_at',
 ])]
-class Order extends Model
+class Order extends BaseModel
 {
     public function user(): BelongsTo
     {

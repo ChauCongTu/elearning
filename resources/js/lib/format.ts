@@ -4,6 +4,31 @@ export function formatPrice(value: string | number): string {
     );
 }
 
+export function formatDateTime(value: string | null | undefined): string {
+    if (!value) {
+        return '—';
+    }
+
+    return new Intl.DateTimeFormat('vi-VN', {
+        dateStyle: 'medium',
+        timeStyle: 'short',
+    }).format(new Date(value));
+}
+
+export function formatPaymentMethod(gateway: string | null | undefined): string {
+    if (!gateway) {
+        return '—';
+    }
+
+    const normalized = gateway.toLowerCase();
+
+    if (normalized === 'sepay' || normalized === 'bank_transfer' || normalized === 'transfer') {
+        return 'Thanh toán tự động';
+    }
+
+    return 'Thanh toán trực tuyến';
+}
+
 export function formatDuration(seconds: number): string {
     const minutes = Math.floor(seconds / 60);
     const remaining = seconds % 60;
@@ -15,17 +40,31 @@ export function formatDuration(seconds: number): string {
     return remaining > 0 ? `${minutes} phút ${remaining}s` : `${minutes} phút`;
 }
 
-export function courseThumbnailUrl(
-    thumbnailPath: string | null | undefined,
-    slug: string,
-): string | null {
-    if (thumbnailPath) {
-        return thumbnailPath.startsWith('http')
-            ? thumbnailPath
-            : `/storage/${thumbnailPath}`;
+export function mediaUrl(path: string | null | undefined): string | null {
+    if (!path) {
+        return null;
     }
 
-    return null;
+    if (path.startsWith('http://') || path.startsWith('https://')) {
+        return path;
+    }
+
+    if (path.startsWith('/')) {
+        return path;
+    }
+
+    if (path.startsWith('images/')) {
+        return `/${path}`;
+    }
+
+    return `/storage/${path}`;
+}
+
+export function courseThumbnailUrl(
+    thumbnailPath: string | null | undefined,
+    _slug?: string,
+): string | null {
+    return mediaUrl(thumbnailPath);
 }
 
 export function courseGradient(slug: string): string {

@@ -38,6 +38,7 @@ export type ArticleItem = {
     excerpt: string;
     url: string;
     slug?: string;
+    featured_image?: string | null;
     published_at?: string | null;
 };
 

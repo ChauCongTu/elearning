@@ -15,6 +15,7 @@ import {
 import { ArrowRight, Headphones, Sparkles } from 'lucide-react';
 import { brandGradients } from '@/theme/brand';
 import { useSiteConfig } from '@/hooks/use-site-config';
+import { mediaUrl } from '@/lib/format';
 import type { Banner, HeroSlide, SiteStat } from '@/types';
 
 import '@mantine/carousel/styles.css';
@@ -32,11 +33,12 @@ export default function HeroBanner({ banners, slides, trustStats }: Props) {
             ? banners.map((banner) => ({
                   title: banner.title ?? 'Khóa học đang tuyển sinh',
                   subtitle:
-                      'Học online linh hoạt — thanh toán VietQR — mở khóa ngay sau chuyển khoản.',
+                      'Học online linh hoạt — thanh toán tự động, kích hoạt khóa học 24/7.',
                   cta_label: 'Xem chi tiết',
                   cta_url: banner.link_url ?? '/courses',
+                  image_url: mediaUrl(banner.image_path),
               }))
-            : slides;
+            : slides.map((slide) => ({ ...slide, image_url: null }));
 
     return (
         <Box className="public-mesh" style={{ background: brandGradients.soft }}>
@@ -128,17 +130,31 @@ export default function HeroBanner({ banners, slides, trustStats }: Props) {
                                 <Grid.Col span={{ base: 12, md: 5 }}>
                                     <Paper
                                         radius="xl"
-                                        p="xl"
+                                        p={slide.image_url ? 0 : 'xl'}
                                         className="public-glass public-card-hover"
                                         style={{
                                             minHeight: 280,
+                                            overflow: 'hidden',
                                             display: 'flex',
                                             alignItems: 'center',
                                             justifyContent: 'center',
                                             textAlign: 'center',
                                         }}
                                     >
-                                        <Stack gap="md" align="center">
+                                        {slide.image_url ? (
+                                            <Box
+                                                component="img"
+                                                src={slide.image_url}
+                                                alt={slide.title}
+                                                style={{
+                                                    width: '100%',
+                                                    height: '100%',
+                                                    minHeight: 280,
+                                                    objectFit: 'cover',
+                                                }}
+                                            />
+                                        ) : (
+                                            <Stack gap="md" align="center" p="xl">
                                             <Box
                                                 style={{
                                                     width: 88,
@@ -155,7 +171,7 @@ export default function HeroBanner({ banners, slides, trustStats }: Props) {
                                             </Box>
                                             <Title order={3}>Học online — Mở khóa ngay</Title>
                                             <Text c="dimmed" size="sm" maw={280}>
-                                                Thanh toán VietQR, tiến độ tự động lưu, chứng chỉ
+                                                Thanh toán tự động 24/7, tiến độ tự động lưu, chứng chỉ
                                                 điện tử khi hoàn thành.
                                             </Text>
                                             <Button
@@ -168,6 +184,7 @@ export default function HeroBanner({ banners, slides, trustStats }: Props) {
                                                 Khám phá khóa học
                                             </Button>
                                         </Stack>
+                                        )}
                                     </Paper>
                                 </Grid.Col>
                             </Grid>

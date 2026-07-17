@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
     'completed',
     'last_watched_at',
 ])]
-class LessonProgress extends Model
+class LessonProgress extends BaseModel
 {
     protected $table = 'lesson_progress';
 

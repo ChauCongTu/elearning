@@ -8,17 +8,20 @@ import AdminLayout from '@/layouts/admin-layout';
 import AppLayout from '@/layouts/app-layout';
 import PublicLayout from '@/layouts/public-layout';
 import SettingsLayout from '@/layouts/settings/layout';
+import AccountLayout from '@/layouts/account/layout';
 import { brandTheme } from '@/theme/brand';
 
 import '@mantine/core/styles.css';
 import '@mantine/notifications/styles.css';
 
-const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
+const appName = import.meta.env.VITE_APP_NAME || 'aaa';
 
 createInertiaApp({
     title: (title) => (title ? `${title} - ${appName}` : appName),
     layout: (name) => {
         switch (true) {
+            case name.startsWith('account/'):
+                return [AppLayout, AccountLayout];
             case name.startsWith('public/'):
                 return PublicLayout;
             case name.startsWith('auth/'):

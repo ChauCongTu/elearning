@@ -29,7 +29,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
     'meta',
     'published_at',
 ])]
-class Course extends Model
+class Course extends BaseModel
 {
     public function category(): BelongsTo
     {

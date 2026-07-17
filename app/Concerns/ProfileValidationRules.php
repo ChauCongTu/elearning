@@ -2,6 +2,7 @@
 
 namespace App\Concerns;
 
+use App\Enums\Gender;
 use App\Models\User;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Validation\Rule;
@@ -9,16 +10,18 @@ use Illuminate\Validation\Rule;
 trait ProfileValidationRules
 {
     /**
-     * Get the validation rules used to validate user profiles.
-     *
      * @return array<string, array<int, ValidationRule|array<mixed>|string>>
      */
-    protected function profileRules(?int $userId = null): array
+    protected function profileRules(?string $userId = null): array
     {
         return [
             'name' => $this->nameRules(),
             'email' => $this->emailRules($userId),
             'phone' => $this->phoneRules(),
+            'gender' => ['nullable', Rule::enum(Gender::class)],
+            'birth_year' => ['nullable', 'integer', 'min:1940', 'max:'.date('Y')],
+            'preference' => ['nullable', 'string', 'max:2000'],
+            'avatar' => ['nullable', 'image', 'max:2048'],
         ];
     }
 
@@ -31,8 +34,6 @@ trait ProfileValidationRules
     }
 
     /**
-     * Get the validation rules used to validate user names.
-     *
      * @return array<int, ValidationRule|array<mixed>|string>
      */
     protected function nameRules(): array
@@ -41,11 +42,9 @@ trait ProfileValidationRules
     }
 
     /**
-     * Get the validation rules used to validate user emails.
-     *
      * @return array<int, ValidationRule|array<mixed>|string>
      */
-    protected function emailRules(?int $userId = null): array
+    protected function emailRules(?string $userId = null): array
     {
         return [
             'required',

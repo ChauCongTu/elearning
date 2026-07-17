@@ -17,6 +17,18 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Upload Disk
+    |--------------------------------------------------------------------------
+    |
+    | Disk used by FileService for user-generated uploads (avatars, thumbnails,
+    | etc.). Defaults to "public" (storage/app/public). Switch to "s3" in Phase 4.
+    |
+    */
+
+    'upload_disk' => env('UPLOAD_DISK', 'public'),
+
+    /*
+    |--------------------------------------------------------------------------
     | Filesystem Disks
     |--------------------------------------------------------------------------
     |

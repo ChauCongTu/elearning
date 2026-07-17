@@ -101,6 +101,7 @@ class PostService implements PostServiceInterface
                     'excerpt' => $post->excerpt ?? '',
                     'url' => route('posts.show', $post->slug),
                     'slug' => $post->slug,
+                    'featured_image' => $post->featured_image,
                     'published_at' => $post->published_at?->toIso8601String(),
                 ])->all(),
             ];

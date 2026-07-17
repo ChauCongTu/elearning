@@ -21,7 +21,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
     'legacy_wp_id',
     'meta',
 ])]
-class Post extends Model
+class Post extends BaseModel
 {
     public function category(): BelongsTo
     {

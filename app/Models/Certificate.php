@@ -14,7 +14,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
     'issued_at',
     'pdf_path',
 ])]
-class Certificate extends Model
+class Certificate extends BaseModel
 {
     public function enrollment(): BelongsTo
     {

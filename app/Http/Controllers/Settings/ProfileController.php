@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers\Settings;
 
+use App\Contracts\Files\FileServiceInterface;
+use App\Enums\FilePrefix;
+use App\Enums\Gender;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Settings\ProfileDeleteRequest;
 use App\Http\Requests\Settings\ProfileUpdateRequest;
@@ -14,43 +17,57 @@ use Inertia\Response;
 
 class ProfileController extends Controller
 {
-    /**
-     * Show the user's profile settings page.
-     */
+    public function __construct(
+        private FileServiceInterface $files,
+    ) {}
+
     public function edit(Request $request): Response
     {
+        $user = $request->user();
+
         return Inertia::render('settings/profile', [
-            'mustVerifyEmail' => $request->user() instanceof MustVerifyEmail,
+            'mustVerifyEmail' => $user instanceof MustVerifyEmail,
             'status' => $request->session()->get('status'),
+            'genders' => collect(Gender::cases())->map(fn ($case) => [
+                'value' => $case->value,
+                'label' => $case->label(),
+            ])->all(),
         ]);
     }
 
-    /**
-     * Update the user's profile information.
-     */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
-        $request->user()->fill($request->validated());
+        $user = $request->user();
+        $validated = $request->safe()->except('avatar');
 
-        if ($request->user()->isDirty('email')) {
-            $request->user()->email_verified_at = null;
+        if ($request->hasFile('avatar')) {
+            $validated['avatar'] = $this->files->replace(
+                $request->file('avatar'),
+                FilePrefix::Avatar,
+                $user->avatar,
+            );
         }
 
-        $request->user()->save();
+        $user->fill($validated);
+
+        if ($user->isDirty('email')) {
+            $user->email_verified_at = null;
+        }
+
+        $user->save();
 
         Inertia::flash('toast', ['type' => 'success', 'message' => __('Profile updated.')]);
 
         return to_route('profile.edit');
     }
 
-    /**
-     * Delete the user's profile.
-     */
     public function destroy(ProfileDeleteRequest $request): RedirectResponse
     {
         $user = $request->user();
 
         Auth::logout();
+
+        $this->files->delete($user->avatar);
 
         $user->delete();
 

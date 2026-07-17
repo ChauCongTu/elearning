@@ -12,9 +12,13 @@ class LoginResponse implements LoginResponseContract
     {
         $user = $request->user();
 
-        $home = $user?->isAdmin()
-            ? route('admin.dashboard')
-            : route('courses.index');
+        if ($user?->isAdmin()) {
+            $home = route('admin.dashboard');
+        } elseif ($user && ! $user->hasVerifiedEmail()) {
+            $home = route('verification.notice');
+        } else {
+            $home = route('account.courses');
+        }
 
         if ($request->wantsJson()) {
             return new JsonResponse(['two_factor' => false], 200);

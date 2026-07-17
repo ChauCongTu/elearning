@@ -105,6 +105,7 @@ class PostSeeder extends Seeder
                 'post_category_id' => $categories[$data['category']]->id,
                 'title' => $data['title'],
                 'slug' => $data['slug'],
+                'featured_image' => "images/posts/{$data['slug']}.svg",
                 'excerpt' => $data['excerpt'],
                 'content' => $data['content'],
                 'author_name' => 'Học Viện Bông Nhài Trắng',

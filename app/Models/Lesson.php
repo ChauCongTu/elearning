@@ -16,7 +16,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
     'is_free_preview',
     'is_published',
 ])]
-class Lesson extends Model
+class Lesson extends BaseModel
 {
     public function chapter(): BelongsTo
     {

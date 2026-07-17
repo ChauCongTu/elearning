@@ -42,12 +42,12 @@ export default function ArticleTeasers({ sections }: Props) {
                                     <PostCard
                                         key={article.slug ?? article.title}
                                         post={{
-                                            id: 0,
+                                            id: '0',
                                             post_category_id: null,
                                             title: article.title,
                                             slug: article.slug ?? article.url.split('/').pop() ?? '',
                                             excerpt: article.excerpt,
-                                            featured_image: null,
+                                            featured_image: article.featured_image ?? null,
                                             author_name: null,
                                             is_featured: false,
                                             published_at: article.published_at ?? null,

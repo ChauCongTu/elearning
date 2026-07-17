@@ -19,7 +19,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
     'completed_at',
     'source',
 ])]
-class Enrollment extends Model
+class Enrollment extends BaseModel
 {
     public function user(): BelongsTo
     {

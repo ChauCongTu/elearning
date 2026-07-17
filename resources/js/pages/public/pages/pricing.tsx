@@ -39,8 +39,8 @@ export default function PricingPage({ siteContent, courses }: Props) {
                         <Stack gap="md">
                             <Title order={3}>Giá khóa học online</Title>
                             <Text c="dimmed">
-                                Học trực tuyến, thanh toán VietQR — mở khóa ngay sau
-                                chuyển khoản.
+                                Học trực tuyến, thanh toán tự động — kích hoạt khóa học ngay
+                                sau khi hoàn tất.
                             </Text>
                             <Paper withBorder radius="lg" p="lg">
                                 <Table striped highlightOnHover>

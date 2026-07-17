@@ -1,7 +1,13 @@
 # Data Model
 
-> **Trạng thái:** Đã triển khai migration `2026_07_15_142501_create_elearning_tables.php`  
+> **Trạng thái:** Đã triển khai migration `2026_07_15_142501_create_elearning_tables.php` + Phase 2 schema (UUID, soft-delete, audit)  
 > Chạy: `php artisan migrate:fresh --seed`
+
+## Quy ước schema (Phase 2)
+
+- **UUID PK** cho bảng nghiệp vụ: `users`, `categories`, `courses`, `enrollments`, …
+- **Soft delete** (`deleted_at`) + audit (`created_by`, `updated_by`) trên bảng nghiệp vụ
+- Bảng hệ thống (`jobs`, `cache`, `failed_jobs`) giữ `bigint` PK
 
 ## ERD (tóm tắt)
 
@@ -26,32 +32,43 @@ banners (standalone)
 
 | Column | Type | Notes |
 |--------|------|-------|
-| id | bigint PK | |
+| id | uuid PK | |
 | name | string | |
 | email | string unique | |
 | phone | string nullable | |
 | password | string | |
 | role | enum: student, admin | default student |
 | legacy_wp_id | bigint nullable unique | migration |
+| avatar | string nullable | storage path |
+| gender | enum nullable | male, female, other, undisclosed |
+| birth_year | smallint nullable | VD: 1995 |
+| preference | text nullable | ghi chú học viên (free text) |
+| last_login_at | timestamp nullable | |
+| last_login_ip | string nullable | |
+| created_by / updated_by | uuid FK nullable | audit |
 | email_verified_at | timestamp nullable | |
+| deleted_at | timestamp nullable | soft delete |
 | timestamps | | |
 
 ### `categories`
 
 | Column | Type | Notes |
 |--------|------|-------|
-| id | bigint PK | |
+| id | uuid PK | |
 | name | string | VD: Phun xăm, Chăm sóc da |
 | slug | string unique | |
-| parent_id | bigint nullable | nested optional |
+| parent_id | uuid nullable | nested optional |
 | sort_order | int | default 0 |
 | is_active | boolean | default true |
+| created_by / updated_by | uuid FK nullable | audit |
+| deleted_at | timestamp nullable | |
+| timestamps | | |
 
 ### `courses`
 
 | Column | Type | Notes |
 |--------|------|-------|
-| id | bigint PK | |
+| id | uuid PK | |
 | category_id | FK nullable | primary category |
 | title | string | |
 | slug | string unique | giữ slug WP nếu có |
@@ -71,23 +88,28 @@ banners (standalone)
 | legacy_product_id | bigint nullable unique | |
 | meta | json nullable | thời gian học, sĩ số lớp |
 | published_at | timestamp nullable | |
+| created_by / updated_by | uuid FK nullable | audit |
+| deleted_at | timestamp nullable | |
 | timestamps | | |
 
 ### `chapters`
 
 | Column | Type | Notes |
 |--------|------|-------|
-| id | bigint PK | |
+| id | uuid PK | |
 | course_id | FK | |
 | title | string | |
 | sort_order | int | |
 | is_published | boolean | |
+| created_by / updated_by | uuid FK nullable | audit |
+| deleted_at | timestamp nullable | |
+| timestamps | | |
 
 ### `lessons`
 
 | Column | Type | Notes |
 |--------|------|-------|
-| id | bigint PK | |
+| id | uuid PK | |
 | chapter_id | FK | |
 | title | string | |
 | sort_order | int | |
@@ -95,12 +117,15 @@ banners (standalone)
 | duration_seconds | int default 0 | |
 | is_free_preview | boolean | optional preview |
 | is_published | boolean | |
+| created_by / updated_by | uuid FK nullable | audit |
+| deleted_at | timestamp nullable | |
+| timestamps | | |
 
 ### `enrollments`
 
 | Column | Type | Notes |
 |--------|------|-------|
-| id | bigint PK | |
+| id | uuid PK | |
 | user_id | FK | |
 | course_id | FK | unique(user_id, course_id) |
 | status | enum: active, revoked | |
@@ -108,23 +133,29 @@ banners (standalone)
 | enrolled_at | timestamp | |
 | completed_at | timestamp nullable | |
 | source | enum: purchase, migration, manual | |
+| created_by / updated_by | uuid FK nullable | audit |
+| deleted_at | timestamp nullable | |
+| timestamps | | |
 
 ### `lesson_progress`
 
 | Column | Type | Notes |
 |--------|------|-------|
-| id | bigint PK | |
+| id | uuid PK | |
 | enrollment_id | FK | |
 | lesson_id | FK | unique pair |
 | watched_seconds | int | |
 | completed | boolean | >= 90% duration |
 | last_watched_at | timestamp | |
+| created_by / updated_by | uuid FK nullable | audit |
+| deleted_at | timestamp nullable | |
+| timestamps | | |
 
 ### `orders`
 
 | Column | Type | Notes |
 |--------|------|-------|
-| id | bigint PK | |
+| id | uuid PK | |
 | user_id | FK | |
 | code | string unique | mã CK SePay, VD: ELN20260715001 |
 | status | enum: pending, paid, expired, cancelled | |
@@ -133,51 +164,65 @@ banners (standalone)
 | sepay_transaction_id | string nullable unique | |
 | legacy_order_id | bigint nullable unique | migration |
 | expires_at | timestamp | QR hết hạn |
+| created_by / updated_by | uuid FK nullable | audit |
+| deleted_at | timestamp nullable | |
 | timestamps | | |
 
 ### `order_items`
 
 | Column | Type | Notes |
 |--------|------|-------|
-| id | bigint PK | |
+| id | uuid PK | |
 | order_id | FK | |
 | course_id | FK | |
 | price | decimal(12,0) | snapshot giá lúc mua |
+| created_by / updated_by | uuid FK nullable | audit |
+| deleted_at | timestamp nullable | |
+| timestamps | | |
 
 ### `payments` (audit log)
 
 | Column | Type | Notes |
 |--------|------|-------|
-| id | bigint PK | |
+| id | uuid PK | |
 | order_id | FK | |
 | gateway | string | sepay |
 | payload | json | raw webhook |
 | amount | decimal(12,0) | |
 | received_at | timestamp | |
+| created_by / updated_by | uuid FK nullable | audit |
+| deleted_at | timestamp nullable | |
+| timestamps | | |
 
 ### `certificates`
 
 | Column | Type | Notes |
 |--------|------|-------|
-| id | bigint PK | |
+| id | uuid PK | |
 | enrollment_id | FK unique | |
 | verification_code | string unique | tra cứu công khai |
 | student_name | string | snapshot |
 | course_title | string | snapshot |
 | issued_at | timestamp | |
 | pdf_path | string | storage path |
+| created_by / updated_by | uuid FK nullable | audit |
+| deleted_at | timestamp nullable | |
+| timestamps | | |
 
 ### `banners`
 
 | Column | Type | Notes |
 |--------|------|-------|
-| id | bigint PK | |
+| id | uuid PK | |
 | title | string nullable | |
 | image_path | string | |
 | link_url | string nullable | |
 | sort_order | int | |
 | is_active | boolean | |
 | starts_at / ends_at | timestamp nullable | optional schedule |
+| created_by / updated_by | uuid FK nullable | audit |
+| deleted_at | timestamp nullable | |
+| timestamps | | |
 
 ### `course_category` (pivot, nếu M:N)
 

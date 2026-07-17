@@ -113,7 +113,7 @@ export default function SiteHeader() {
                                         )}
                                         <Menu.Item
                                             component={Link}
-                                            href="/dashboard"
+                                            href="/account/courses"
                                             leftSection={<User size={16} />}
                                         >
                                             Tài khoản

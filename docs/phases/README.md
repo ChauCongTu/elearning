@@ -40,7 +40,8 @@ Phase 5–7 có thể song song một phần sau khi Phase 4 có skeleton.
 |-------|--------|
 | 0 | ✅ Hoàn thành | |
 | 1 | ✅ Hoàn thành | |
-| 2–8 | ⬜ Chưa bắt đầu | |
+| 2 | ✅ Hoàn thành | |
+| 3–8 | ⬜ Chưa bắt đầu | |
 
 ## Tài liệu gửi khách
 

@@ -1,5 +1,9 @@
 <?php
 
+use App\Http\Controllers\Account\LoginHistoryController;
+use App\Http\Controllers\Account\MyCoursesController;
+use App\Http\Controllers\Account\PaymentHistoryController;
+use App\Http\Controllers\Account\PurchaseHistoryController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Public\ConsultationController;
 use App\Http\Controllers\Public\CourseController;
@@ -27,7 +31,15 @@ Route::middleware('site.online')->group(function () {
 });
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::inertia('dashboard', 'dashboard')->name('dashboard');
+    Route::redirect('dashboard', '/account/courses')->name('dashboard');
+
+    Route::prefix('account')->name('account.')->group(function () {
+        Route::redirect('/', '/account/courses');
+        Route::get('/courses', MyCoursesController::class)->name('courses');
+        Route::get('/purchases', PurchaseHistoryController::class)->name('purchases');
+        Route::get('/payments', PaymentHistoryController::class)->name('payments');
+        Route::get('/login-history', LoginHistoryController::class)->name('login-history');
+    });
 });
 
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {

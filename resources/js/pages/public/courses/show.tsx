@@ -308,8 +308,7 @@ export default function CourseShow({ course }: Props) {
                                 )}
 
                                 <Text size="xs" c="dimmed" ta="center">
-                                    Thanh toán VietQR — tự động mở khóa sau khi
-                                    chuyển khoản
+                                    Thanh toán tự động — kích hoạt khóa học 24/7
                                 </Text>
                             </Stack>
                         </Paper>

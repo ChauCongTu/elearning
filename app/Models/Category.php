@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 #[Fillable(['name', 'slug', 'parent_id', 'sort_order', 'is_active'])]
-class Category extends Model
+class Category extends BaseModel
 {
     public function parent(): BelongsTo
     {

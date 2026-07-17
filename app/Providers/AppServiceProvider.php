@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Contracts\Files\FileServiceInterface;
+use App\Contracts\Enrollment\EnrollmentServiceInterface;
 use App\Contracts\Admin\AdminDashboardServiceInterface;
 use App\Contracts\Catalog\CategoryServiceInterface;
 use App\Contracts\Catalog\CourseCatalogServiceInterface;
@@ -12,6 +14,7 @@ use App\Contracts\Content\PostCategoryServiceInterface;
 use App\Contracts\Content\PostServiceInterface;
 use App\Contracts\Content\SiteContentServiceInterface;
 use App\Contracts\Content\SiteSettingsServiceInterface;
+use App\Services\Files\FileService;
 use App\Services\Content\SiteSettingsService;
 use App\Services\Admin\AdminDashboardService;
 use App\Services\Catalog\CategoryService;
@@ -22,10 +25,15 @@ use App\Services\Content\HomePageService;
 use App\Services\Content\PostCategoryService;
 use App\Services\Content\PostService;
 use App\Services\Content\SiteContentService;
+use App\Listeners\RecordUserLogin;
+use App\Services\Enrollment\EnrollmentService;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Event;
+use Illuminate\Auth\Events\Login;
 use Illuminate\Support\ServiceProvider;
+
 use Illuminate\Validation\Rules\Password;
 
 class AppServiceProvider extends ServiceProvider
@@ -35,6 +43,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        $this->app->bind(FileServiceInterface::class, FileService::class);
         $this->app->bind(SiteSettingsServiceInterface::class, SiteSettingsService::class);
         $this->app->bind(SiteContentServiceInterface::class, SiteContentService::class);
         $this->app->bind(CategoryServiceInterface::class, CategoryService::class);
@@ -44,6 +53,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(ConsultationServiceInterface::class, ConsultationService::class);
         $this->app->bind(AdminDashboardServiceInterface::class, AdminDashboardService::class);
         $this->app->bind(PostCategoryServiceInterface::class, PostCategoryService::class);
+        $this->app->bind(EnrollmentServiceInterface::class, EnrollmentService::class);
         $this->app->bind(PostServiceInterface::class, PostService::class);
     }
 
@@ -52,6 +62,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        Event::listen(Login::class, RecordUserLogin::class);
+
         $this->configureDefaults();
     }
 

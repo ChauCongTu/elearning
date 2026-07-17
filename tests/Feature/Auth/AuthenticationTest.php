@@ -11,7 +11,7 @@ test('login screen can be rendered', function () {
     $response->assertOk();
 });
 
-test('students are redirected to courses after login', function () {
+test('students are redirected to account courses after login', function () {
     $user = User::factory()->create([
         'role' => UserRole::Student,
     ]);
@@ -22,7 +22,7 @@ test('students are redirected to courses after login', function () {
     ]);
 
     $this->assertAuthenticated();
-    $response->assertRedirect(route('courses.index', absolute: false));
+    $response->assertRedirect(route('account.courses', absolute: false));
 });
 
 test('admins are redirected to admin dashboard after login', function () {
@@ -66,6 +66,22 @@ test('users can not authenticate with invalid password', function () {
     ]);
 
     $this->assertGuest();
+});
+
+test('login records last login metadata', function () {
+    $user = User::factory()->create([
+        'role' => UserRole::Student,
+    ]);
+
+    $this->post(route('login.store'), [
+        'email' => $user->email,
+        'password' => 'password',
+    ])->assertRedirect(route('account.courses', absolute: false));
+
+    $user->refresh();
+
+    expect($user->last_login_at)->not->toBeNull()
+        ->and($user->last_login_ip)->not->toBeNull();
 });
 
 test('users can logout', function () {

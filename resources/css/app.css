@@ -63,20 +63,20 @@
 }
 
 :root {
-    --background: oklch(1 0 0);
-    --foreground: oklch(0.145 0 0);
+    --background: oklch(0.995 0.002 350);
+    --foreground: oklch(0.22 0.02 285);
     --card: oklch(1 0 0);
-    --card-foreground: oklch(0.145 0 0);
+    --card-foreground: oklch(0.22 0.02 285);
     --popover: oklch(1 0 0);
-    --popover-foreground: oklch(0.145 0 0);
-    --primary: oklch(0.205 0 0);
-    --primary-foreground: oklch(0.985 0 0);
-    --secondary: oklch(0.97 0 0);
-    --secondary-foreground: oklch(0.205 0 0);
-    --muted: oklch(0.97 0 0);
-    --muted-foreground: oklch(0.556 0 0);
-    --accent: oklch(0.97 0 0);
-    --accent-foreground: oklch(0.205 0 0);
+    --popover-foreground: oklch(0.22 0.02 285);
+    --primary: oklch(0.59 0.22 350);
+    --primary-foreground: oklch(0.99 0 0);
+    --secondary: oklch(0.97 0.01 350);
+    --secondary-foreground: oklch(0.35 0.04 285);
+    --muted: oklch(0.97 0.005 285);
+    --muted-foreground: oklch(0.5 0.02 285);
+    --accent: oklch(0.97 0.02 350);
+    --accent-foreground: oklch(0.45 0.12 350);
     --destructive: oklch(0.577 0.245 27.325);
     --destructive-foreground: oklch(0.577 0.245 27.325);
     --border: oklch(0.922 0 0);
@@ -88,14 +88,23 @@
     --chart-4: oklch(0.828 0.189 84.429);
     --chart-5: oklch(0.769 0.188 70.08);
     --radius: 0.625rem;
-    --sidebar: oklch(0.985 0 0);
-    --sidebar-foreground: oklch(0.145 0 0);
-    --sidebar-primary: oklch(0.205 0 0);
-    --sidebar-primary-foreground: oklch(0.985 0 0);
-    --sidebar-accent: oklch(0.97 0 0);
-    --sidebar-accent-foreground: oklch(0.205 0 0);
-    --sidebar-border: oklch(0.922 0 0);
-    --sidebar-ring: oklch(0.87 0 0);
+    --sidebar: oklch(1 0 0);
+    --sidebar-foreground: oklch(0.28 0.02 285);
+    --sidebar-primary: oklch(0.59 0.22 350);
+    --sidebar-primary-foreground: oklch(0.99 0 0);
+    --sidebar-accent: oklch(0.97 0.02 350);
+    --sidebar-accent-foreground: oklch(0.45 0.12 350);
+    --sidebar-border: oklch(0.93 0.01 350);
+    --sidebar-ring: oklch(0.82 0.04 350);
+}
+
+.account-shell {
+    background: linear-gradient(
+        160deg,
+        oklch(0.99 0.01 350) 0%,
+        oklch(0.995 0.005 285) 45%,
+        oklch(0.99 0.008 320) 100%
+    );
 }
 
 .dark {

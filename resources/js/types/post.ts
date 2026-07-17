@@ -1,13 +1,13 @@
 export type PostCategory = {
-    id: number;
+    id: string;
     name: string;
     slug: string;
     description?: string | null;
 };
 
 export type PostSummary = {
-    id: number;
-    post_category_id: number | null;
+    id: string;
+    post_category_id: string | null;
     title: string;
     slug: string;
     excerpt: string | null;

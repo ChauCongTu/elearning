@@ -1,6 +1,7 @@
 import { Link } from '@inertiajs/react';
-import { Badge, Card, Group, Stack, Text, Title } from '@mantine/core';
+import { Badge, Box, Card, Group, Stack, Text, Title } from '@mantine/core';
 import { ArrowUpRight, Calendar } from 'lucide-react';
+import { courseGradient, mediaUrl } from '@/lib/format';
 import type { PostSummary } from '@/types';
 
 type Props = {
@@ -20,6 +21,8 @@ function formatDate(value: string | null): string {
 }
 
 export default function PostCard({ post }: Props) {
+    const image = mediaUrl(post.featured_image);
+
     return (
         <Card
             component={Link}
@@ -29,7 +32,14 @@ export default function PostCard({ post }: Props) {
             className="public-card-hover public-glass"
             style={{ textDecoration: 'none', color: 'inherit', height: '100%', overflow: 'hidden' }}
         >
-            <div className="public-post-accent" />
+            <Box
+                h={180}
+                style={{
+                    background: image
+                        ? `linear-gradient(180deg, transparent 35%, rgba(0,0,0,0.45) 100%), url(${image}) center/cover no-repeat`
+                        : courseGradient(post.slug),
+                }}
+            />
             <Stack gap="sm" p="lg" h="100%">
                 {post.category && (
                     <Badge variant="light" color="pink" w="fit-content" radius="sm">

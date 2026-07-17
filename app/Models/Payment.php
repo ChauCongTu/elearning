@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 #[Fillable(['order_id', 'gateway', 'payload', 'amount', 'received_at'])]
-class Payment extends Model
+class Payment extends BaseModel
 {
     public $timestamps = true;
 

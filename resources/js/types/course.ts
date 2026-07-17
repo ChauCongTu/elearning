@@ -1,5 +1,5 @@
 export type Category = {
-    id: number;
+    id: string;
     name: string;
     slug: string;
 };
@@ -9,8 +9,8 @@ export type CourseMeta = {
 };
 
 export type Course = {
-    id: number;
-    category_id: number | null;
+    id: string;
+    category_id: string | null;
     title: string;
     slug: string;
     excerpt: string | null;
@@ -30,8 +30,8 @@ export type Course = {
 };
 
 export type LessonSummary = {
-    id: number;
-    chapter_id: number;
+    id: string;
+    chapter_id: string;
     title: string;
     sort_order: number;
     duration_seconds: number;
@@ -51,7 +51,7 @@ export type CourseDetail = Course & {
 };
 
 export type Banner = {
-    id: number;
+    id: string;
     title: string | null;
     image_path: string;
     link_url: string | null;
@@ -64,16 +64,16 @@ export type CourseFilters = {
 };
 
 export type Chapter = {
-    id: number;
-    course_id: number;
+    id: string;
+    course_id: string;
     title: string;
     sort_order: number;
     is_published: boolean;
 };
 
 export type Lesson = {
-    id: number;
-    chapter_id: number;
+    id: string;
+    chapter_id: string;
     title: string;
     sort_order: number;
     duration_seconds: number;
@@ -82,9 +82,9 @@ export type Lesson = {
 };
 
 export type Enrollment = {
-    id: number;
-    user_id: number;
-    course_id: number;
+    id: string;
+    user_id: string;
+    course_id: string;
     status: 'active' | 'revoked';
     progress_percent: string;
     enrolled_at: string;

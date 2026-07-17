@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 #[Fillable(['course_id', 'title', 'sort_order', 'is_published'])]
-class Chapter extends Model
+class Chapter extends BaseModel
 {
     public function course(): BelongsTo
     {

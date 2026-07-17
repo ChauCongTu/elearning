@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 #[Fillable(['order_id', 'course_id', 'price'])]
-class OrderItem extends Model
+class OrderItem extends BaseModel
 {
     public function order(): BelongsTo
     {

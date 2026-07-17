@@ -9,19 +9,22 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('post_categories', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
             $table->string('name');
             $table->string('slug')->unique();
             $table->text('description')->nullable();
             $table->unsignedInteger('sort_order')->default(0);
             $table->boolean('is_active')->default(true);
+            $table->foreignUuid('created_by')->nullable()->constrained('users')->nullOnDelete();
+            $table->foreignUuid('updated_by')->nullable()->constrained('users')->nullOnDelete();
             $table->timestamps();
+            $table->softDeletes();
         });
 
         Schema::create('posts', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('post_category_id')->nullable()->constrained()->nullOnDelete();
-            $table->foreignId('user_id')->nullable()->constrained()->nullOnDelete();
+            $table->uuid('id')->primary();
+            $table->foreignUuid('post_category_id')->nullable()->constrained()->nullOnDelete();
+            $table->foreignUuid('user_id')->nullable()->constrained()->nullOnDelete();
             $table->string('title');
             $table->string('slug')->unique();
             $table->text('excerpt')->nullable();
@@ -33,7 +36,10 @@ return new class extends Migration
             $table->timestamp('published_at')->nullable();
             $table->unsignedBigInteger('legacy_wp_id')->nullable()->unique();
             $table->json('meta')->nullable();
+            $table->foreignUuid('created_by')->nullable()->constrained('users')->nullOnDelete();
+            $table->foreignUuid('updated_by')->nullable()->constrained('users')->nullOnDelete();
             $table->timestamps();
+            $table->softDeletes();
 
             $table->index(['is_published', 'published_at']);
             $table->index('is_featured');

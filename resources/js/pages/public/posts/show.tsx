@@ -13,6 +13,7 @@ import {
 import { Calendar, User } from 'lucide-react';
 import HotlineCta from '@/components/public/sections/hotline-cta';
 import PostCard from '@/components/public/post-card';
+import { courseGradient, mediaUrl } from '@/lib/format';
 import type { PostDetail, PostSummary } from '@/types';
 
 type Props = {
@@ -33,15 +34,27 @@ function formatDate(value: string | null): string {
 }
 
 export default function PostShow({ post, relatedPosts }: Props) {
+    const featuredImage = mediaUrl(post.featured_image);
+
     return (
         <>
             <Head title={post.title} />
 
+            {featuredImage && (
+                <Box
+                    h={{ base: 220, md: 320 }}
+                    style={{
+                        background: `linear-gradient(180deg, rgba(0,0,0,0.35), rgba(0,0,0,0.55)), url(${featuredImage}) center/cover no-repeat`,
+                    }}
+                />
+            )}
+
             <Box
                 py={48}
                 style={{
-                    background:
-                        'linear-gradient(135deg, var(--mantine-color-pink-0) 0%, #fff 60%)',
+                    background: featuredImage
+                        ? '#fff'
+                        : 'linear-gradient(135deg, var(--mantine-color-pink-0) 0%, #fff 60%)',
                     borderBottom: '1px solid var(--mantine-color-gray-2)',
                 }}
             >

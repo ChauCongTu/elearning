@@ -15,7 +15,7 @@ use Illuminate\Database\Eloquent\Model;
     'starts_at',
     'ends_at',
 ])]
-class Banner extends Model
+class Banner extends BaseModel
 {
     public function scopeActive(Builder $query): Builder
     {

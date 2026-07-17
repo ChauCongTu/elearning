@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 #[Fillable(['name', 'slug', 'description', 'sort_order', 'is_active'])]
-class PostCategory extends Model
+class PostCategory extends BaseModel
 {
     public function posts(): HasMany
     {
