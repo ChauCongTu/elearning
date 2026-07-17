@@ -9,7 +9,7 @@ Theo báo giá `Bao_Gia_Website_Khoa_Hoc_Tinh_Gon.pdf` — các hạng mục sau
 | 3 | Mã giảm giá (Coupon) | Bảng `coupons`, `coupon_redemptions`, hook vào checkout |
 | 4 | Gói hội viên tháng/năm | `subscriptions`, recurring billing (chưa có trong SePay gói hiện tại) |
 | 5 | Tiếp thị liên kết (Affiliate) | Mã ref, commission, payout |
-| 6 | Tin tức / Blog — **admin CRUD** | Phase 1: public read + seeder ✅ — CRUD → Phase 5 |
+| 6 | Tin tức / Blog — **admin CRUD** | Phase 1: public read + seeder ✅ — CRUD → Phase 3 |
 | 7 | Bình luận & đánh giá khóa học | `reviews` polymorphic |
 | 8 | Livestream | RTMP/HLS, scheduling — hạ tầng riêng |
 

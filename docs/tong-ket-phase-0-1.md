@@ -17,10 +17,10 @@ Khách hàng có thể xem trước website với đầy đủ trang giới thi�
 |-----------|----------|------------|
 | **0 — Nền tảng** | Hệ thống cơ sở, cơ sở dữ liệu, phân quyền | ✅ Xong |
 | **1 — Website công khai** | Trang chủ, landing pages, tin tức, form tư vấn | ✅ Xong |
-| 2 — Tài khoản học viên | Đăng ký, trang cá nhân, khóa đã mua | ⬜ Chưa bắt đầu |
-| 3 — Thanh toán | VietQR SePay, tự mở khóa sau chuyển khoản | ⬜ Chưa bắt đầu |
-| 4 — Học online | Xem video, lưu tiến độ học | ⬜ Chưa bắt đầu |
-| 5 — Quản trị | Thêm/sửa khóa học, đơn hàng, banner, tin tức | ⬜ Chưa bắt đầu |
+| 2 — Tài khoản học viên | Đăng ký, trang cá nhân, khóa đã mua | ✅ Xong |
+| **3 — Quản trị** | Thêm/sửa khóa học, đơn hàng, banner, tin tức | ⬜ Tiếp theo |
+| 4 — Thanh toán | Tự kích hoạt khóa 24/7 | ⬜ Chưa bắt đầu |
+| 5 — Học online | Xem video, lưu tiến độ học | ⬜ Chưa bắt đầu |
 | 6 — Chuyển dữ liệu | Import từ WordPress/WooCommerce cũ | ⬜ Chưa bắt đầu |
 | 7 — Chứng chỉ | PDF tự động khi hoàn thành khóa | ⬜ Chưa bắt đầu |
 | 8 — Triển khai | Đưa lên hosting, nghiệm thu, bàn giao | ⬜ Chưa bắt đầu |
@@ -97,13 +97,13 @@ Toàn bộ thông tin cố định (tên web, logo, hotline, Zalo, Facebook, men
 
 ### Form tư vấn
 
-Khách điền form tại trang Liên hệ hoặc cuối trang chủ → dữ liệu lưu vào bảng `consultation_requests` để Học Viện xử lý sau (hiện chưa có màn hình admin xem — sẽ có ở Giai đoạn 5).
+Khách điền form tại trang Liên hệ hoặc cuối trang chủ → dữ liệu lưu vào bảng `consultation_requests` để Học Viện xử lý sau (hiện chưa có màn hình admin xem — sẽ có ở Phase 3).
 
 ### Tin tức
 
 - Giao diện đọc tin đầy đủ (danh sách, danh mục, chi tiết)  
 - 10 bài viết mẫu + 4 danh mục (seeder)  
-- **Chưa có** trang admin thêm/sửa bài — chuyển sang Giai đoạn 5  
+- **Chưa có** trang admin thêm/sửa bài — chuyển sang Phase 3  
 
 ### Đăng nhập / Đăng ký
 
@@ -128,12 +128,12 @@ Khách điền form tại trang Liên hệ hoặc cuối trang chủ → dữ li
 
 | Tính năng | Giai đoạn dự kiến |
 |-----------|-------------------|
-| Mua khóa học, thanh toán VietQR | Giai đoạn 3 |
-| Xem video bài học, lưu tiến độ | Giai đoạn 4 |
-| Trang quản trị: thêm/sửa khóa, video, đơn hàng, tin tức | Giai đoạn 5 |
-| Chuyển dữ liệu từ website WordPress cũ | Giai đoạn 6 |
-| Chứng chỉ PDF khi hoàn thành khóa | Giai đoạn 7 |
-| Đưa website lên hosting chính thức | Giai đoạn 8 |
+| Trang quản trị: thêm/sửa khóa, video, đơn hàng, tin tức | Phase 3 |
+| Mua khóa học, thanh toán tự động | Phase 4 |
+| Xem video bài học, lưu tiến độ | Phase 5 |
+| Chuyển dữ liệu từ website WordPress cũ | Phase 6 |
+| Chứng chỉ PDF khi hoàn thành khóa | Phase 7 |
+| Đưa website lên hosting chính thức | Phase 8 |
 
 Các tính năng **ngoài gói** (đăng nhập Facebook/Google, mã giảm giá, membership, affiliate…): xem [out-of-scope.md](./out-of-scope.md).
 
@@ -174,6 +174,6 @@ Các tính năng **ngoài gói** (đăng nhập Facebook/Google, mã giảm giá
 
 ## 9. Bước tiếp theo
 
-→ **Giai đoạn 2:** Hoàn thiện khu vực tài khoản học viên — trang cá nhân, danh sách khóa đã mua (giao diện), đồng bộ đăng nhập/đăng ký.
+→ **Phase 3 (Admin):** Trang quản trị — thêm/sửa khóa học, video, banner, tin tức, form tư vấn.
 
 Xem lịch triển khai đầy đủ: [ke-hoach-trien-khai-20-ngay.md](./ke-hoach-trien-khai-20-ngay.md).

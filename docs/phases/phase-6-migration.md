@@ -1,7 +1,7 @@
 # Phase 6 — Legacy Data Migration
 
 **Mục tiêu:** Script chuyển users, khóa học, đơn hàng, tiến độ từ WordPress/WooCommerce sang hệ thống mới.  
-**Phụ thuộc:** Phase 0, 5 (admin verify)  
+**Phụ thuộc:** Phase 0, 3 (admin verify)  
 **Ước lượng:** 3–4 ngày
 
 ## Tiền đề

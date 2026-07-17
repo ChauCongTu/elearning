@@ -1,7 +1,7 @@
 # Phase 7 — Digital Certificates
 
 **Mục tiêu:** Tự động cấp chứng chỉ PDF khi hoàn thành 100%, mã tra cứu công khai.  
-**Phụ thuộc:** Phase 4 (progress 100%)  
+**Phụ thuộc:** Phase 5 (progress 100%)  
 **Ước lượng:** 2–3 ngày
 
 ## Checklist

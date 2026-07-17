@@ -3,7 +3,7 @@
 **Dự án:** Website bán khóa học online — Học Viện Bông Nhài Trắng  
 **Thời gian:** 20/07/2026 → 08/08/2026 (20 ngày làm việc)  
 **Phạm vi:** Theo báo giá trọn gói 6.500.000 VNĐ (07/07/2026)  
-**Cập nhật:** 16/07/2026
+**Cập nhật:** 17/07/2026
 
 ---
 
@@ -20,9 +20,9 @@ Kế hoạch dưới đây mô tả **từng giai đoạn sẽ làm gì** và **
 ```
 20/07      23/07      29/07      03/08      08/08
   │          │          │          │          │
- Thiết kế   Website    Thanh      Học +      Nghiệm
-           công khai   toán      Quản trị   thu &
-            + Nền tảng             + DL      Bàn giao
+ Thiết kế   Website    Quản trị   TT + Học   DL + NT
+           công khai              online     & bàn giao
+            + Nền tảng
 ```
 
 | # | Giai đoạn | Thời gian | Số ngày |
@@ -31,14 +31,14 @@ Kế hoạch dưới đây mô tả **từng giai đoạn sẽ làm gì** và **
 | 2 | Nền tảng hệ thống | 24/07 | 1 ngày |
 | 3 | Website công khai | 25–27/07 | 3 ngày |
 | 4 | Tài khoản học viên | 28–29/07 | 2 ngày |
-| 5 | Thanh toán VietQR | 30–31/07 | 2 ngày |
+| 5 | **Trang quản trị** | 30–31/07 | 2 ngày |
 | 6 | Học online (video) | 01–03/08 | 3 ngày |
-| 7 | Trang quản trị | 04–05/08 | 2 ngày |
+| 7 | Thanh toán tự động | 04–05/08 | 2 ngày |
 | 8 | Chuyển dữ liệu + Chứng chỉ | 06–07/08 | 2 ngày |
 | 9 | Triển khai & nghiệm thu | 08/08 | 1 ngày |
 | | **Tổng** | | **20 ngày** |
 
-> *Giai đoạn 8 (chuyển dữ liệu) bắt đầu song song một phần ngay sau khi trang quản trị có thể nhập khóa học.*
+> *Giai đoạn 8 (chuyển dữ liệu) bắt đầu song song một phần ngay sau khi trang quản trị (giai đoạn 5) có thể nhập khóa học.*
 
 ---
 
@@ -123,19 +123,24 @@ Kế hoạch dưới đây mô tả **từng giai đoạn sẽ làm gì** và **
 
 ---
 
-## Giai đoạn 5 — Thanh toán chuyển khoản (VietQR)
+## Giai đoạn 5 — Trang quản trị
 **30–31/07/2026 | 2 ngày**
 
-**Làm gì:** Kết nối cổng thanh toán SePay — học viên mua khóa bằng quét mã VietQR, hệ thống **tự mở khóa** sau khi nhận tiền.
+**Làm gì:** Trang quản lý để Học Viện **tự thêm/sửa nội dung** — không cần nhờ lập trình viên mỗi lần đổi khóa hay banner.
 
 **Học Viện nhận được:**
-- Nút **Mua khóa** trên trang chi tiết
-- Màn hình mã QR + hướng dẫn chuyển khoản
-- Tự động mở khóa trong vài phút — không cần duyệt tay từng đơn
 
-**Cần từ Học Viện:** Tài khoản SePay (VietQR) + thông tin ngân hàng nhận tiền.
+| Chức năng | Mô tả |
+|-----------|-------|
+| Tổng quan | Đơn hàng, doanh thu, học viên mới |
+| Khóa học | Thêm / sửa / ẩn khóa, ảnh bìa, giá |
+| Chương & bài | Sắp xếp nội dung, upload video |
+| Đơn hàng | Lịch sử thanh toán |
+| Banner & tin tức | Đổi banner trang chủ, đăng bài viết |
+| Học viên | Danh sách, cấp khóa thủ công (CK tay) |
+| Form tư vấn | Xem yêu cầu từ website |
 
-**Mốc nghiệm thu:** Mua thử 1 khóa → khóa tự hiện trong "Khóa học của tôi".
+**Mốc nghiệm thu:** Admin tự thêm 1 khóa + upload video → sẵn sàng cho bước thanh toán và học online.
 
 ---
 
@@ -156,24 +161,19 @@ Kế hoạch dưới đây mô tả **từng giai đoạn sẽ làm gì** và **
 
 ---
 
-## Giai đoạn 7 — Trang quản trị
+## Giai đoạn 7 — Thanh toán tự động
 **04–05/08/2026 | 2 ngày**
 
-**Làm gì:** Trang quản lý để Học Viện **tự thêm/sửa nội dung** — không cần nhờ lập trình viên mỗi lần đổi khóa hay banner.
+**Làm gì:** Học viên mua khóa trực tuyến — hệ thống **tự kích hoạt khóa học 24/7** sau khi nhận tiền, không cần duyệt tay từng đơn.
 
 **Học Viện nhận được:**
+- Nút **Mua khóa** trên trang chi tiết
+- Màn hình thanh toán + hướng dẫn chuyển khoản
+- Tự động mở khóa trong vài phút
 
-| Chức năng | Mô tả |
-|-----------|-------|
-| Tổng quan | Đơn hàng, doanh thu, học viên mới |
-| Khóa học | Thêm / sửa / ẩn khóa, ảnh bìa, giá |
-| Chương & bài | Sắp xếp nội dung, upload video |
-| Đơn hàng | Lịch sử thanh toán |
-| Banner & tin tức | Đổi banner trang chủ, đăng bài viết |
-| Học viên | Danh sách, cấp khóa thủ công (CK tay) |
-| Form tư vấn | Xem yêu cầu từ website |
+**Cần từ Học Viện:** Tài khoản cổng thanh toán + thông tin ngân hàng nhận tiền.
 
-**Mốc nghiệm thu:** Admin tự thêm 1 khóa + upload video → học viên mua và học được.
+**Mốc nghiệm thu:** Mua thử 1 khóa → khóa tự hiện trong "Khóa học của tôi".
 
 ---
 
@@ -232,25 +232,25 @@ Kế hoạch dưới đây mô tả **từng giai đoạn sẽ làm gì** và **
 | T7 25/07 | Code website: trang chủ + khóa học | Theo mockup đã duyệt |
 | CN 26/07 | Code website: tin tức + landing pages | Website công khai gần xong |
 
-### Tuần 2 — 27/07 → 02/08 *(Tài khoản + Thanh toán + Học)*
+### Tuần 2 — 27/07 → 02/08 *(Tài khoản + Quản trị + Học)*
 
 | Ngày | Việc chính | Kết quả |
 |------|------------|---------|
 | T2 27/07 | Hoàn thiện website + nghiệm thu | Website công khai ✅ |
 | T3 28/07 | Tài khoản học viên | Trang cá nhân |
 | T4 29/07 | Tài khoản (hoàn thiện) | Khóa học của tôi |
-| T5 30/07 | Thanh toán VietQR | Kết nối SePay |
-| T6 31/07 | Thanh toán (hoàn thiện) | Mua khóa tự mở |
+| T5 30/07 | Trang quản trị | Quản lý khóa, video |
+| T6 31/07 | Quản trị (hoàn thiện) | Banner, tin tức, form tư vấn |
 | T7 01/08 | Học online | Giao diện xem video |
 | CN 02/08 | Học online (tiếp) | Lưu tiến độ học |
 
-### Tuần 3 — 03/08 → 08/08 *(Quản trị + Go-live)*
+### Tuần 3 — 03/08 → 08/08 *(Thanh toán + Go-live)*
 
 | Ngày | Việc chính | Kết quả |
 |------|------------|---------|
 | T2 03/08 | Học online (hoàn thiện) | Luồng học ổn định |
-| T3 04/08 | Trang quản trị | Quản lý khóa, video |
-| T4 05/08 | Quản trị (hoàn thiện) | Đơn hàng, tin tức, banner |
+| T3 04/08 | Thanh toán tự động | Kết nối cổng TT |
+| T4 05/08 | Thanh toán (hoàn thiện) | Mua khóa tự kích hoạt |
 | T5 06/08 | Chuyển dữ liệu cũ | Import từ WordPress |
 | T6 07/08 | Chứng chỉ + triển khai hosting | PDF chứng chỉ; lên server |
 | T7 08/08 | **Nghiệm thu & bàn giao** | Ký nghiệm thu, bảo hành 3 tháng |
@@ -263,7 +263,7 @@ Kế hoạch dưới đây mô tả **từng giai đoạn sẽ làm gì** và **
 |---|----------|------------------|
 | 1 | Vào trang chủ, tìm khóa học | Hiển thị đúng thiết kế đã duyệt |
 | 2 | Đăng ký tài khoản mới | Tạo tài khoản thành công |
-| 3 | Mua khóa bằng VietQR | Quét mã → khóa tự mở |
+| 3 | Mua khóa — thanh toán tự động | Chuyển khoản → khóa tự kích hoạt |
 | 4 | Xem video bài học | Phát được, giữ tiến độ khi quay lại |
 | 5 | Hoàn thành 100% khóa | Nhận chứng chỉ PDF |
 | 6 | Tra cứu chứng chỉ | Nhập mã → xác thực được |
@@ -279,7 +279,7 @@ Kế hoạch dưới đây mô tả **từng giai đoạn sẽ làm gì** và **
 |-----------|----------|-------------------|
 | **Trước 20/07** | Logo file gốc, ảnh founder, nội dung ưu tiên | Thiết kế |
 | **23/07** | Phản hồi duyệt thiết kế | Chốt mockup |
-| Trước 30/07 | Tài khoản SePay + VietQR | Thanh toán |
+| Trước 04/08 | Tài khoản cổng thanh toán + ngân hàng nhận tiền | Thanh toán tự động |
 | Trước 01/08 | Tài khoản AWS + file video | Học online |
 | Trước 06/08 | Backup database website cũ | Chuyển dữ liệu |
 | Trước 07/08 | Hosting + tên miền + email SMTP | Go-live |

@@ -15,7 +15,7 @@
 - [x] Public UI: `/tin-tuc`, danh mục, chi tiết bài
 - [x] Homepage teasers từ DB
 - [x] Seeder mẫu (`PostSeeder`)
-- [ ] **CRUD admin** → chuyển sang [phase-5-admin.md](./phase-5-admin.md)
+- [ ] **CRUD admin** → chuyển sang [phase-3-admin.md](./phase-3-admin.md)
 
 ## Backend refactor (Phase 1)
 

@@ -1,7 +1,7 @@
-# Phase 3 — Payment (SePay VietQR)
+# Phase 4 — Payment
 
-**Mục tiêu:** Mua từng khóa học qua VietQR, webhook tự động mở khóa.  
-**Phụ thuộc:** Phase 0, 1, 2  
+**Mục tiêu:** Mua từng khóa học, thanh toán tự động kích hoạt khóa 24/7.  
+**Phụ thuộc:** Phase 0, 1, 2, 3  
 **Ước lượng:** 3–4 ngày
 
 ## Checklist
@@ -36,7 +36,7 @@
 
 ### Admin visibility (tối thiểu)
 
-- [ ] Route admin list orders (có thể placeholder đến phase 5)
+- [ ] Route admin list orders (Phase 3)
 
 ### Tests
 
@@ -74,4 +74,4 @@ Nội dung chuyển khoản SePay: chỉ chứa `code` để parser đơn giản
 
 ## Tiếp theo
 
-→ [phase-4-learning.md](./phase-4-learning.md)
+→ [phase-5-learning.md](./phase-5-learning.md)

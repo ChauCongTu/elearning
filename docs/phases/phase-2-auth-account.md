@@ -23,7 +23,7 @@
 ### Trang cá nhân
 
 - [x] `GET /account/courses` — danh sách enrollments (`MyCoursesController`)
-  - Card: thumbnail, title, progress bar %, nút "Tiếp tục học" (disabled — chờ Phase 4)
+  - Card: thumbnail, title, progress bar %, nút "Tiếp tục học" (disabled — chờ Phase 5)
   - Empty state: CTA xem khóa học
 - [x] `PATCH /settings/profile` — update name, email, phone, avatar, gender, age, preference
 - [x] Đổi mật khẩu — Fortify/settings hiện có
@@ -38,7 +38,7 @@
 ### Enrollment (read-only UI)
 
 - [x] `EnrollmentService::listActiveForUser()` — enrollments `status=active` với `progress_percent`
-- [x] Nút "Tiếp tục học" disabled (Phase 4: `/learn/{course_slug}`)
+- [x] Nút "Tiếp tục học" disabled (Phase 5: `/learn/{course_slug}`)
 - [x] Seeder: 2 enrollments demo cho `student@example.com`
 
 ### Tests
@@ -64,4 +64,4 @@
 
 ## Tiếp theo
 
-→ [phase-3-payment.md](./phase-3-payment.md)
+→ [phase-3-admin.md](./phase-3-admin.md)

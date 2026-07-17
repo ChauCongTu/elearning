@@ -7,16 +7,16 @@ Triển khai **tuần tự** theo dependency. Mỗi phase có checklist — đá
 ```
 Phase 0 Foundation
     └── Phase 1 Public Website
-            └── Phase 2 Auth & Account (mở rộng)
-                    └── Phase 3 Payment (SePay)
-                            └── Phase 4 Learning (S3 + progress)
-                                    ├── Phase 5 Admin
-                                    ├── Phase 6 Migration
-                                    └── Phase 7 Certificates
-                                            └── Phase 8 Deploy & Go-live
+            └── Phase 2 Auth & Account
+                    └── Phase 3 Admin
+                            └── Phase 4 Payment
+                                    └── Phase 5 Learning (S3 + progress)
+                                            ├── Phase 6 Migration
+                                            └── Phase 7 Certificates
+                                                    └── Phase 8 Deploy & Go-live
 ```
 
-Phase 5–7 có thể song song một phần sau khi Phase 4 có skeleton.
+Phase 6–7 có thể song song một phần sau khi Phase 5 có skeleton.
 
 ## Danh sách phase
 
@@ -25,23 +25,26 @@ Phase 5–7 có thể song song một phần sau khi Phase 4 có skeleton.
 | 0 | [phase-0-foundation.md](./phase-0-foundation.md) | DB, models, Mantine, roles | 2–3 ngày |
 | 1 | [phase-1-public-website.md](./phase-1-public-website.md) | Homepage, listing, chi tiết khóa | 3–4 ngày |
 | 2 | [phase-2-auth-account.md](./phase-2-auth-account.md) | Profile, khóa đã mua | 2 ngày |
-| 3 | [phase-3-payment.md](./phase-3-payment.md) | SePay VietQR, webhook | 3–4 ngày |
-| 4 | [phase-4-learning.md](./phase-4-learning.md) | Player, S3, tiến độ | 4–5 ngày |
-| 5 | [phase-5-admin.md](./phase-5-admin.md) | CRUD admin, banner | 4–5 ngày |
+| 3 | [phase-3-admin.md](./phase-3-admin.md) | CRUD admin, banner, tin tức | 4–5 ngày |
+| 4 | [phase-4-payment.md](./phase-4-payment.md) | Thanh toán tự động, webhook | 3–4 ngày |
+| 5 | [phase-5-learning.md](./phase-5-learning.md) | Player, S3, tiến độ | 4–5 ngày |
 | 6 | [phase-6-migration.md](./phase-6-migration.md) | Import WordPress/WC | 3–4 ngày |
 | 7 | [phase-7-certificates.md](./phase-7-certificates.md) | PDF + tra cứu | 2–3 ngày |
 | 8 | [phase-8-deploy-go-live.md](./phase-8-deploy-go-live.md) | Hostinger, UAT, bàn giao | 2–3 ngày |
 
 **Tổng:** ~20–30 ngày làm việc (khớp báo giá)
 
+> **Đánh số lại (17/07):** Admin (trước đây Phase 5) → **Phase 3**. Payment, Learning và các phase sau tăng +1 số.
+
 ## Trạng thái hiện tại
 
 | Phase | Status |
 |-------|--------|
-| 0 | ✅ Hoàn thành | |
-| 1 | ✅ Hoàn thành | |
-| 2 | ✅ Hoàn thành | |
-| 3–8 | ⬜ Chưa bắt đầu | |
+| 0 | ✅ Hoàn thành |
+| 1 | ✅ Hoàn thành |
+| 2 | ✅ Hoàn thành |
+| 3 | ⬜ Tiếp theo |
+| 4–8 | ⬜ Chưa bắt đầu |
 
 ## Tài liệu gửi khách
 

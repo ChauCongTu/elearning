@@ -1,7 +1,7 @@
-# Phase 5 — Admin Panel
+# Phase 3 — Admin Panel
 
 **Mục tiêu:** Trang quản trị — user, danh mục, khóa/bài, video, đơn hàng, banner.  
-**Phụ thuộc:** Phase 0–4  
+**Phụ thuộc:** Phase 0, 1, 2  
 **Ước lượng:** 4–5 ngày
 
 ## Checklist
@@ -44,7 +44,7 @@
 #### Orders
 
 - [ ] List orders: filter status, date range
-- [ ] Detail: user, course, amount, SePay transaction, payment log
+- [ ] Detail: user, course, amount, mã giao dịch, payment log
 - [ ] Export CSV optional
 
 #### Banners
@@ -84,7 +84,7 @@ Dùng Mantine `DataTable` hoặc Table + Pagination + Modal forms.
 ## Acceptance criteria
 
 1. Admin quản lý full vòng đời khóa học không cần DB trực tiếp
-2. Upload video + publish → học viên xem được (phase 4)
+2. Upload video + publish → học viên xem được (Phase 5)
 3. Đổi banner → homepage cập nhật
 
 ## Không làm trong phase này
@@ -94,4 +94,4 @@ Dùng Mantine `DataTable` hoặc Table + Pagination + Modal forms.
 
 ## Tiếp theo
 
-→ [phase-6-migration.md](./phase-6-migration.md)
+→ [phase-4-payment.md](./phase-4-payment.md)

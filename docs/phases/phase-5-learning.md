@@ -1,7 +1,7 @@
-# Phase 4 — Online Learning
+# Phase 5 — Online Learning
 
 **Mục tiêu:** Giao diện học theo chương, video S3 signed URL, lưu tiến độ.  
-**Phụ thuộc:** Phase 0, 3 (enrollment)  
+**Phụ thuộc:** Phase 0, 4 (enrollment)  
 **Ước lượng:** 4–5 ngày
 
 ## Checklist
@@ -12,7 +12,7 @@
 - [ ] `VideoStreamService::signedUrl(lesson)` — TTL configurable (default 2h)
 - [ ] Policy: chỉ user có `enrollment.active` mới lấy URL (trừ `is_free_preview`)
 
-### Admin upload (minimal — full UI phase 5)
+### Admin upload (minimal — full UI phase 3)
 
 - [ ] `POST /admin/lessons/{id}/upload-url` — presigned PUT cho admin
 - [ ] Callback confirm upload → save `video_s3_key`, probe duration (ffprobe local hoặc manual input tạm)
@@ -66,11 +66,11 @@ PATCH /learn/progress                        → heartbeat watched_seconds
 
 ## Không làm trong phase này
 
-- Chứng chỉ PDF (phase 7)
+- Chứng chỉ PDF (Phase 7)
 - Quiz, bài tập
 - DRM chuyên sâu
 
 ## Tiếp theo
 
-→ [phase-5-admin.md](./phase-5-admin.md)  
+→ [phase-6-migration.md](./phase-6-migration.md)  
 → [phase-7-certificates.md](./phase-7-certificates.md) (khi progress 100%)

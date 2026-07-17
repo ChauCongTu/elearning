@@ -292,7 +292,7 @@ export default function CourseShow({ course }: Props) {
                                         leftSection={<ShoppingCart size={18} />}
                                         disabled
                                     >
-                                        Mua khóa (Phase 3)
+                                        Mua khóa (Phase 4)
                                     </Button>
                                 ) : (
                                     <Button
