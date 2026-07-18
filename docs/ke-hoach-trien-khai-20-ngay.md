@@ -34,11 +34,11 @@ Kế hoạch dưới đây mô tả **từng giai đoạn sẽ làm gì** và **
 | 5 | **Trang quản trị** | 30–31/07 | 2 ngày |
 | 6 | Học online (video) | 01–03/08 | 3 ngày |
 | 7 | Thanh toán tự động | 04–05/08 | 2 ngày |
-| 8 | Chuyển dữ liệu + Chứng chỉ | 06–07/08 | 2 ngày |
+| 8 | Chứng chỉ + Chuyển dữ liệu | 06–07/08 | 2 ngày |
 | 9 | Triển khai & nghiệm thu | 08/08 | 1 ngày |
 | | **Tổng** | | **20 ngày** |
 
-> *Giai đoạn 8 (chuyển dữ liệu) bắt đầu song song một phần ngay sau khi trang quản trị (giai đoạn 5) có thể nhập khóa học.*
+> *Giai đoạn 8: chứng chỉ trước (06/08), chuyển dữ liệu cuối (07/08) trước go-live.*
 
 ---
 
@@ -177,8 +177,18 @@ Kế hoạch dưới đây mô tả **từng giai đoạn sẽ làm gì** và **
 
 ---
 
-## Giai đoạn 8 — Chuyển dữ liệu & Chứng chỉ
+## Giai đoạn 8 — Chứng chỉ & Chuyển dữ liệu
 **06–07/08/2026 | 2 ngày**
+
+### Chứng chỉ điện tử
+
+**Làm gì:** Tự động cấp chứng chỉ PDF khi hoàn thành 100% khóa; trang tra cứu mã công khai.
+
+**Học Viện nhận được:**
+- Học viên tải chứng chỉ trong tài khoản
+- Tra cứu mã trên chứng chỉ để xác minh
+
+**Mốc nghiệm thu:** Hoàn thành khóa thử → nhận chứng chỉ PDF.
 
 ### Chuyển dữ liệu website cũ
 
@@ -190,15 +200,7 @@ Kế hoạch dưới đây mô tả **từng giai đoạn sẽ làm gì** và **
 
 **Cần từ Học Viện:** File backup database website cũ.
 
-### Chứng chỉ điện tử
-
-**Làm gì:** Tự động cấp chứng chỉ PDF khi hoàn thành 100% khóa; trang tra cứu mã công khai.
-
-**Học Viện nhận được:**
-- Học viên tải chứng chỉ trong tài khoản
-- Tra cứu mã trên chứng chỉ để xác minh
-
-**Mốc nghiệm thu:** Học viên cũ thấy khóa + hoàn thành khóa thử → nhận chứng chỉ.
+**Mốc nghiệm thu:** Học viên cũ thấy khóa đã mua; tiến độ học giữ nguyên.
 
 ---
 
@@ -251,8 +253,8 @@ Kế hoạch dưới đây mô tả **từng giai đoạn sẽ làm gì** và **
 | T2 03/08 | Học online (hoàn thiện) | Luồng học ổn định |
 | T3 04/08 | Thanh toán tự động | Kết nối cổng TT |
 | T4 05/08 | Thanh toán (hoàn thiện) | Mua khóa tự kích hoạt |
-| T5 06/08 | Chuyển dữ liệu cũ | Import từ WordPress |
-| T6 07/08 | Chứng chỉ + triển khai hosting | PDF chứng chỉ; lên server |
+| T5 06/08 | Chứng chỉ điện tử | PDF + tra cứu |
+| T6 07/08 | Chuyển dữ liệu cũ | Import từ WordPress |
 | T7 08/08 | **Nghiệm thu & bàn giao** | Ký nghiệm thu, bảo hành 3 tháng |
 
 ---
@@ -281,9 +283,9 @@ Kế hoạch dưới đây mô tả **từng giai đoạn sẽ làm gì** và **
 | **23/07** | Phản hồi duyệt thiết kế | Chốt mockup |
 | Trước 04/08 | Tài khoản cổng thanh toán + ngân hàng nhận tiền | Thanh toán tự động |
 | Trước 01/08 | Tài khoản AWS + file video | Học online |
-| Trước 06/08 | Backup database website cũ | Chuyển dữ liệu |
-| Trước 07/08 | Hosting + tên miền + email SMTP | Go-live |
-| Tuỳ chọn | Mẫu thiết kế chứng chỉ | Chứng chỉ PDF |
+| Trước 06/08 | Mẫu thiết kế chứng chỉ (tuỳ chọn) | Chứng chỉ PDF |
+| Trước 07/08 | Backup database website cũ | Chuyển dữ liệu |
+| Trước 08/08 | Hosting + tên miền + email SMTP | Go-live |
 
 ---
 

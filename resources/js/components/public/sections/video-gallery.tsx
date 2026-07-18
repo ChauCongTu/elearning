@@ -1,4 +1,4 @@
-import { Box, Container, SimpleGrid, Stack, Text, Title } from '@mantine/core';
+import { Box, Container, SimpleGrid, Stack, Text } from '@mantine/core';
 import SectionHeading from '@/components/public/section-heading';
 import type { VideoItem } from '@/types';
 
@@ -8,22 +8,21 @@ type Props = {
 
 export default function VideoGallery({ videos }: Props) {
     return (
-        <Container size="xl" py={64}>
+        <Container size="xl" py={72}>
             <SectionHeading
                 title="Video nổi bật"
                 description="Cùng khám phá hành trình học nghề và dịch vụ tại học viện."
-                align="center"
             />
             <SimpleGrid cols={{ base: 1, md: 3 }} spacing="lg">
                 {videos.map((video) => (
                     <Stack key={video.title} gap="sm">
                         <Box
+                            className="public-soft-card"
                             style={{
                                 position: 'relative',
                                 paddingBottom: '56.25%',
-                                borderRadius: 'var(--mantine-radius-lg)',
                                 overflow: 'hidden',
-                                background: '#111',
+                                padding: 0,
                             }}
                         >
                             <iframe
@@ -39,7 +38,7 @@ export default function VideoGallery({ videos }: Props) {
                                 allowFullScreen
                             />
                         </Box>
-                        <Text fw={500} size="sm">
+                        <Text fw={600} size="sm" lh={1.5}>
                             {video.title}
                         </Text>
                     </Stack>

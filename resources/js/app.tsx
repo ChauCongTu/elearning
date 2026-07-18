@@ -1,50 +1,48 @@
 import { createInertiaApp } from '@inertiajs/react';
-import { MantineProvider } from '@mantine/core';
-import { Notifications } from '@mantine/notifications';
-import { Toaster } from '@/components/ui/sonner';
-import { TooltipProvider } from '@/components/ui/tooltip';
+import BrandProviders, { resolveSiteSettings } from '@/components/brand-providers';
 import { initializeTheme } from '@/hooks/use-appearance';
-import AdminLayout from '@/layouts/admin-layout';
-import AppLayout from '@/layouts/app-layout';
+import DashboardLayout from '@/layouts/dashboard-layout';
 import PublicLayout from '@/layouts/public-layout';
 import SettingsLayout from '@/layouts/settings/layout';
-import AccountLayout from '@/layouts/account/layout';
-import { brandTheme } from '@/theme/brand';
+import { setupInertiaNotifications } from '@/lib/inertia-notifications';
+import type { SiteSettings } from '@/types/site-settings';
 
 import '@mantine/core/styles.css';
+import '@mantine/dates/styles.css';
 import '@mantine/notifications/styles.css';
+import '@mantine/tiptap/styles.css';
 
 const appName = import.meta.env.VITE_APP_NAME || 'aaa';
+
+setupInertiaNotifications();
 
 createInertiaApp({
     title: (title) => (title ? `${title} - ${appName}` : appName),
     layout: (name) => {
         switch (true) {
             case name.startsWith('account/'):
-                return [AppLayout, AccountLayout];
+                return DashboardLayout;
             case name.startsWith('public/'):
                 return PublicLayout;
             case name.startsWith('auth/'):
                 return PublicLayout;
             case name.startsWith('admin/'):
-                return AdminLayout;
+                return DashboardLayout;
+            case name.startsWith('learn/'):
+                return undefined;
             case name.startsWith('settings/'):
-                return [AppLayout, SettingsLayout];
+                return [DashboardLayout, SettingsLayout];
             default:
-                return AppLayout;
+                return DashboardLayout;
         }
     },
     strictMode: true,
-    withApp(app) {
-        return (
-            <MantineProvider theme={brandTheme} defaultColorScheme="light">
-                <Notifications position="top-right" />
-                <TooltipProvider delayDuration={0}>
-                    {app}
-                    <Toaster />
-                </TooltipProvider>
-            </MantineProvider>
+    withApp(app, { page }) {
+        const siteSettings = resolveSiteSettings(
+            (page.props as { siteSettings?: SiteSettings }).siteSettings,
         );
+
+        return <BrandProviders siteSettings={siteSettings}>{app}</BrandProviders>;
     },
     progress: {
         color: '#e64980',

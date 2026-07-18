@@ -8,55 +8,56 @@
 
 ### Access
 
-- [ ] Prefix route `/admin`, middleware `auth` + `admin`
-- [ ] `AdminLayout` — Mantine AppShell + nav
+- [x] Prefix route `/admin`, middleware `auth` + `admin`
+- [x] `DashboardLayout` — sidebar + topbar thống nhất account/admin
 
 ### Modules
 
 #### Dashboard
 
-- [ ] Tổng quan: đơn hôm nay, doanh thu tháng, học viên mới, khóa active
+- [x] Tổng quan: đơn hôm nay, doanh thu tháng, học viên mới, khóa active
+- [x] Biểu đồ doanh thu 6 tháng, phân bổ trạng thái đơn, đơn/ghi danh gần đây
 
 #### Users
 
-- [ ] List/search users (name, email, phone)
-- [ ] Edit role (student/admin) — không tự hạ quyền super
-- [ ] Xem enrollments của user
-- [ ] Manual grant enrollment (support khách CK tay)
+- [x] List/search users (name, email, phone)
+- [x] Edit role (student/admin) — không tự hạ quyền super
+- [x] Xem enrollments của user
+- [x] Manual grant enrollment (support khách CK tay)
 
 #### Categories
 
-- [ ] CRUD categories, sort_order, active toggle
+- [x] CRUD categories, sort_order, active toggle
 
 #### Courses
 
-- [ ] CRUD courses (all fields [data-model.md](../data-model.md))
-- [ ] Rich text description (Mantine RichTextEditor hoặc textarea markdown)
-- [ ] Upload thumbnail → S3 hoặc local `storage/app/public`
-- [ ] Publish/unpublish, featured toggle
+- [x] CRUD courses (all fields [data-model.md](../data-model.md))
+- [x] Rich text description (textarea)
+- [x] Upload thumbnail → local `storage/app/public`
+- [x] Publish/unpublish, featured toggle
 
 #### Chapters & Lessons
 
-- [ ] Nested management UI per course
-- [ ] Drag reorder chapters/lessons (sort_order)
-- [ ] Lesson: upload video (presigned), nhập duration, free preview flag
+- [x] Nested management UI per course
+- [x] Reorder chapters/lessons (sort_order, nút lên/xuống)
+- [x] Lesson: upload video, nhập duration, free preview flag
 
 #### Orders
 
-- [ ] List orders: filter status, date range
-- [ ] Detail: user, course, amount, mã giao dịch, payment log
+- [x] List orders: filter status, date range
+- [x] Detail: user, course, amount, mã giao dịch, payment log
 - [ ] Export CSV optional
 
 #### Banners
 
-- [ ] CRUD banner tĩnh homepage
-- [ ] Upload image, link, schedule, active
+- [x] CRUD banner tĩnh homepage
+- [x] Upload image, link, schedule, active
 
 #### Posts (Tin tức)
 
-- [ ] CRUD `post_categories` (slug, sort, active)
-- [ ] CRUD `posts` — title, slug, excerpt, rich content, featured image
-- [ ] Publish/unpublish, featured toggle, category assign
+- [x] CRUD `post_categories` (slug, sort, active)
+- [x] CRUD `posts` — title, slug, excerpt, content, featured image
+- [x] Publish/unpublish, featured toggle, category assign
 - [ ] (Optional) Import từ WordPress legacy
 
 ### Frontend pages
@@ -73,18 +74,18 @@
 /admin/post-categories
 ```
 
-Dùng Mantine `DataTable` hoặc Table + Pagination + Modal forms.
+Dùng Mantine Table + Modal forms + Pagination.
 
 ### Tests
 
-- [ ] Student cannot access `/admin`
-- [ ] Admin CRUD course
-- [ ] Admin manual enrollment creates record
+- [x] Student cannot access `/admin`
+- [x] Admin CRUD course
+- [x] Admin manual enrollment creates record
 
 ## Acceptance criteria
 
 1. Admin quản lý full vòng đời khóa học không cần DB trực tiếp
-2. Upload video + publish → học viên xem được (Phase 5)
+2. Upload video + publish → học viên xem được (Phase 4)
 3. Đổi banner → homepage cập nhật
 
 ## Không làm trong phase này
@@ -94,4 +95,4 @@ Dùng Mantine `DataTable` hoặc Table + Pagination + Modal forms.
 
 ## Tiếp theo
 
-→ [phase-4-payment.md](./phase-4-payment.md)
+→ [phase-4-learning.md](./phase-4-learning.md)

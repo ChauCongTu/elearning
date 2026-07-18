@@ -21,7 +21,7 @@ return [
     |--------------------------------------------------------------------------
     |
     | Disk used by FileService for user-generated uploads (avatars, thumbnails,
-    | etc.). Defaults to "public" (storage/app/public). Switch to "s3" in Phase 4.
+    | lesson videos via multipart upload, etc.). Set UPLOAD_DISK=s3 in production.
     |
     */
 
@@ -68,8 +68,13 @@ return [
             'url' => env('AWS_URL'),
             'endpoint' => env('AWS_ENDPOINT'),
             'use_path_style_endpoint' => env('AWS_USE_PATH_STYLE_ENDPOINT', false),
+            'visibility' => 'private',
             'throw' => false,
             'report' => false,
+            // Bucket "Bucket owner enforced" — không gửi ACL (AWS mặc định tắt ACL từ 2023)
+            'options' => [
+                'ACL' => '',
+            ],
         ],
 
     ],

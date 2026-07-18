@@ -25,79 +25,67 @@ type PageProps = {
 export default function SiteHeader() {
     const [opened, { toggle, close }] = useDisclosure(false);
     const { auth, navigation } = usePage<PageProps>().props;
+    const { url } = usePage();
     const site = useSiteConfig();
     const user = auth.user;
+    const currentPath = url.split('?')[0];
 
     const NavItems = ({ vertical = false }: { vertical?: boolean }) => (
-        <Group gap={vertical ? 'md' : 'md'} component={vertical ? Stack : Group} wrap="nowrap">
+        <Group
+            gap={vertical ? 'md' : 'lg'}
+            component={vertical ? Stack : Group}
+            wrap="nowrap"
+            justify={vertical ? 'flex-start' : 'center'}
+        >
             {(navigation ?? []).map((link) => (
-                <Link key={link.href} href={link.href} onClick={close} className="public-nav-link">
-                    <Text size="sm" fw={600} style={{ whiteSpace: 'nowrap' }}>
-                        {link.label}
-                    </Text>
+                <Link
+                    key={link.href}
+                    href={link.href}
+                    onClick={close}
+                    className="public-nav-link"
+                    data-active={currentPath === link.href ? 'true' : undefined}
+                >
+                    <Text size="sm">{link.label}</Text>
                 </Link>
             ))}
-            <UnstyledButton
-                component="a"
-                href={site.hotlineHref}
-                style={{ textDecoration: 'none', flexShrink: 0 }}
-            >
-                <Group gap={6} wrap="nowrap">
-                    <Phone size={16} color="var(--mantine-color-pink-6)" />
-                    <Text size="sm" fw={600} c="pink.7">
-                        {site.hotline}
-                    </Text>
-                </Group>
-            </UnstyledButton>
         </Group>
     );
 
     return (
         <>
-            <Box
-                component="header"
-                style={{
-                    position: 'sticky',
-                    top: 0,
-                    zIndex: 100,
-                    backdropFilter: 'blur(16px)',
-                    backgroundColor: 'rgba(255, 255, 255, 0.82)',
-                    borderBottom: '1px solid rgba(230, 73, 128, 0.08)',
-                    boxShadow: '0 8px 32px -20px rgba(230, 73, 128, 0.35)',
-                }}
-            >
-                <Container size="xl" h={72}>
+            <Box component="header" className="public-header">
+                <Container size="xl" h={{ base: 68, sm: 72 }}>
                     <Group h="100%" justify="space-between" align="center" wrap="nowrap">
-                        <Group gap="sm" align="center" wrap="nowrap" style={{ flexShrink: 0 }}>
-                            <Burger
-                                opened={opened}
-                                onClick={toggle}
-                                hiddenFrom="sm"
-                                size="sm"
-                            />
+                        <Group gap="sm" wrap="nowrap" style={{ flexShrink: 0 }}>
+                            <Burger opened={opened} onClick={toggle} hiddenFrom="md" size="sm" />
                             <Link href="/" style={{ display: 'flex', alignItems: 'center' }}>
                                 <BrandLogo variant="header" />
                             </Link>
                         </Group>
 
-                        <Group
-                            gap="md"
-                            visibleFrom="lg"
-                            wrap="nowrap"
-                            style={{ flex: 1, justifyContent: 'center', minWidth: 0 }}
-                        >
+                        <Group gap="md" visibleFrom="md" wrap="nowrap" style={{ flex: 1, justifyContent: 'center' }}>
                             <NavItems />
                         </Group>
 
                         <Group gap="sm" wrap="nowrap" style={{ flexShrink: 0 }}>
+                            <UnstyledButton
+                                component="a"
+                                href={site.hotlineHref}
+                                visibleFrom="lg"
+                                style={{ textDecoration: 'none' }}
+                            >
+                                <Group gap={6} wrap="nowrap">
+                                    <Phone size={16} color="var(--brand-primary)" />
+                                    <Text size="sm" fw={700} style={{ color: 'var(--brand-primary-dark)' }}>
+                                        {site.hotline}
+                                    </Text>
+                                </Group>
+                            </UnstyledButton>
+
                             {user ? (
                                 <Menu shadow="md" width={200}>
                                     <Menu.Target>
-                                        <Button
-                                            variant="light"
-                                            color="pink"
-                                            leftSection={<User size={16} />}
-                                        >
+                                        <Button variant="light" color="brand" leftSection={<User size={16} />}>
                                             {user.name.split(' ').at(-1)}
                                         </Button>
                                     </Menu.Target>
@@ -108,7 +96,7 @@ export default function SiteHeader() {
                                                 href="/admin"
                                                 leftSection={<LayoutDashboard size={16} />}
                                             >
-                                                Quản trị
+                                                Khu vực quản trị
                                             </Menu.Item>
                                         )}
                                         <Menu.Item
@@ -116,7 +104,7 @@ export default function SiteHeader() {
                                             href="/account/courses"
                                             leftSection={<User size={16} />}
                                         >
-                                            Tài khoản
+                                            {user.role === 'admin' ? 'Khu vực học viên' : 'Tài khoản của tôi'}
                                         </Menu.Item>
                                         <Menu.Divider />
                                         <Menu.Item
@@ -144,7 +132,8 @@ export default function SiteHeader() {
                                     <Button
                                         component={Link}
                                         href="/register"
-                                        color="pink"
+                                        color="brand"
+                                        style={{ background: 'var(--brand-gradient)' }}
                                     >
                                         Đăng ký
                                     </Button>
@@ -155,15 +144,27 @@ export default function SiteHeader() {
                 </Container>
             </Box>
 
-            <Drawer opened={opened} onClose={close} size="xs" title="Menu">
+            <Drawer opened={opened} onClose={close} size="xs" title={site.shortName} radius="lg">
                 <Stack gap="lg" p="md">
                     <NavItems vertical />
+                    <UnstyledButton component="a" href={site.hotlineHref}>
+                        <Group gap={8}>
+                            <Phone size={16} color="var(--brand-primary)" />
+                            <Text fw={700}>{site.hotline}</Text>
+                        </Group>
+                    </UnstyledButton>
                     {!user && (
                         <Stack gap="sm">
                             <Button component={Link} href="/login" variant="light" fullWidth>
                                 Đăng nhập
                             </Button>
-                            <Button component={Link} href="/register" color="pink" fullWidth>
+                            <Button
+                                component={Link}
+                                href="/register"
+                                color="brand"
+                                fullWidth
+                                style={{ background: 'var(--brand-gradient)' }}
+                            >
                                 Đăng ký
                             </Button>
                         </Stack>

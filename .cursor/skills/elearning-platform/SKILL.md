@@ -73,10 +73,11 @@ php artisan config:cache && php artisan route:cache && php artisan view:cache
 | LMS progress (plugin — cần xác nhận) | `lesson_progress`, `enrollments` |
 | Media attachments | `lessons.video_s3_key` |
 
-Chi tiết: [docs/legacy-survey.md](../../docs/legacy-survey.md), [docs/phases/phase-6-migration.md](../../docs/phases/phase-6-migration.md).
+Chi tiết: [docs/legacy-survey.md](../../docs/legacy-survey.md), [docs/phases/phase-7-migration.md](../../docs/phases/phase-7-migration.md).
 
 ## Tài liệu tham khảo
 
+- [design.md](../../design.md) — **Hallmark design system (Atelier editorial)**
 - [docs/ui-system.md](../../docs/ui-system.md) — **section architecture tái sử dụng**
 - [docs/architecture.md](../../docs/architecture.md) — kiến trúc, package, cấu trúc thư mục
 - [docs/data-model.md](../../docs/data-model.md) — ERD và bảng

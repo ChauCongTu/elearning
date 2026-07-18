@@ -10,16 +10,16 @@ export default function FounderSpotlight({ founder }: Props) {
     const site = useSiteConfig();
 
     return (
-        <Box py={64} style={{ background: 'var(--mantine-color-gray-0)' }}>
+        <Box py={72} className="public-surface-alt">
             <Container size="xl">
-                <Grid align="center" gap="xl">
+                <Grid align="center" gutter="xl">
                     <Grid.Col span={{ base: 12, md: 4 }}>
-                        <Paper radius="xl" p="xl" withBorder ta="center">
+                        <Paper radius="xl" p="xl" className="public-soft-card" ta="center">
                             <Avatar
                                 size={120}
                                 radius="xl"
                                 mx="auto"
-                                color="pink"
+                                color="brand"
                                 variant="gradient"
                                 gradient={{ from: 'pink', to: 'grape', deg: 135 }}
                             >
@@ -32,7 +32,7 @@ export default function FounderSpotlight({ founder }: Props) {
                             <Title order={3} mt="md">
                                 {founder.name}
                             </Title>
-                            <Text size="sm" c="pink.7" fw={600}>
+                            <Text size="sm" fw={700} style={{ color: 'var(--brand-primary-dark)' }}>
                                 {founder.title}
                             </Text>
                             <Text size="xs" c="dimmed" mt={4}>
@@ -42,11 +42,9 @@ export default function FounderSpotlight({ founder }: Props) {
                     </Grid.Col>
                     <Grid.Col span={{ base: 12, md: 8 }}>
                         <Stack gap="md">
-                            <Text size="sm" fw={700} c="pink.7" tt="uppercase">
-                                Người sáng lập
-                            </Text>
+                            <span className="public-kicker">Người sáng lập</span>
                             <Title order={2}>{founder.subtitle}</Title>
-                            <Text c="dimmed" style={{ lineHeight: 1.7 }}>
+                            <Text c="dimmed" lh={1.8}>
                                 {founder.bio}
                             </Text>
                             <List spacing="xs" size="sm">
@@ -58,8 +56,10 @@ export default function FounderSpotlight({ founder }: Props) {
                                 component="a"
                                 href={site.zaloUrl}
                                 target="_blank"
-                                color="pink"
+                                color="brand"
+                                radius="xl"
                                 w="fit-content"
+                                style={{ background: 'var(--brand-gradient)', border: 'none' }}
                             >
                                 Kết nối với {founder.name.split(' ').slice(-2).join(' ')}
                             </Button>

@@ -39,7 +39,6 @@ export default function Home({
             <HeroBanner
                 banners={banners}
                 slides={siteContent.hero_slides}
-                trustStats={siteContent.hero_trust_stats}
             />
             <QuickSearchBar />
             <StatsStrip stats={siteContent.stats} />

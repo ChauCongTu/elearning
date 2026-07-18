@@ -25,24 +25,15 @@ export default function SiteFooter() {
     );
 
     return (
-        <Box
-            component="footer"
-            mt="auto"
-            py={48}
-            style={{
-                background:
-                    'linear-gradient(180deg, var(--mantine-color-gray-0) 0%, #fff 100%)',
-                borderTop: '1px solid var(--mantine-color-gray-2)',
-            }}
-        >
+        <Box component="footer" mt="auto" py={56} className="public-footer-grid">
             <Container size="xl">
                 <Grid gap="xl">
                     <Grid.Col span={{ base: 12, md: 5 }}>
                         <Stack gap="md">
-                            <Title order={4} c="pink.8">
+                            <Title order={4} style={{ color: 'var(--brand-primary-dark)' }}>
                                 {site.name}
                             </Title>
-                            <Text c="dimmed" maw={400}>
+                            <Text c="dimmed" maw={400} lh={1.7}>
                                 {site.tagline}
                             </Text>
                             <Group gap="sm">
@@ -50,7 +41,7 @@ export default function SiteFooter() {
                                     component="a"
                                     href={site.hotlineHref}
                                     variant="light"
-                                    color="pink"
+                                    color="brand"
                                     size="lg"
                                     radius="xl"
                                 >
@@ -60,7 +51,7 @@ export default function SiteFooter() {
                                     <Text size="xs" c="dimmed">
                                         Hotline tư vấn 24/7
                                     </Text>
-                                    <Text fw={600}>{site.hotline}</Text>
+                                    <Text fw={700}>{site.hotline}</Text>
                                 </div>
                             </Group>
                         </Stack>
@@ -68,15 +59,15 @@ export default function SiteFooter() {
 
                     <Grid.Col span={{ base: 6, md: 3 }}>
                         <Stack gap="sm">
-                            <Text fw={600}>Liên kết</Text>
+                            <Text fw={700}>Liên kết</Text>
                             {footerLinks.map((link) => (
-                                <Link key={link.href} href={link.href}>
+                                <Link key={link.href} href={link.href} className="public-nav-link">
                                     <Text size="sm" c="dimmed">
                                         {link.label}
                                     </Text>
                                 </Link>
                             ))}
-                            <Link href="/login">
+                            <Link href="/login" className="public-nav-link">
                                 <Text size="sm" c="dimmed">
                                     Đăng nhập
                                 </Text>
@@ -86,7 +77,7 @@ export default function SiteFooter() {
 
                     <Grid.Col span={{ base: 6, md: 4 }}>
                         <Stack gap="sm">
-                            <Text fw={600}>Hỗ trợ</Text>
+                            <Text fw={700}>Hỗ trợ</Text>
                             <Group gap={8}>
                                 <Headset size={16} />
                                 <Text size="sm" c="dimmed">
@@ -105,8 +96,8 @@ export default function SiteFooter() {
                                 target="_blank"
                                 rel="noreferrer"
                                 size="sm"
-                                c="pink.7"
-                                fw={500}
+                                fw={600}
+                                style={{ color: 'var(--brand-primary-dark)', textDecoration: 'none' }}
                             >
                                 Chat Zalo ngay →
                             </Text>

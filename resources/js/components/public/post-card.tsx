@@ -29,7 +29,7 @@ export default function PostCard({ post }: Props) {
             href={`/tin-tuc/${post.slug}`}
             padding={0}
             radius="xl"
-            className="public-card-hover public-glass"
+            className="public-soft-card public-card-hover"
             style={{ textDecoration: 'none', color: 'inherit', height: '100%', overflow: 'hidden' }}
         >
             <Box
@@ -42,7 +42,7 @@ export default function PostCard({ post }: Props) {
             />
             <Stack gap="sm" p="lg" h="100%">
                 {post.category && (
-                    <Badge variant="light" color="pink" w="fit-content" radius="sm">
+                    <Badge variant="light" color="brand" w="fit-content">
                         {post.category.name}
                     </Badge>
                 )}
@@ -61,7 +61,7 @@ export default function PostCard({ post }: Props) {
                             {formatDate(post.published_at)}
                         </Text>
                     </Group>
-                    <ArrowUpRight size={16} color="var(--mantine-color-pink-6)" />
+                    <ArrowUpRight size={16} color="var(--brand-primary)" />
                 </Group>
             </Stack>
         </Card>

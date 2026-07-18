@@ -1,9 +1,12 @@
+export type * from './admin';
 export type * from './account';
 export type * from './post';
 export type * from './auth';
+export type * from './course-review';
 export type * from './course';
 export type * from './navigation';
 export type * from './site-content';
 export type * from './site-settings';
 export type * from './enrollment';
+export type * from './learning';
 export type * from './ui';

@@ -18,10 +18,14 @@ class FileService implements FileServiceInterface
     public function upload(UploadedFile $file, FilePrefix $prefix): string
     {
         $directory = $this->normalizePrefix($prefix);
+        $disk = $this->disk();
 
-        Storage::disk($this->disk())->makeDirectory($directory);
+        // S3 không cần tạo thư mục — makeDirectory gây PutObject rỗng + lỗi ACL
+        if ($disk !== 's3') {
+            Storage::disk($disk)->makeDirectory($directory);
+        }
 
-        return $file->store($directory, $this->disk());
+        return $file->store($directory, $disk);
     }
 
     public function replace(UploadedFile $file, FilePrefix $prefix, ?string $existingPath = null): string

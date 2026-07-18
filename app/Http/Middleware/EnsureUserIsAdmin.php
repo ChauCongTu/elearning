@@ -10,10 +10,16 @@ class EnsureUserIsAdmin
 {
     public function handle(Request $request, Closure $next): Response
     {
-        if (! $request->user()?->isAdmin()) {
+        if ($request->user()?->isAdmin()) {
+            return $next($request);
+        }
+
+        if ($request->expectsJson() || ! $request->isMethod('GET')) {
             abort(403);
         }
 
-        return $next($request);
+        return redirect()
+            ->route('account.courses')
+            ->with('error', 'Bạn không có quyền truy cập khu vực quản trị.');
     }
 }

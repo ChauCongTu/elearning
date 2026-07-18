@@ -20,7 +20,7 @@ export default function ContactChannels({ contact }: Props) {
     return (
         <Grid>
             <Grid.Col span={{ base: 12, md: 6 }}>
-                <Paper withBorder radius="lg" p="lg" h="100%">
+                <Paper withBorder radius={0} p="lg" h="100%" className="public-surface">
                     <Stack gap="md">
                         <Title order={4}>Liên hệ trực tiếp</Title>
                         {contact.hotlines.map((line) => (
@@ -29,7 +29,7 @@ export default function ContactChannels({ contact }: Props) {
                                     component="a"
                                     href={line.href}
                                     variant="light"
-                                    color="pink"
+                                    color="brand"
                                     size="lg"
                                     radius="xl"
                                 >
@@ -39,7 +39,7 @@ export default function ContactChannels({ contact }: Props) {
                                     <Text size="xs" c="dimmed">
                                         {line.label}
                                     </Text>
-                                    <Anchor href={line.href} fw={600} c="pink.7">
+                                    <Anchor href={line.href} fw={600} c="brand.7">
                                         {line.number}
                                     </Anchor>
                                 </div>
@@ -110,7 +110,7 @@ export default function ContactChannels({ contact }: Props) {
             </Grid.Col>
 
             <Grid.Col span={{ base: 12, md: 6 }}>
-                <Paper withBorder radius="lg" p="lg" h="100%">
+                <Paper withBorder radius={0} p="lg" h="100%" className="public-surface">
                     <Stack gap="md">
                         <Title order={4}>Hệ thống cơ sở</Title>
                         {contact.branches.map((branch) => (
@@ -118,7 +118,7 @@ export default function ContactChannels({ contact }: Props) {
                                 <MapPin
                                     size={18}
                                     style={{ marginTop: 2, flexShrink: 0 }}
-                                    color="var(--mantine-color-pink-6)"
+                                    color="var(--color-accent)"
                                 />
                                 <div>
                                     <Text fw={600} size="sm">

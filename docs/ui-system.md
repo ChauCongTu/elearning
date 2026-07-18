@@ -6,7 +6,9 @@ Thiết kế tách **nội dung** (config) khỏi **presentation** (React sectio
 
 ```
 config/site.json            ← Nội dung marketing + thông tin cố định (JSON, server-side)
-resources/js/theme/brand.ts ← Màu, font, gradient (client)
+                              ← theme.primary, gradient_* — màu chủ đạo (→ siteSettings.theme)
+resources/js/theme/brand.ts ← Mantine theme + CSS variable helpers
+BrandProviders              ← Inject --brand-* từ siteSettings.theme
 hooks/use-site-config.ts    ← Logo, hotline, nav từ Inertia `siteSettings`
 components/public/sections/ ← Section UI tái sử dụng
 pages/public/home.tsx       ← Compose sections (registry)

@@ -36,17 +36,17 @@ export default function ConsultationSection({ config }: Props) {
                 <Grid gap="xl">
                     <Grid.Col span={{ base: 12, md: 5 }}>
                         <Stack gap="md">
-                            <Text size="sm" fw={700} c="pink.7" tt="uppercase">
+                            <Text size="sm" fw={700} c="brand.7" tt="uppercase" style={{ letterSpacing: '0.08em' }}>
                                 Miễn phí 100%
                             </Text>
-                            <Title order={2}>Đặt lịch tư vấn trực tiếp</Title>
+                            <Title order={2} className="public-display">Đặt lịch tư vấn trực tiếp</Title>
                             <Text c="dimmed">
                                 Cùng các chuyên gia hàng đầu tại {site.shortName}.
                                 Cam kết bảo mật thông tin khách hàng.
                             </Text>
-                            <Paper p="lg" radius="lg" withBorder>
+                            <Paper p="lg" radius={0} withBorder className="public-surface">
                                 <Group gap="sm">
-                                    <Phone color="var(--mantine-color-pink-6)" />
+                                    <Phone color="var(--color-accent)" />
                                     <div>
                                         <Text size="xs" c="dimmed">
                                             Hotline 24/7
@@ -61,7 +61,7 @@ export default function ConsultationSection({ config }: Props) {
                     </Grid.Col>
 
                     <Grid.Col span={{ base: 12, md: 7 }}>
-                        <Paper p="xl" radius="lg" shadow="md" withBorder>
+                        <Paper p="xl" radius={0} withBorder className="public-surface">
                             {flash?.consultation_success && (
                                 <Alert
                                     icon={<CheckCircle2 size={16} />}
@@ -131,7 +131,7 @@ export default function ConsultationSection({ config }: Props) {
                                         />
                                         <Button
                                             type="submit"
-                                            color="pink"
+                                            color="brand"
                                             size="md"
                                             loading={processing}
                                             fullWidth

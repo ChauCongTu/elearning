@@ -16,7 +16,7 @@ class DashboardController extends Controller
     public function __invoke(): Response
     {
         return Inertia::render('admin/dashboard', [
-            'stats' => $this->dashboard->getStats(),
+            'overview' => $this->dashboard->getOverview(),
         ]);
     }
 }

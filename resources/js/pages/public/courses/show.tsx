@@ -16,31 +16,106 @@ import {
 } from '@mantine/core';
 import {
     CheckCircle2,
+    ChevronRight,
     Clock,
     GraduationCap,
+    ListTree,
     Lock,
     PlayCircle,
     ShoppingCart,
 } from 'lucide-react';
+import { useEffect, useMemo, useState } from 'react';
 import {
     courseGradient,
     courseThumbnailUrl,
     formatDuration,
     formatPrice,
 } from '@/lib/format';
-import type { Auth, CourseDetail } from '@/types';
+import CourseReviewsSection from '@/components/public/course-reviews-section';
+import type { Auth, CourseDetail, CourseReviewItem, CourseReviewSummary } from '@/types';
 
 type Props = {
     course: CourseDetail;
+    reviewSummary: CourseReviewSummary;
+    reviews: CourseReviewItem[];
+    userReview: CourseReviewItem | null;
+    canReview: boolean;
 };
 
-export default function CourseShow({ course }: Props) {
+export default function CourseShow({
+    course,
+    reviewSummary,
+    reviews,
+    userReview,
+    canReview,
+}: Props) {
     const { auth } = usePage<{ auth: Auth }>().props;
     const thumbnail = courseThumbnailUrl(course.thumbnail_path, course.slug);
     const totalLessons = course.chapters.reduce(
         (sum, chapter) => sum + chapter.lessons.length,
         0,
     );
+
+    const tableOfContents = useMemo(
+        () =>
+            [
+                course.description
+                    ? { id: 'course-intro', label: 'Giới thiệu khóa học' }
+                    : null,
+                { id: 'course-curriculum', label: 'Đề cương khóa học' },
+                course.benefits && course.benefits.length > 0
+                    ? { id: 'course-benefits', label: 'Lợi ích khóa học' }
+                    : null,
+                course.faq && course.faq.length > 0
+                    ? { id: 'course-faq', label: 'Câu hỏi thường gặp' }
+                    : null,
+            ].filter((item): item is { id: string; label: string } => item !== null),
+        [course.benefits, course.description, course.faq],
+    );
+
+    const [activeSection, setActiveSection] = useState<string | null>(tableOfContents[0]?.id ?? null);
+
+    useEffect(() => {
+        const elements = tableOfContents
+            .map((item) => document.getElementById(item.id))
+            .filter((element): element is HTMLElement => element !== null);
+
+        if (elements.length === 0) {
+            return;
+        }
+
+        const observer = new IntersectionObserver(
+            (entries) => {
+                const visible = entries
+                    .filter((entry) => entry.isIntersecting)
+                    .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
+
+                if (visible[0]?.target.id) {
+                    setActiveSection(visible[0].target.id);
+                }
+            },
+            {
+                rootMargin: '-20% 0px -55% 0px',
+                threshold: [0, 0.25, 0.5, 1],
+            },
+        );
+
+        elements.forEach((element) => observer.observe(element));
+
+        return () => observer.disconnect();
+    }, [tableOfContents]);
+
+    const scrollToSection = (sectionId: string) => {
+        const element = document.getElementById(sectionId);
+
+        if (!element) {
+            return;
+        }
+
+        setActiveSection(sectionId);
+        element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        window.history.replaceState(null, '', `#${sectionId}`);
+    };
 
     return (
         <>
@@ -109,17 +184,16 @@ export default function CourseShow({ course }: Props) {
                     <Grid.Col span={{ base: 12, md: 8 }}>
                         <Stack gap="xl">
                             {course.description && (
-                                <section>
+                                <section id="course-intro" className="course-section">
                                     <Title order={3} mb="md">
                                         Giới thiệu khóa học
                                     </Title>
-                                    <Text c="dimmed" style={{ whiteSpace: 'pre-line' }}>
-                                        {course.description}
-                                    </Text>
+                                    <Box c="dimmed" dangerouslySetInnerHTML={{ __html: course.description }} />
+
                                 </section>
                             )}
 
-                            <section>
+                            <section id="course-curriculum" className="course-section">
                                 <Title order={3} mb="md">
                                     Đề cương khóa học
                                 </Title>
@@ -192,7 +266,7 @@ export default function CourseShow({ course }: Props) {
                             </section>
 
                             {course.benefits && course.benefits.length > 0 && (
-                                <section>
+                                <section id="course-benefits" className="course-section">
                                     <Title order={3} mb="md">
                                         Lợi ích khóa học
                                     </Title>
@@ -214,7 +288,7 @@ export default function CourseShow({ course }: Props) {
                             )}
 
                             {course.faq && course.faq.length > 0 && (
-                                <section>
+                                <section id="course-faq" className="course-section">
                                     <Title order={3} mb="md">
                                         Câu hỏi thường gặp
                                     </Title>
@@ -239,81 +313,122 @@ export default function CourseShow({ course }: Props) {
                     </Grid.Col>
 
                     <Grid.Col span={{ base: 12, md: 4 }}>
-                        <Paper
-                            p="lg"
-                            radius="lg"
-                            shadow="md"
-                            withBorder
-                            style={{ position: 'sticky', top: 96 }}
-                        >
-                            <Stack gap="md">
-                                <div>
-                                    <Text size="sm" c="dimmed">
-                                        Học phí
-                                    </Text>
-                                    <Text fw={700} size="xl" c="pink.7">
-                                        {formatPrice(course.price)}
-                                    </Text>
-                                    {course.compare_price && (
-                                        <Text size="sm" c="dimmed" td="line-through">
-                                            {formatPrice(course.compare_price)}
+                        <Stack gap="md" className="course-sidebar">
+                            <Paper p="lg" radius="lg" shadow="md" withBorder className="course-sidebar__card">
+                                <Stack gap="md">
+                                    <div>
+                                        <Text size="sm" c="dimmed">
+                                            Học phí
                                         </Text>
-                                    )}
-                                </div>
+                                        <Text fw={700} size="xl" c="pink.7">
+                                            {formatPrice(course.price)}
+                                        </Text>
+                                        {course.compare_price && (
+                                            <Text size="sm" c="dimmed" td="line-through">
+                                                {formatPrice(course.compare_price)}
+                                            </Text>
+                                        )}
+                                    </div>
 
-                                {course.instructor_name && (
-                                    <Group gap="sm">
-                                        <ThemeIcon
-                                            size={40}
-                                            radius="md"
+                                    {course.instructor_name && (
+                                        <Group gap="sm" className="course-sidebar__instructor">
+                                            <ThemeIcon
+                                                size={40}
+                                                radius="md"
+                                                color="pink"
+                                                variant="light"
+                                            >
+                                                <GraduationCap size={20} />
+                                            </ThemeIcon>
+                                            <div>
+                                                <Text fw={600} size="sm">
+                                                    {course.instructor_name}
+                                                </Text>
+                                                {course.instructor_title && (
+                                                    <Text size="xs" c="dimmed">
+                                                        {course.instructor_title}
+                                                    </Text>
+                                                )}
+                                            </div>
+                                        </Group>
+                                    )}
+
+                                    {auth.user ? (
+                                        <Button
                                             color="pink"
-                                            variant="light"
+                                            size="md"
+                                            fullWidth
+                                            leftSection={<ShoppingCart size={18} />}
+                                            disabled
                                         >
-                                            <GraduationCap size={20} />
+                                            Mua khóa (Phase 5)
+                                        </Button>
+                                    ) : (
+                                        <Button
+                                            component={Link}
+                                            href="/login"
+                                            color="pink"
+                                            size="md"
+                                            fullWidth
+                                            leftSection={<ShoppingCart size={18} />}
+                                        >
+                                            Đăng nhập để mua khóa
+                                        </Button>
+                                    )}
+
+                                    <Text size="xs" c="dimmed" ta="center">
+                                        Thanh toán tự động — kích hoạt khóa học 24/7
+                                    </Text>
+                                </Stack>
+                            </Paper>
+
+                            <Paper radius="lg" shadow="sm" withBorder className="course-sidebar__card course-sidebar-toc">
+                                <div className="course-sidebar-toc__header">
+                                    <Group gap="sm" wrap="nowrap">
+                                        <ThemeIcon size={36} radius="md" color="pink" variant="light">
+                                            <ListTree size={18} />
                                         </ThemeIcon>
                                         <div>
-                                            <Text fw={600} size="sm">
-                                                {course.instructor_name}
+                                            <Text fw={700} size="sm">
+                                                Mục lục nhanh
                                             </Text>
-                                            {course.instructor_title && (
-                                                <Text size="xs" c="dimmed">
-                                                    {course.instructor_title}
-                                                </Text>
-                                            )}
+                                            <Text size="xs" c="dimmed">
+                                                Chuyển tới nội dung khóa học
+                                            </Text>
                                         </div>
                                     </Group>
-                                )}
+                                </div>
 
-                                {auth.user ? (
-                                    <Button
-                                        color="pink"
-                                        size="md"
-                                        fullWidth
-                                        leftSection={<ShoppingCart size={18} />}
-                                        disabled
-                                    >
-                                        Mua khóa (Phase 4)
-                                    </Button>
-                                ) : (
-                                    <Button
-                                        component={Link}
-                                        href="/login"
-                                        color="pink"
-                                        size="md"
-                                        fullWidth
-                                        leftSection={<ShoppingCart size={18} />}
-                                    >
-                                        Đăng nhập để mua khóa
-                                    </Button>
-                                )}
+                                <nav className="course-sidebar-toc__nav" aria-label="Mục lục khóa học">
+                                    {tableOfContents.map((item, index) => {
+                                        const isActive = activeSection === item.id;
 
-                                <Text size="xs" c="dimmed" ta="center">
-                                    Thanh toán tự động — kích hoạt khóa học 24/7
-                                </Text>
-                            </Stack>
-                        </Paper>
+                                        return (
+                                            <button
+                                                key={item.id}
+                                                type="button"
+                                                className={`course-sidebar-toc__item${isActive ? ' course-sidebar-toc__item--active' : ''}`}
+                                                onClick={() => scrollToSection(item.id)}
+                                            >
+                                                <span className="course-sidebar-toc__index">{index + 1}</span>
+                                                <span className="course-sidebar-toc__label">{item.label}</span>
+                                                <ChevronRight size={16} className="course-sidebar-toc__chevron" />
+                                            </button>
+                                        );
+                                    })}
+                                </nav>
+                            </Paper>
+                        </Stack>
                     </Grid.Col>
                 </Grid>
+
+                <CourseReviewsSection
+                    courseSlug={course.slug}
+                    summary={reviewSummary}
+                    reviews={reviews}
+                    userReview={userReview}
+                    canReview={canReview}
+                />
             </Container>
         </>
     );

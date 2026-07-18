@@ -86,9 +86,11 @@ export default function AccountCourses({ enrollments }: Props) {
                                     </div>
 
                                     <div className="flex flex-wrap gap-2">
-                                        <Button variant="outline" disabled title="Sắp ra mắt">
-                                            <BookOpen className="mr-2 size-4" />
-                                            Tiếp tục học
+                                        <Button variant="outline" asChild>
+                                            <Link href={`/learn/${course.slug}`}>
+                                                <BookOpen className="mr-2 size-4" />
+                                                Tiếp tục học
+                                            </Link>
                                         </Button>
                                         <Button variant="ghost" asChild>
                                             <Link href={`/courses/${course.slug}`}>

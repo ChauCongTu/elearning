@@ -1,4 +1,4 @@
-import { Box, Container, Grid, Image, Paper, Stack, Text, Title } from '@mantine/core';
+import { Container, Grid, Image, Paper, Stack, Text, Title } from '@mantine/core';
 import type { AboutContent } from '@/types';
 
 type Props = {
@@ -7,30 +7,33 @@ type Props = {
 
 export default function AboutAcademy({ content }: Props) {
     return (
-        <Container size="xl" py={64}>
-            <Grid align="center" gap="xl">
+        <Container size="xl" py={72}>
+            <Grid align="center" gutter="xl">
                 <Grid.Col span={{ base: 12, md: 6 }}>
                     <Stack gap="md">
-                        <Text size="sm" fw={700} c="pink.7" tt="uppercase">
-                            {content.eyebrow}
-                        </Text>
-                        <Title order={2}>{content.headline}</Title>
-                        <Title order={4} c="dimmed">
+                        <span className="public-kicker">{content.eyebrow}</span>
+                        <Title order={2} lh={1.15}>
+                            {content.headline}
+                        </Title>
+                        <Title order={4} c="dimmed" fw={600}>
                             {content.story_title}
                         </Title>
-                        <Text c="dimmed" style={{ lineHeight: 1.7 }}>
+                        <Text c="dimmed" lh={1.8}>
                             {content.story}
                         </Text>
-                        <Text style={{ lineHeight: 1.7 }}>{content.mission}</Text>
+                        <Paper p="lg" radius="xl" className="public-soft-card">
+                            <Text lh={1.8}>{content.mission}</Text>
+                        </Paper>
                     </Stack>
                 </Grid.Col>
                 <Grid.Col span={{ base: 12, md: 6 }}>
-                    <Paper radius="xl" withBorder p={0} style={{ overflow: 'hidden' }}>
+                    <Paper radius="xl" p={0} className="public-soft-card public-card-hover" style={{ overflow: 'hidden' }}>
                         <Image
                             src="https://images.unsplash.com/photo-1560066984-138dadb4c035?w=800&auto=format&fit=crop"
                             alt="Học viện thẩm mỹ"
-                            h={360}
-                            fallbackSrc="https://placehold.co/800x360/fce7f3/9d174d?text=Hoc+Vien"
+                            h={380}
+                            fit="cover"
+                            fallbackSrc="https://placehold.co/800x380/fff0f6/e64980?text=Hoc+Vien"
                         />
                     </Paper>
                 </Grid.Col>

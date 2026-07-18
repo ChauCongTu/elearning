@@ -8,6 +8,7 @@ enum FilePrefix: string
     case CourseThumbnail = 'courses/thumbnails';
     case PostFeatured = 'posts/featured';
     case Banner = 'banners';
+    case EditorImage = 'editor/images';
     case Certificate = 'certificates';
     case LessonVideo = 'lessons/videos';
 
@@ -18,6 +19,7 @@ enum FilePrefix: string
             self::CourseThumbnail => 'Ảnh khóa học',
             self::PostFeatured => 'Ảnh bài viết',
             self::Banner => 'Banner',
+            self::EditorImage => 'Ảnh soạn thảo',
             self::Certificate => 'Chứng chỉ',
             self::LessonVideo => 'Video bài học',
         };

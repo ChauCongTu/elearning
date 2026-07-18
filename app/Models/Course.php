@@ -51,6 +51,11 @@ class Course extends BaseModel
         return $this->hasMany(Enrollment::class);
     }
 
+    public function reviews(): HasMany
+    {
+        return $this->hasMany(CourseReview::class);
+    }
+
     public function orderItems(): HasMany
     {
         return $this->hasMany(OrderItem::class);

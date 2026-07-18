@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Public;
 
 use App\Contracts\Catalog\CategoryServiceInterface;
 use App\Contracts\Catalog\CourseCatalogServiceInterface;
+use App\Contracts\Catalog\CourseReviewServiceInterface;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -14,6 +15,7 @@ class CourseController extends Controller
     public function __construct(
         private CourseCatalogServiceInterface $courses,
         private CategoryServiceInterface $categories,
+        private CourseReviewServiceInterface $reviews,
     ) {}
 
     public function index(Request $request): Response
@@ -37,10 +39,17 @@ class CourseController extends Controller
         ]);
     }
 
-    public function show(string $slug): Response
+    public function show(Request $request, string $slug): Response
     {
+        $course = $this->courses->findPublishedBySlug($slug);
+        $user = $request->user();
+
         return Inertia::render('public/courses/show', [
-            'course' => $this->courses->findPublishedBySlug($slug),
+            'course' => $course,
+            'reviewSummary' => $this->reviews->summaryForCourse($course),
+            'reviews' => $this->reviews->listPublishedForCourse($course),
+            'userReview' => $user ? $this->reviews->findUserReview($user, $course) : null,
+            'canReview' => $user ? $this->reviews->canUserReview($user, $course) : false,
         ]);
     }
 }

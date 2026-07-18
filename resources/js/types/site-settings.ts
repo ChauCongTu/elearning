@@ -1,3 +1,14 @@
+export type SiteTheme = {
+    primary: string;
+    primaryDark: string;
+    primaryLight: string;
+    secondary: string;
+    surface: string;
+    gradientFrom: string;
+    gradientVia: string;
+    gradientTo: string;
+};
+
 export type SiteSettings = {
     name: string;
     shortName: string;
@@ -11,6 +22,7 @@ export type SiteSettings = {
     facebookUrl: string;
     address: string;
     hours: string;
+    theme: SiteTheme;
 };
 
 export type MaintenanceInfo = {

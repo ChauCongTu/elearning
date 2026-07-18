@@ -59,10 +59,14 @@ class HandleInertiaRequests extends Middleware
             ],
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
             'flash' => [
-                'consultation_success' => fn () => $request->session()->get('consultation_success'),
+                'consultation_success' => $request->session()->get('consultation_success'),
+                'review_success' => $request->session()->get('review_success'),
+                'success' => $request->session()->get('success'),
+                'error' => $request->session()->get('error'),
             ],
             'navigation' => $siteSettings->navigation(),
             'siteSettings' => $siteSettings->forFrontend(),
+            'appUrl' => rtrim((string) config('app.url'), '/'),
         ];
     }
 }

@@ -25,7 +25,7 @@ export default function PricingTables({ pricing }: Props) {
             <Grid>
                 {pricing.groups.map((group) => (
                     <Grid.Col key={group.title} span={{ base: 12, md: 6 }}>
-                        <Paper withBorder radius="lg" p="lg" h="100%">
+                        <Paper withBorder radius={0} p="lg" h="100%" className="public-surface">
                             <Title order={4} mb="md">
                                 {group.title}
                             </Title>
@@ -37,7 +37,7 @@ export default function PricingTables({ pricing }: Props) {
                                                 <Text size="sm">{item.name}</Text>
                                             </Table.Td>
                                             <Table.Td ta="right">
-                                                <Text size="sm" fw={600} c="pink.7">
+                                                <Text size="sm" fw={600} c="brand.7" className="public-tnum">
                                                     {item.price} đ
                                                 </Text>
                                             </Table.Td>
@@ -52,7 +52,7 @@ export default function PricingTables({ pricing }: Props) {
 
             <Alert
                 icon={<Info size={18} />}
-                color="pink"
+                color="brand"
                 variant="light"
                 title="Lưu ý"
             >

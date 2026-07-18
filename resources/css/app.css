@@ -2,6 +2,8 @@
 
 @import 'tw-animate-css';
 @import './public-ui.css';
+@import './app-shell-ui.css';
+@import './admin-forms.css';
 
 @source '../views';
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
@@ -10,7 +12,7 @@
 
 @theme {
     --font-sans:
-        'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif,
+        'Be Vietnam Pro', ui-sans-serif, system-ui, sans-serif,
         'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
         'Noto Color Emoji';
 
@@ -99,12 +101,7 @@
 }
 
 .account-shell {
-    background: linear-gradient(
-        160deg,
-        oklch(0.99 0.01 350) 0%,
-        oklch(0.995 0.005 285) 45%,
-        oklch(0.99 0.008 320) 100%
-    );
+    background: var(--app-shell-bg, linear-gradient(160deg, #fafafa 0%, #ffffff 50%, var(--brand-primary-light, #fff0f6) 100%));
 }
 
 .dark {

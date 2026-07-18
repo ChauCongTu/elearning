@@ -5,7 +5,7 @@ namespace App\Contracts\Admin;
 interface AdminDashboardServiceInterface
 {
     /**
-     * @return array{users: int, courses: int, enrollments: int, orders: int}
+     * @return array<string, mixed>
      */
-    public function getStats(): array;
+    public function getOverview(): array;
 }

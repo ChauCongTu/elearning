@@ -1,5 +1,5 @@
-import { Box, Stack, Text, Title } from '@mantine/core';
 import type { ReactNode } from 'react';
+import { Box, Stack, Text, Title } from '@mantine/core';
 
 type Props = {
     title: string;
@@ -13,24 +13,26 @@ export default function SectionHeading({
     title,
     description,
     eyebrow,
-    align = 'left',
+    align = 'center',
     action,
 }: Props) {
+    const centered = align === 'center';
+
     return (
         <Stack
             gap="sm"
             mb="xl"
-            align={align === 'center' ? 'center' : 'flex-start'}
-            style={{ textAlign: align }}
-            className="public-fade-up"
+            align={centered ? 'center' : 'flex-start'}
+            style={{ textAlign: centered ? 'center' : 'left' }}
+            className="public-section-head public-fade-up"
         >
-            {align === 'center' && <Box className="public-section-divider" />}
-            {eyebrow && <span className="public-eyebrow">{eyebrow}</span>}
-            <Title order={2} style={{ lineHeight: 1.2 }}>
+            {centered && <Box className="public-section-divider" />}
+            {eyebrow && <span className="public-kicker">{eyebrow}</span>}
+            <Title order={2} lh={1.2} fw={700}>
                 {title}
             </Title>
             {description && (
-                <Text c="dimmed" maw={align === 'center' ? 600 : undefined} size="md">
+                <Text c="dimmed" maw={centered ? 620 : 680} size="md" lh={1.75}>
                     {description}
                 </Text>
             )}

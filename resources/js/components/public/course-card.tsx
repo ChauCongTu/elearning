@@ -26,7 +26,7 @@ export default function CourseCard({ course }: Props) {
             href={`/courses/${course.slug}`}
             padding={0}
             radius="xl"
-            className="public-card-hover public-glass"
+            className="public-soft-card public-card-hover"
             style={{ textDecoration: 'none', color: 'inherit', overflow: 'hidden' }}
         >
             <Box
@@ -40,12 +40,12 @@ export default function CourseCard({ course }: Props) {
             >
                 <Group gap="xs" style={{ position: 'absolute', top: 12, left: 12 }}>
                     {course.meta?.badge && (
-                        <Badge color="pink" variant="filled" size="sm" radius="sm">
+                        <Badge color="brand" variant="filled" size="sm">
                             {course.meta.badge}
                         </Badge>
                     )}
                     {!course.meta?.badge && course.is_featured && (
-                        <Badge color="pink" variant="filled" size="sm">
+                        <Badge color="brand" variant="filled" size="sm">
                             Nổi bật
                         </Badge>
                     )}
@@ -54,7 +54,7 @@ export default function CourseCard({ course }: Props) {
 
             <Stack gap="sm" p="lg">
                 {course.category && (
-                    <Badge variant="light" color="grape" size="sm" w="fit-content">
+                    <Badge variant="light" color="brand" size="sm" w="fit-content">
                         {course.category.name}
                     </Badge>
                 )}
@@ -91,7 +91,13 @@ export default function CourseCard({ course }: Props) {
                     </Group>
                 )}
 
-                <Group justify="space-between" align="flex-end" mt="xs" pt="sm" style={{ borderTop: '1px solid var(--mantine-color-gray-2)' }}>
+                <Group
+                    justify="space-between"
+                    align="flex-end"
+                    mt="xs"
+                    pt="sm"
+                    style={{ borderTop: '1px solid color-mix(in srgb, var(--brand-primary) 10%, #e5e7eb)' }}
+                >
                     <div>
                         <Text fw={800} size="lg" className="public-gradient-text">
                             {formatPrice(course.price)}
@@ -105,7 +111,7 @@ export default function CourseCard({ course }: Props) {
                     <Button
                         size="xs"
                         variant="light"
-                        color="pink"
+                        color="brand"
                         radius="xl"
                         rightSection={<ArrowUpRight size={14} />}
                     >

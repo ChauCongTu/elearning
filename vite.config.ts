@@ -12,7 +12,7 @@ export default defineConfig({
             input: ['resources/css/app.css', 'resources/js/app.tsx'],
             refresh: true,
             fonts: [
-                google('Plus Jakarta Sans', {
+                google('Be Vietnam Pro', {
                     weights: [400, 500, 600, 700],
                     subsets: ['latin', 'vietnamese'],
                 }),

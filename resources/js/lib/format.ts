@@ -81,3 +81,17 @@ export function courseGradient(slug: string): string {
 
     return palettes[index];
 }
+
+/** Gắn ?source=<APP_URL> vào link banner (tracking nguồn click). */
+export function withBannerSourceParam(href: string, appUrl: string): string {
+    const source = appUrl.replace(/\/$/, '');
+
+    try {
+        const url = href.startsWith('http') ? new URL(href) : new URL(href, `${source}/`);
+        url.searchParams.set('source', source);
+
+        return url.toString();
+    } catch {
+        return href;
+    }
+}

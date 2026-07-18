@@ -45,5 +45,5 @@ Khi triển khai trong Cursor, attach skill: `.cursor/skills/elearning-platform/
 Dự án khởi tạo từ Laravel React Starter Kit:
 
 - ✅ Laravel 13, Fortify (auth), Inertia 3, Vite, Tailwind 4, TypeScript
-- ✅ Phase 0–2: Foundation, website công khai, tài khoản học viên
-- ⬜ Phase 3+: Admin, thanh toán, học video, migration, chứng chỉ
+- ✅ Phase 0–3: Foundation, website công khai, tài khoản học viên, admin
+- ⬜ Phase 4+: Học video online, thanh toán, chứng chỉ, migration

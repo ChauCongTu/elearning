@@ -16,22 +16,21 @@ export default function ArticleTeasers({ sections }: Props) {
     }
 
     return (
-        <Box py={72} style={{ background: '#fff' }}>
+        <Box py={72} style={{ background: 'rgba(255,255,255,0.65)' }}>
             <Container size="xl">
                 <Stack gap={56}>
                     {visibleSections.map((section) => (
                         <div key={section.key}>
                             <Group justify="space-between" align="flex-end" mb="xl" wrap="wrap" gap="md">
                                 <Stack gap="xs">
-                                    <span className="public-eyebrow">Tin tức</span>
+                                    <span className="public-kicker">Tin tức</span>
                                     <Title order={3}>{section.title}</Title>
                                 </Stack>
-                                <Link href={section.view_all_url}>
+                                <Link href={section.view_all_url} className="public-nav-link">
                                     <Text
                                         size="sm"
-                                        c="pink.7"
-                                        fw={600}
-                                        style={{ display: 'flex', alignItems: 'center', gap: 6 }}
+                                        fw={700}
+                                        style={{ display: 'flex', alignItems: 'center', gap: 6, color: 'var(--brand-primary-dark)' }}
                                     >
                                         Xem tất cả <ArrowRight size={16} />
                                     </Text>

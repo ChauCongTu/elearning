@@ -48,6 +48,26 @@ class SiteSettingsService implements SiteSettingsServiceInterface
             'facebookUrl' => (string) ($contact['facebook_url'] ?? ''),
             'address' => (string) ($contact['address'] ?? ''),
             'hours' => (string) ($contact['hours'] ?? ''),
+            'theme' => $this->themeForFrontend(),
+        ];
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    private function themeForFrontend(): array
+    {
+        $theme = $this->config()['theme'] ?? [];
+
+        return [
+            'primary' => (string) ($theme['primary'] ?? '#e64980'),
+            'primaryDark' => (string) ($theme['primary_dark'] ?? '#c2255c'),
+            'primaryLight' => (string) ($theme['primary_light'] ?? '#fff0f6'),
+            'secondary' => (string) ($theme['secondary'] ?? '#be4bdb'),
+            'surface' => (string) ($theme['surface'] ?? '#fff5f8'),
+            'gradientFrom' => (string) ($theme['gradient_from'] ?? '#e64980'),
+            'gradientVia' => (string) ($theme['gradient_via'] ?? '#be4bdb'),
+            'gradientTo' => (string) ($theme['gradient_to'] ?? '#7950f2'),
         ];
     }
 

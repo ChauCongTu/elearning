@@ -10,6 +10,19 @@ test('students cannot access admin dashboard', function () {
 
     $this->actingAs($student)
         ->get(route('admin.dashboard'))
+        ->assertRedirect(route('account.courses'))
+        ->assertSessionHas('error');
+});
+
+test('students receive forbidden when mutating admin routes', function () {
+    $student = User::factory()->create([
+        'role' => UserRole::Student,
+    ]);
+
+    $this->actingAs($student)
+        ->post(route('admin.categories.store'), [
+            'name' => 'Blocked',
+        ])
         ->assertForbidden();
 });
 

@@ -12,13 +12,12 @@ const icons = [Sparkles, Users, ShieldCheck, Award];
 
 export default function WhyChooseUs({ items }: Props) {
     return (
-        <Box py={72} style={{ background: '#fff' }}>
+        <Box py={72} className="public-surface-alt">
             <Container size="xl">
                 <SectionHeading
                     eyebrow="Lý do chọn chúng tôi"
                     title="Vì sao chọn Bông Nhài Trắng"
                     description="Không chỉ dạy nghề — chúng tôi dẫn dắt bạn xây dựng sự nghiệp bền vững trong ngành thẩm mỹ."
-                    align="center"
                 />
                 <SimpleGrid cols={{ base: 1, sm: 2, lg: 4 }} spacing="lg">
                     {items.map((item, index) => {
@@ -29,17 +28,14 @@ export default function WhyChooseUs({ items }: Props) {
                                 key={item.number}
                                 p="xl"
                                 radius="xl"
-                                className="public-glass public-card-hover"
+                                className="public-soft-card public-card-hover"
                             >
                                 <Stack gap="md">
-                                    <GroupRow
-                                        icon={<Icon size={22} />}
-                                        number={item.number}
-                                    />
-                                    <Title order={4} lh={1.3}>
+                                    <GroupRow icon={<Icon size={22} />} number={item.number} />
+                                    <Title order={4} lh={1.35}>
                                         {item.title}
                                     </Title>
-                                    <Text size="sm" c="dimmed" lh={1.7}>
+                                    <Text size="sm" c="dimmed" lh={1.75}>
                                         {item.description}
                                     </Text>
                                 </Stack>
@@ -52,11 +48,11 @@ export default function WhyChooseUs({ items }: Props) {
     );
 }
 
-function GroupRow({ icon, number }: { icon: React.ReactNode; number: string }) {
+function GroupRow({ icon, number }: { icon: ReactNode; number: string }) {
     return (
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <div className="public-feature-icon">{icon}</div>
-            <Text size="xl" fw={800} c="pink.2">
+            <Text size="xl" fw={800} c="brand.2">
                 {number}
             </Text>
         </div>

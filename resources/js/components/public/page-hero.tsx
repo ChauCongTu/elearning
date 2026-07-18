@@ -8,28 +8,22 @@ type Props = {
 
 export default function PageHero({ title, subtitle, eyebrow = 'Học Viện Bông Nhài Trắng' }: Props) {
     return (
-        <Box
-            py={56}
-            className="public-mesh"
-            style={{
-                background: 'var(--brand-gradient-soft)',
-                borderBottom: '1px solid rgba(230, 73, 128, 0.08)',
-            }}
-        >
+        <Box py={56} className="public-soft-mesh" style={{ background: 'var(--brand-gradient-soft)' }}>
             <Container size="xl">
                 <Stack gap="md" maw={760} className="public-fade-up">
-                    <span className="public-eyebrow">{eyebrow}</span>
+                    <span className="public-kicker">{eyebrow}</span>
                     <Title
                         order={1}
+                        fw={800}
                         style={{
                             fontSize: 'clamp(1.85rem, 4vw, 2.75rem)',
-                            lineHeight: 1.15,
+                            lineHeight: 1.12,
                         }}
                     >
                         <span className="public-gradient-text">{title}</span>
                     </Title>
                     {subtitle && (
-                        <Text size="lg" c="dimmed" style={{ lineHeight: 1.7 }}>
+                        <Text size="lg" c="dimmed" lh={1.75}>
                             {subtitle}
                         </Text>
                     )}

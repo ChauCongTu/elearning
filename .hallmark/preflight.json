@@ -1,0 +1,8 @@
+{
+  "scanned_at": "2026-07-18",
+  "font_stack": "Plus Jakarta Sans (vite.config.ts) → migrating to Fraunces + Source Sans 3",
+  "palette": "Pink/purple gradients (public-ui.css) → Atelier warm rose OKLCH",
+  "motion": "motion-cut (no framer-motion)",
+  "spacing": "Mantine default + Tailwind 4",
+  "framework": "Laravel 13 + Inertia React 3 + Mantine 7 + Vite 5"
+}

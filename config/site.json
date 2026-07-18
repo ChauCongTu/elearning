@@ -11,6 +11,16 @@
         "logo_url": "/images/logo-hoc-vien-bong-nhai-trang.png",
         "logo_alt": "Học Viện Bông Nhài Trắng"
     },
+    "theme": {
+        "primary": "#e64980",
+        "primary_dark": "#c2255c",
+        "primary_light": "#fff0f6",
+        "secondary": "#be4bdb",
+        "surface": "#fff5f8",
+        "gradient_from": "#e64980",
+        "gradient_via": "#be4bdb",
+        "gradient_to": "#7950f2"
+    },
     "contact": {
         "address": "TP. Hồ Chí Minh",
         "hours": "8h – 20h (Thứ 2 – Chủ nhật)",
@@ -155,15 +165,15 @@
         "videos": [
             {
                 "title": "Dịch vụ chăm sóc sắc đẹp toàn diện",
-                "youtube_id": "YbJAKamEH4o"
+                "youtube_id": "vNiyTo3reoU"
             },
             {
                 "title": "Học nghề phun xăm — ổn định tương lai",
-                "youtube_id": "YbJAKamEH4o"
+                "youtube_id": "vNiyTo3reoU"
             },
             {
                 "title": "Đào tạo nhân viên spa chuyên nghiệp",
-                "youtube_id": "YbJAKamEH4o"
+                "youtube_id": "vNiyTo3reoU"
             }
         ],
         "article_sections": [

@@ -24,7 +24,12 @@ export default function CourseEnrollmentCard({ course }: Props) {
     const badge = course.meta?.badge ?? (course.is_featured ? 'Nổi bật' : null);
 
     return (
-        <Card padding={0} radius="xl" className="public-card-hover public-glass h-full" style={{ overflow: 'hidden' }}>
+        <Card
+            padding={0}
+            radius="xl"
+            className="public-soft-card public-card-hover h-full"
+            style={{ overflow: 'hidden' }}
+        >
             <Box
                 h={200}
                 style={{
@@ -35,22 +40,18 @@ export default function CourseEnrollmentCard({ course }: Props) {
                 }}
             >
                 {badge && (
-                    <Badge
-                        color="pink"
-                        variant="filled"
-                        style={{ position: 'absolute', top: 12, left: 12 }}
-                    >
+                    <Badge color="brand" variant="filled" style={{ position: 'absolute', top: 12, left: 12 }}>
                         {badge}
                     </Badge>
                 )}
             </Box>
 
             <Stack gap="sm" p="lg" style={{ flex: 1 }}>
-                <Title order={4} lineClamp={2}>
+                <Title order={4} lineClamp={2} lh={1.35}>
                     {course.title}
                 </Title>
                 {course.excerpt && (
-                    <Text size="sm" c="dimmed" lineClamp={3}>
+                    <Text size="sm" c="dimmed" lineClamp={3} lh={1.65}>
                         {course.excerpt}
                     </Text>
                 )}
@@ -87,7 +88,7 @@ export default function CourseEnrollmentCard({ course }: Props) {
                 )}
 
                 <Group gap="xs" align="baseline" mt="auto">
-                    <Text fw={700} c="pink.7">
+                    <Text fw={800} style={{ color: 'var(--brand-primary-dark)' }}>
                         {formatPrice(course.price)}
                     </Text>
                     {course.compare_price && (
@@ -98,16 +99,14 @@ export default function CourseEnrollmentCard({ course }: Props) {
                 </Group>
 
                 <Group grow mt="xs">
-                    <Button
-                        component="a"
-                        href={site.zaloUrl}
-                        target="_blank"
-                        variant="light"
-                        color="pink"
-                    >
+                    <Button component="a" href={site.zaloUrl} target="_blank" variant="light" color="brand">
                         Nhận tư vấn
                     </Button>
-                    <Button component={Link} href={`/courses/${course.slug}`} color="pink">
+                    <Button
+                        component={Link}
+                        href={`/courses/${course.slug}`}
+                        style={{ background: 'var(--brand-gradient)', border: 'none' }}
+                    >
                         Xem chi tiết
                     </Button>
                 </Group>

@@ -85,7 +85,7 @@ app/
 │   ├── Content/
 │   ├── SePayService.php          # phase 3
 │   ├── VideoStreamService.php    # phase 4
-│   └── CertificateService.php    # phase 7
+│   └── CertificateService.php    # phase 6
 └── Console/Commands/
 ```
 

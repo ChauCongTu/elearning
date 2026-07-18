@@ -129,10 +129,10 @@ Khách điền form tại trang Liên hệ hoặc cuối trang chủ → dữ li
 | Tính năng | Giai đoạn dự kiến |
 |-----------|-------------------|
 | Trang quản trị: thêm/sửa khóa, video, đơn hàng, tin tức | Phase 3 |
-| Mua khóa học, thanh toán tự động | Phase 4 |
-| Xem video bài học, lưu tiến độ | Phase 5 |
-| Chuyển dữ liệu từ website WordPress cũ | Phase 6 |
-| Chứng chỉ PDF khi hoàn thành khóa | Phase 7 |
+| Xem video bài học, lưu tiến độ | Phase 4 |
+| Mua khóa học, thanh toán tự động | Phase 5 |
+| Chứng chỉ PDF khi hoàn thành khóa | Phase 6 |
+| Chuyển dữ liệu từ website WordPress cũ | Phase 7 |
 | Đưa website lên hosting chính thức | Phase 8 |
 
 Các tính năng **ngoài gói** (đăng nhập Facebook/Google, mã giảm giá, membership, affiliate…): xem [out-of-scope.md](./out-of-scope.md).
