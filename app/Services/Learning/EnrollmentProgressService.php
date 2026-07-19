@@ -32,6 +32,26 @@ class EnrollmentProgressService implements EnrollmentProgressServiceInterface
         return $record->fresh();
     }
 
+    public function markLessonComplete(Enrollment $enrollment, Lesson $lesson): LessonProgress
+    {
+        $record = LessonProgress::query()->firstOrNew([
+            'enrollment_id' => $enrollment->id,
+            'lesson_id' => $lesson->id,
+        ]);
+
+        $duration = max(0, (int) $lesson->duration_seconds);
+        $minimumWatch = $duration > 0 ? $duration : max(1, (int) ($record->watched_seconds ?? 0));
+
+        $record->watched_seconds = max((int) ($record->watched_seconds ?? 0), $minimumWatch);
+        $record->completed = true;
+        $record->last_watched_at = now();
+        $record->save();
+
+        $this->recalculate($enrollment);
+
+        return $record->fresh();
+    }
+
     public function recalculate(Enrollment $enrollment): void
     {
         $courseId = $enrollment->course_id;

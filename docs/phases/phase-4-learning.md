@@ -23,14 +23,16 @@
 GET  /learn/{course:slug}                    → redirect lesson đang học dở hoặc first
 GET  /learn/{course:slug}/lessons/{lesson}   → player page
 PATCH /learn/progress                        → heartbeat watched_seconds
+POST /learn/lessons/{lesson}/complete        → đánh dấu bài đã học (bỏ qua nếu không cần xem hết)
 ```
 
 ### Backend logic
 
 - [ ] `LearningController@show` — sidebar chapters/lessons, current lesson, signed video URL
 - [ ] `ProgressController@update` — validate enrollment, update `lesson_progress`
+- [ ] `ProgressController@complete` — đánh dấu `completed=true`, mở khóa bài tiếp theo
 - [ ] `EnrollmentProgressService::recalculate` — % hoàn thành course
-- [ ] Mark lesson `completed` khi watched >= 90% duration
+- [ ] Mark lesson `completed` khi watched >= 90% duration hoặc học viên bấm "Đánh dấu đã học"
 - [ ] Queue job debounce recalculate (optional)
 
 ### Frontend
@@ -39,6 +41,7 @@ PATCH /learn/progress                        → heartbeat watched_seconds
   - Layout: sidebar curriculum (Mantine NavLink) + main video area
   - Video player HTML5 — không download dễ (no controls download best-effort)
   - Heartbeat mỗi 15–30s gửi `watched_seconds`
+  - Nút **Đánh dấu đã học** — hoàn thành bài mà không cần xem hết video (mở khóa bài tiếp theo)
   - Nút prev/next lesson
   - Hiển thị % tiến độ course trên header
 - [ ] Mobile: sidebar collapse drawer
@@ -50,6 +53,7 @@ PATCH /learn/progress                        → heartbeat watched_seconds
 - [ ] User with enrollment → receives signed URL
 - [ ] Progress update increases watched_seconds
 - [ ] 90% watch marks completed
+- [ ] Mark as done completes lesson and unlocks next lesson
 - [ ] Preview lesson accessible without enrollment
 
 ## Acceptance criteria
@@ -61,8 +65,15 @@ PATCH /learn/progress                        → heartbeat watched_seconds
 
 ## Bảo mật video
 
-- Bucket private
+- Bucket private, video phát qua **proxy same-origin** (`/learn/lessons/{id}/stream`) — không lộ signed URL S3 ra client
+- Stream yêu cầu quyền học + cookie session; chặn mở trực tiếp tab mới (`Sec-Fetch-Dest`)
 - Không đưa `video_s3_key` ra Inertia props client — chỉ signed URL
+- Player: `controlsList=nodownload`, chặn PiP / remote playback, chặn menu chuột phải
+- Chặn tua nhanh / tua vượt tiến độ (client + server)
+- Chặn phím DevTools / Save / Print (best-effort trên trình duyệt)
+- Capture guard: tạm dừng khi ẩn tab, chặn phím chụp màn hình phổ biến (best-effort)
+- Watermark `Tên - email` theo chu kỳ ngẫu nhiên để truy vết leak quay màn hình
+- **Không thể** chặn hoàn toàn: OBS, quay màn hình iPhone/Android, extension tải video — cần app native + DRM nếu yêu cầu cao hơn
 - CORS S3 chỉ domain production
 
 ## Không làm trong phase này

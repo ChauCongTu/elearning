@@ -4,6 +4,8 @@
 @import './public-ui.css';
 @import './app-shell-ui.css';
 @import './admin-forms.css';
+@import './checkout-payment.css';
+@import './learn-player.css';
 
 @source '../views';
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';

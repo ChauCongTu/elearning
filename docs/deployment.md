@@ -65,10 +65,11 @@ AWS_DEFAULT_REGION=ap-southeast-1
 AWS_BUCKET=...
 AWS_USE_PATH_STYLE_ENDPOINT=false
 
-SEPAY_API_KEY=...
-SEPAY_WEBHOOK_SECRET=...
+SEPAY_BANK_CODE=Vietcombank
 SEPAY_ACCOUNT_NUMBER=...
-SEPAY_BANK_CODE=...
+SEPAY_ACCOUNT_NAME=...
+SEPAY_WEBHOOK_API_KEY=   # enc:... — sinh bằng php artisan sepay:rotate-webhook-key
+SEPAY_PAYMENT_EXPIRY_MINUTES=15
 
 SESSION_DRIVER=database
 QUEUE_CONNECTION=database
@@ -86,7 +87,10 @@ Queue worker: nếu không có supervisor, dùng `database` queue + cron chạy 
 
 - URL: `https://your-domain.com/webhooks/sepay`
 - Đăng ký trên dashboard SePay
-- Route **không** CSRF — exclude trong `bootstrap/app.php` hoặc middleware
+- **Security:** chọn **API Key** — dán key plaintext lúc chạy `php artisan sepay:rotate-webhook-key` (SePay + app dùng cùng key; `.env` app chỉ lưu bản mã hóa)
+- Header SePay gửi: `Authorization: Apikey {key}`
+- Rotate key: `php artisan sepay:rotate-webhook-key` rồi cập nhật lại trên SePay Dashboard
+- Route **không** CSRF — đã exclude trong `bootstrap/app.php`
 - Chỉ HTTPS
 
 ## SSL & domain

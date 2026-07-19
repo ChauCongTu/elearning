@@ -4,7 +4,6 @@ namespace App\Services\Learning;
 
 use App\Contracts\Learning\EnrollmentProgressServiceInterface;
 use App\Contracts\Learning\LearningServiceInterface;
-use App\Contracts\Video\VideoStreamServiceInterface;
 use App\Enums\EnrollmentStatus;
 use App\Models\Course;
 use App\Models\Enrollment;
@@ -12,14 +11,9 @@ use App\Models\Lesson;
 use App\Models\LessonProgress;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Support\Carbon;
 
 class LearningService implements LearningServiceInterface
 {
-    public function __construct(
-        private VideoStreamServiceInterface $videoStream,
-    ) {}
-
     public function findPublishedCourseOrFail(string $slug): Course
     {
         return Course::query()
@@ -85,40 +79,30 @@ class LearningService implements LearningServiceInterface
         }
 
         $enrollment = $this->findActiveEnrollment($user, $course);
+        $progressByLesson = $this->progressMap($enrollment);
 
         if ($enrollment !== null) {
-            $progressByLesson = $this->progressMap($enrollment);
-
-            $inProgress = LessonProgress::query()
-                ->where('enrollment_id', $enrollment->id)
-                ->where('completed', false)
-                ->whereNotNull('last_watched_at')
-                ->orderByDesc('last_watched_at')
-                ->first();
-
-            if ($inProgress !== null) {
-                $lesson = $lessons->firstWhere('id', $inProgress->lesson_id);
-
-                if ($lesson !== null && $this->canAccessLesson($user, $lesson, $course, $progressByLesson)) {
-                    return $lesson;
-                }
-            }
-
             foreach ($lessons as $lesson) {
                 if (! $this->canAccessLesson($user, $lesson, $course, $progressByLesson)) {
-                    continue;
+                    break;
                 }
 
-                $completed = ($progressByLesson[$lesson->id]['completed'] ?? false) === true;
-
-                if (! $completed) {
+                if (($progressByLesson[$lesson->id]['completed'] ?? false) !== true) {
                     return $lesson;
                 }
             }
+
+            foreach ($lessons->reverse()->values() as $lesson) {
+                if ($this->canAccessLesson($user, $lesson, $course, $progressByLesson)) {
+                    return $lesson;
+                }
+            }
+
+            return null;
         }
 
         foreach ($lessons as $lesson) {
-            if ($this->canAccessLesson($user, $lesson, $course)) {
+            if ($this->canAccessLesson($user, $lesson, $course, $progressByLesson)) {
                 return $lesson;
             }
         }
@@ -131,37 +115,47 @@ class LearningService implements LearningServiceInterface
         $enrollment = $this->findActiveEnrollment($user, $course);
         $lessons = $this->orderedPublishedLessons($course);
         $progressByLesson = $this->progressMap($enrollment);
-        $signedUrl = $this->videoStream->signedUrl($lesson);
         $currentProgress = $progressByLesson[$lesson->id] ?? null;
         $currentIndex = $lessons->search(fn (Lesson $item) => $item->id === $lesson->id);
+        $lessonsByChapter = $lessons->groupBy('chapter_id');
 
         $chapters = $course->publishedChapters()
-            ->with(['publishedLessons'])
+            ->orderBy('sort_order')
             ->get()
-            ->map(fn ($chapter) => [
-                'id' => $chapter->id,
-                'title' => $chapter->title,
-                'lessons' => $chapter->publishedLessons->map(function (Lesson $chapterLesson) use (
-                    $lesson,
-                    $course,
-                    $user,
-                    $progressByLesson,
-                ) {
-                    $record = $progressByLesson[$chapterLesson->id] ?? null;
-                    $accessible = $this->canAccessLesson($user, $chapterLesson, $course, $progressByLesson);
+            ->map(function ($chapter) use (
+                $lesson,
+                $course,
+                $user,
+                $progressByLesson,
+                $lessonsByChapter,
+            ) {
+                $chapterLessons = $lessonsByChapter->get($chapter->id, collect());
 
-                    return [
-                        'id' => $chapterLesson->id,
-                        'title' => $chapterLesson->title,
-                        'duration_seconds' => $chapterLesson->duration_seconds,
-                        'is_free_preview' => $chapterLesson->is_free_preview,
-                        'is_current' => $chapterLesson->id === $lesson->id,
-                        'is_locked' => ! $accessible,
-                        'completed' => (bool) ($record['completed'] ?? false),
-                        'watched_seconds' => (int) ($record['watched_seconds'] ?? 0),
-                    ];
-                })->values()->all(),
-            ])
+                return [
+                    'id' => $chapter->id,
+                    'title' => $chapter->title,
+                    'lessons' => $chapterLessons->map(function (Lesson $chapterLesson) use (
+                        $lesson,
+                        $course,
+                        $user,
+                        $progressByLesson,
+                    ) {
+                        $record = $progressByLesson[$chapterLesson->id] ?? null;
+                        $accessible = $this->canAccessLesson($user, $chapterLesson, $course, $progressByLesson);
+
+                        return [
+                            'id' => $chapterLesson->id,
+                            'title' => $chapterLesson->title,
+                            'duration_seconds' => $chapterLesson->duration_seconds,
+                            'is_free_preview' => $chapterLesson->is_free_preview,
+                            'is_current' => $chapterLesson->id === $lesson->id,
+                            'is_locked' => ! $accessible,
+                            'completed' => (bool) ($record['completed'] ?? false),
+                            'watched_seconds' => (int) ($record['watched_seconds'] ?? 0),
+                        ];
+                    })->values()->all(),
+                ];
+            })
             ->values()
             ->all();
 
@@ -182,9 +176,8 @@ class LearningService implements LearningServiceInterface
                 'completed' => (bool) ($currentProgress['completed'] ?? false),
                 'is_free_preview' => $lesson->is_free_preview,
             ],
-            'videoUrl' => $signedUrl,
-            'videoUrlExpiresAt' => $signedUrl !== null
-                ? Carbon::now()->addMinutes((int) config('video.signed_url_ttl_minutes', 120))->toIso8601String()
+            'videoStreamUrl' => filled($lesson->video_s3_key)
+                ? route('learn.lessons.stream', ['lesson' => $lesson])
                 : null,
             'chapters' => $chapters,
             'navigation' => [
@@ -193,6 +186,60 @@ class LearningService implements LearningServiceInterface
             ],
             'canTrackProgress' => $enrollment !== null,
             'unlock_ratio' => (float) config('video.unlock_ratio', 0.8),
+            'watermark' => $this->watermarkPayload($user),
+            'capture_guard' => $this->captureGuardPayload(),
+        ];
+    }
+
+    /**
+     * @return array{
+     *     enabled: bool,
+     *     pause_on_hidden: bool,
+     *     block_capture_shortcuts: bool
+     * }
+     */
+    private function captureGuardPayload(): array
+    {
+        $config = config('video.capture_guard', []);
+
+        return [
+            'enabled' => (bool) ($config['enabled'] ?? true),
+            'pause_on_hidden' => (bool) ($config['pause_on_hidden'] ?? true),
+            'block_capture_shortcuts' => (bool) ($config['block_capture_shortcuts'] ?? true),
+        ];
+    }
+
+    /**
+     * @return array{
+     *     enabled: bool,
+     *     label: string|null,
+     *     min_interval_seconds: int,
+     *     max_interval_seconds: int,
+     *     min_visible_seconds: int,
+     *     max_visible_seconds: int,
+     *     initial_delay_min_seconds: int,
+     *     initial_delay_max_seconds: int
+     * }
+     */
+    private function watermarkPayload(?User $user): array
+    {
+        $config = config('video.watermark', []);
+        $label = null;
+
+        if ($user !== null && filled($user->email)) {
+            $name = trim((string) $user->name);
+            $label = ($name !== '' ? $name : 'Học viên').' - '.$user->email;
+        }
+
+        return [
+            'enabled' => ($config['enabled'] ?? true) && $label !== null,
+            'label' => $label,
+            'min_interval_seconds' => (int) ($config['min_interval_seconds'] ?? 90),
+            'max_interval_seconds' => (int) ($config['max_interval_seconds'] ?? 210),
+            'min_visible_seconds' => (int) ($config['min_visible_seconds'] ?? 5),
+            'max_visible_seconds' => (int) ($config['max_visible_seconds'] ?? 10),
+            'initial_delay_min_seconds' => (int) ($config['initial_delay_min_seconds'] ?? 30),
+            'initial_delay_max_seconds' => (int) ($config['initial_delay_max_seconds'] ?? 75),
         ];
     }
 
@@ -202,17 +249,16 @@ class LearningService implements LearningServiceInterface
     private function orderedPublishedLessons(Course $course): Collection
     {
         return Lesson::query()
-            ->where('is_published', true)
-            ->whereHas('chapter', fn ($query) => $query
-                ->where('course_id', $course->id)
-                ->where('is_published', true))
+            ->select('lessons.*')
+            ->join('chapters', 'chapters.id', '=', 'lessons.chapter_id')
+            ->where('lessons.is_published', true)
+            ->where('chapters.course_id', $course->id)
+            ->where('chapters.is_published', true)
+            ->orderBy('chapters.sort_order')
+            ->orderBy('lessons.sort_order')
+            ->orderBy('lessons.created_at')
             ->with('chapter')
-            ->get()
-            ->sortBy([
-                fn (Lesson $lesson) => $lesson->chapter->sort_order,
-                fn (Lesson $lesson) => $lesson->sort_order,
-            ])
-            ->values();
+            ->get();
     }
 
     /**
@@ -252,18 +298,21 @@ class LearningService implements LearningServiceInterface
             return null;
         }
 
-        for ($index = $currentIndex + $step; $step > 0 ? $index < $lessons->count() : $index >= 0; $index += $step) {
-            $candidate = $lessons->get($index);
+        $targetIndex = $currentIndex + $step;
+        $candidate = $lessons->get($targetIndex);
 
-            if ($candidate !== null && $this->canAccessLesson($user, $candidate, $course, $progressByLesson)) {
-                return [
-                    'id' => $candidate->id,
-                    'title' => $candidate->title,
-                ];
-            }
+        if ($candidate === null) {
+            return null;
         }
 
-        return null;
+        if (! $this->canAccessLesson($user, $candidate, $course, $progressByLesson)) {
+            return null;
+        }
+
+        return [
+            'id' => $candidate->id,
+            'title' => $candidate->title,
+        ];
     }
 
     private function isSequentiallyUnlocked(
@@ -279,12 +328,6 @@ class LearningService implements LearningServiceInterface
             return true;
         }
 
-        $previousLesson = $lessons->get($index - 1);
-
-        if ($previousLesson === null) {
-            return true;
-        }
-
         $enrollment = $this->findActiveEnrollment($user, $course);
 
         if ($enrollment === null) {
@@ -292,9 +335,32 @@ class LearningService implements LearningServiceInterface
         }
 
         $progressByLesson ??= $this->progressMap($enrollment);
-        $watchedSeconds = (int) ($progressByLesson[$previousLesson->id]['watched_seconds'] ?? 0);
 
-        return $this->meetsUnlockThreshold($previousLesson, $watchedSeconds);
+        for ($i = 0; $i < $index; $i++) {
+            $priorLesson = $lessons->get($i);
+
+            if ($priorLesson === null) {
+                continue;
+            }
+
+            if (! $this->lessonMeetsUnlockRequirement($priorLesson, $progressByLesson[$priorLesson->id] ?? null)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * @param  array{watched_seconds?: int, completed?: bool}|null  $progress
+     */
+    private function lessonMeetsUnlockRequirement(Lesson $lesson, ?array $progress): bool
+    {
+        if (($progress['completed'] ?? false) === true) {
+            return true;
+        }
+
+        return $this->meetsUnlockThreshold($lesson, (int) ($progress['watched_seconds'] ?? 0));
     }
 
     private function meetsUnlockThreshold(Lesson $lesson, int $watchedSeconds): bool

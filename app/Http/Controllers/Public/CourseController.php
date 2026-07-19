@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Public;
 use App\Contracts\Catalog\CategoryServiceInterface;
 use App\Contracts\Catalog\CourseCatalogServiceInterface;
 use App\Contracts\Catalog\CourseReviewServiceInterface;
+use App\Contracts\Payment\OrderServiceInterface;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -16,6 +17,7 @@ class CourseController extends Controller
         private CourseCatalogServiceInterface $courses,
         private CategoryServiceInterface $categories,
         private CourseReviewServiceInterface $reviews,
+        private OrderServiceInterface $orders,
     ) {}
 
     public function index(Request $request): Response
@@ -50,6 +52,7 @@ class CourseController extends Controller
             'reviews' => $this->reviews->listPublishedForCourse($course),
             'userReview' => $user ? $this->reviews->findUserReview($user, $course) : null,
             'canReview' => $user ? $this->reviews->canUserReview($user, $course) : false,
+            'purchaseState' => $user ? $this->orders->purchaseStateForCourse($user, $course) : null,
         ]);
     }
 }

@@ -1,107 +1,161 @@
 import { Head, Link } from '@inertiajs/react';
-import { BookOpen, GraduationCap } from 'lucide-react';
+import { Button, Text } from '@mantine/core';
+import { GraduationCap, Plus } from 'lucide-react';
+import { useMemo, useState } from 'react';
 import { EmptyState } from '@/components/account/account-ui';
-import Heading from '@/components/heading';
-import { Button } from '@/components/ui/button';
-import { courseGradient, courseThumbnailUrl } from '@/lib/format';
+import MyCourseRow, {
+    MyCoursesHero,
+    filterEnrollments,
+    pickFeaturedEnrollment,
+} from '@/components/account/my-course-row';
 import type { EnrollmentCard } from '@/types';
 
 type Props = {
     enrollments: EnrollmentCard[];
 };
 
+type FilterKey = 'all' | 'active' | 'completed';
+
+const filters: { key: FilterKey; label: string }[] = [
+    { key: 'all', label: 'Tất cả' },
+    { key: 'active', label: 'Đang học' },
+    { key: 'completed', label: 'Hoàn thành' },
+];
+
+function countCompleted(enrollments: EnrollmentCard[]): number {
+    return enrollments.filter((enrollment) => {
+        const progress = Number.parseFloat(enrollment.progress_percent);
+
+        return progress >= 100 || enrollment.completed_at !== null;
+    }).length;
+}
+
 export default function AccountCourses({ enrollments }: Props) {
+    const [filter, setFilter] = useState<FilterKey>('all');
+    const completedCount = countCompleted(enrollments);
+    const inProgressCount = enrollments.length - completedCount;
+    const featured = useMemo(() => pickFeaturedEnrollment(enrollments), [enrollments]);
+    const filtered = useMemo(
+        () => filterEnrollments(enrollments, filter),
+        [enrollments, filter],
+    );
+    const listItems = useMemo(() => {
+        if (!featured || filter !== 'all') {
+            return filtered;
+        }
+
+        return filtered.filter((enrollment) => enrollment.id !== featured.id);
+    }, [filtered, featured, filter]);
+
     return (
         <>
             <Head title="Khóa học của tôi" />
 
-            <Heading
-                title="Khóa học của tôi"
-                description="Các khóa học bạn đã đăng ký và tiến độ học tập."
-            />
-
             {enrollments.length === 0 ? (
-                <EmptyState
-                    icon={<GraduationCap className="size-12" />}
-                    title="Chưa có khóa học nào"
-                    description="Khám phá các khóa học online và bắt đầu hành trình học tập của bạn."
-                    action={
-                        <Button asChild className="bg-pink-600 hover:bg-pink-700">
-                            <Link href="/courses">Xem khóa học</Link>
-                        </Button>
-                    }
-                />
-            ) : (
-                <div className="mt-6 grid gap-5 md:grid-cols-2">
-                    {enrollments.map((enrollment) => {
-                        const course = enrollment.course;
-                        if (!course) {
-                            return null;
-                        }
-
-                        const thumbnail = courseThumbnailUrl(
-                            course.thumbnail_path,
-                            course.slug,
-                        );
-                        const progress = Number.parseFloat(enrollment.progress_percent);
-
-                        return (
-                            <article
-                                key={enrollment.id}
-                                className="overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm transition-shadow hover:shadow-md"
+                <div className="my-courses-empty-wrap">
+                    <EmptyState
+                        icon={<GraduationCap className="size-12" />}
+                        title="Chưa có khóa học nào"
+                        description="Khám phá các khóa học online và bắt đầu hành trình học tập của bạn."
+                        action={
+                            <Button
+                                component={Link}
+                                href="/courses"
+                                color="pink"
+                                radius="xl"
+                                size="md"
                             >
-                                <div
-                                    className="h-36 bg-cover bg-center"
-                                    style={{
-                                        backgroundImage: thumbnail
-                                            ? `url(${thumbnail})`
-                                            : courseGradient(course.slug),
-                                    }}
-                                />
-                                <div className="space-y-4 p-5">
-                                    <div>
-                                        <h3 className="font-semibold leading-snug text-gray-900">
-                                            {course.title}
-                                        </h3>
-                                        {course.excerpt && (
-                                            <p className="mt-1 line-clamp-2 text-sm text-gray-500">
-                                                {course.excerpt}
-                                            </p>
-                                        )}
-                                    </div>
+                                Khám phá khóa học
+                            </Button>
+                        }
+                    />
+                </div>
+            ) : (
+                <div className="my-courses-hub">
+                    <MyCoursesHero
+                        enrollments={enrollments}
+                        completedCount={completedCount}
+                        inProgressCount={inProgressCount}
+                    />
 
-                                    <div className="space-y-2">
-                                        <div className="flex items-center justify-between text-sm">
-                                            <span className="text-gray-500">Tiến độ học</span>
-                                            <span className="font-semibold text-pink-600">
-                                                {progress}%
-                                            </span>
-                                        </div>
-                                        <div className="h-2 overflow-hidden rounded-full bg-gray-100">
-                                            <div
-                                                className="h-full rounded-full bg-gradient-to-r from-pink-500 to-fuchsia-500 transition-all"
-                                                style={{ width: `${Math.min(progress, 100)}%` }}
-                                            />
-                                        </div>
-                                    </div>
-
-                                    <div className="flex flex-wrap gap-2">
-                                        <Button variant="outline" asChild>
-                                            <Link href={`/learn/${course.slug}`}>
-                                                <BookOpen className="mr-2 size-4" />
-                                                Tiếp tục học
-                                            </Link>
-                                        </Button>
-                                        <Button variant="ghost" asChild>
-                                            <Link href={`/courses/${course.slug}`}>
-                                                Chi tiết
-                                            </Link>
-                                        </Button>
-                                    </div>
+                    {featured && filter === 'all' && (
+                        <section className="my-courses-section">
+                            <div className="my-courses-section__head">
+                                <div>
+                                    <Text size="xs" tt="uppercase" fw={800} c="pink" lts={1.2}>
+                                        Gợi ý hôm nay
+                                    </Text>
+                                    <Text fw={700} size="lg" mt={4}>
+                                        Bắt đầu từ nơi bạn dừng lại
+                                    </Text>
                                 </div>
-                            </article>
-                        );
-                    })}
+                            </div>
+                            <MyCourseRow enrollment={featured} featured />
+                        </section>
+                    )}
+
+                    <section className="my-courses-section">
+                        <div className="my-courses-section__head">
+                            <div>
+                                <Text fw={700} size="lg">
+                                    Thư viện khóa học
+                                </Text>
+                                <Text size="sm" c="dimmed" mt={4}>
+                                    Lọc và tiếp tục học các khóa bạn đã sở hữu
+                                </Text>
+                            </div>
+                            <Button
+                                component={Link}
+                                href="/courses"
+                                variant="light"
+                                color="pink"
+                                radius="xl"
+                                leftSection={<Plus size={16} />}
+                            >
+                                Thêm khóa mới
+                            </Button>
+                        </div>
+
+                        <div className="my-courses-tabs" role="tablist" aria-label="Lọc khóa học">
+                            {filters.map((item) => (
+                                <button
+                                    key={item.key}
+                                    type="button"
+                                    role="tab"
+                                    aria-selected={filter === item.key}
+                                    className={`my-courses-tab${filter === item.key ? ' my-courses-tab--active' : ''}`}
+                                    onClick={() => setFilter(item.key)}
+                                >
+                                    {item.label}
+                                    <span className="my-courses-tab__count">
+                                        {filterEnrollments(enrollments, item.key).length}
+                                    </span>
+                                </button>
+                            ))}
+                        </div>
+
+                        {listItems.length === 0 ? (
+                            <div className="my-courses-filter-empty">
+                                <Text c="dimmed" size="sm">
+                                    Không có khóa học trong mục này.
+                                </Text>
+                                <Button
+                                    variant="subtle"
+                                    color="pink"
+                                    mt="sm"
+                                    onClick={() => setFilter('all')}
+                                >
+                                    Xem tất cả
+                                </Button>
+                            </div>
+                        ) : (
+                            <div className="my-courses__list">
+                                {listItems.map((enrollment) => (
+                                    <MyCourseRow key={enrollment.id} enrollment={enrollment} />
+                                ))}
+                            </div>
+                        )}
+                    </section>
                 </div>
             )}
         </>

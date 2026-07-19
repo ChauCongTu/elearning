@@ -51,4 +51,39 @@ class ProgressController extends Controller
             'progress_percent' => (string) $enrollment->progress_percent,
         ]);
     }
+
+    public function complete(Lesson $lesson): JsonResponse
+    {
+        $user = request()->user();
+
+        if ($user === null) {
+            abort(403);
+        }
+
+        $lesson->loadMissing('chapter.course');
+        $course = $lesson->chapter?->course;
+
+        if ($course === null) {
+            abort(404);
+        }
+
+        if (! $this->learning->canAccessLesson($user, $lesson, $course)) {
+            abort(403);
+        }
+
+        $enrollment = $this->learning->findActiveEnrollment($user, $course);
+
+        if ($enrollment === null) {
+            abort(403, 'Cần đăng ký khóa học để lưu tiến độ.');
+        }
+
+        $record = $this->progress->markLessonComplete($enrollment, $lesson);
+        $enrollment->refresh();
+
+        return response()->json([
+            'watched_seconds' => $record->watched_seconds,
+            'completed' => true,
+            'progress_percent' => (string) $enrollment->progress_percent,
+        ]);
+    }
 }

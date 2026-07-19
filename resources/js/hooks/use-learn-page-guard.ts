@@ -16,6 +16,14 @@ function isBlockedShortcut(event: KeyboardEvent): boolean {
         return true;
     }
 
+    if (ctrlOrMeta && !event.shiftKey && key === 's') {
+        return true;
+    }
+
+    if (ctrlOrMeta && !event.shiftKey && key === 'p') {
+        return true;
+    }
+
     // macOS: Cmd+Option+I/J/C/U
     if (event.metaKey && event.altKey && ['i', 'j', 'c', 'u'].includes(key)) {
         return true;

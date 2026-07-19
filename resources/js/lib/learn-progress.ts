@@ -30,3 +30,23 @@ export async function patchLearnProgress(
 
     return (await response.json()) as LearnProgressResponse;
 }
+
+export async function postMarkLessonComplete(
+    lessonId: string,
+): Promise<LearnProgressResponse> {
+    const response = await fetch(`/learn/lessons/${lessonId}/complete`, {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            'X-XSRF-TOKEN': getCsrfToken(),
+        },
+    });
+
+    if (!response.ok) {
+        throw new Error('Không thể đánh dấu bài học đã hoàn thành.');
+    }
+
+    return (await response.json()) as LearnProgressResponse;
+}

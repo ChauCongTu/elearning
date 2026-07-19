@@ -15,6 +15,18 @@ export function formatDateTime(value: string | null | undefined): string {
     }).format(new Date(value));
 }
 
+export function formatCheckoutDate(value: string | null | undefined): string {
+    if (!value) {
+        return '—';
+    }
+
+    return new Intl.DateTimeFormat('vi-VN', {
+        month: 'long',
+        day: 'numeric',
+        year: 'numeric',
+    }).format(new Date(value));
+}
+
 export function formatPaymentMethod(gateway: string | null | undefined): string {
     if (!gateway) {
         return '—';
@@ -23,7 +35,7 @@ export function formatPaymentMethod(gateway: string | null | undefined): string 
     const normalized = gateway.toLowerCase();
 
     if (normalized === 'sepay' || normalized === 'bank_transfer' || normalized === 'transfer') {
-        return 'Thanh toán tự động';
+        return 'Chuyển khoản ngân hàng';
     }
 
     return 'Thanh toán trực tuyến';

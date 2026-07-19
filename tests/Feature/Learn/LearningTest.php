@@ -62,6 +62,54 @@ function createLearningFixtures(bool $withPreview = false): array
     return compact('course', 'chapter', 'lesson', 'previewLesson');
 }
 
+/**
+ * @return array{course: Course, chapter: Chapter, lessons: array<int, Lesson>}
+ */
+function createSequentialLessonFixtures(int $lessonCount = 4): array
+{
+    $category = Category::create([
+        'name' => 'Phun xăm',
+        'slug' => 'phun-xam-seq-'.uniqid(),
+        'sort_order' => 0,
+        'is_active' => true,
+    ]);
+
+    $course = Course::create([
+        'category_id' => $category->id,
+        'title' => 'Khóa học tuần tự',
+        'slug' => 'khoa-hoc-tuan-tu-'.uniqid(),
+        'price' => 1_000_000,
+        'is_published' => true,
+        'published_at' => now(),
+    ]);
+
+    $chapter = Chapter::create([
+        'course_id' => $course->id,
+        'title' => 'Chương 1',
+        'sort_order' => 0,
+        'is_published' => true,
+    ]);
+
+    $lessons = [];
+
+    for ($index = 0; $index < $lessonCount; $index++) {
+        $videoKey = "lessons/videos/lesson-{$index}.mp4";
+        Storage::disk('s3')->put($videoKey, 'video-content');
+
+        $lessons[] = Lesson::create([
+            'chapter_id' => $chapter->id,
+            'title' => 'Bài '.($index + 1),
+            'sort_order' => $index,
+            'video_s3_key' => $videoKey,
+            'duration_seconds' => 100,
+            'is_free_preview' => false,
+            'is_published' => true,
+        ]);
+    }
+
+    return compact('course', 'chapter', 'lessons');
+}
+
 beforeEach(function () {
     Storage::fake('s3');
     config(['video.disk' => 's3']);
@@ -107,7 +155,13 @@ test('enrolled student receives signed video url on player page', function () {
             ->component('learn/player')
             ->where('currentLesson.id', $lesson->id)
             ->where('canTrackProgress', true)
-            ->has('videoUrl'));
+            ->where('watermark.enabled', true)
+            ->where('watermark.label', $user->name.' - '.$user->email)
+            ->where('capture_guard.enabled', true)
+            ->where('videoStreamUrl', fn (string $url) => str_contains($url, '/learn/lessons/')
+                && ! str_contains($url, 'amazonaws.com')
+                && ! str_contains($url, 'X-Amz-'))
+            ->has('videoStreamUrl'));
 });
 
 test('progress update increases watched seconds', function () {
@@ -204,7 +258,8 @@ test('preview lesson is accessible without enrollment', function () {
             ->component('learn/player')
             ->where('currentLesson.id', $previewLesson->id)
             ->where('canTrackProgress', false)
-            ->has('videoUrl'));
+            ->where('watermark.enabled', false)
+            ->has('videoStreamUrl'));
 });
 
 test('learn redirect sends student to resume lesson', function () {
@@ -313,6 +368,224 @@ test('enrolled student can access next lesson after watching eighty percent of p
         ->assertInertia(fn ($page) => $page
             ->component('learn/player')
             ->where('currentLesson.id', $nextLesson->id));
+});
+
+test('mark as done completes lesson without watching and unlocks next lesson', function () {
+    ['course' => $course, 'lesson' => $lesson, 'previewLesson' => $nextLesson] = createLearningFixtures();
+
+    $user = User::factory()->create(['role' => UserRole::Student]);
+
+    $enrollment = Enrollment::create([
+        'user_id' => $user->id,
+        'course_id' => $course->id,
+        'status' => EnrollmentStatus::Active,
+        'progress_percent' => 0,
+        'enrolled_at' => now(),
+        'source' => EnrollmentSource::Manual,
+    ]);
+
+    $this->actingAs($user)
+        ->postJson(route('learn.progress.complete', ['lesson' => $lesson]))
+        ->assertOk()
+        ->assertJson([
+            'watched_seconds' => 100,
+            'completed' => true,
+            'progress_percent' => '50.00',
+        ]);
+
+    $this->assertDatabaseHas('lesson_progress', [
+        'enrollment_id' => $enrollment->id,
+        'lesson_id' => $lesson->id,
+        'watched_seconds' => 100,
+        'completed' => true,
+    ]);
+
+    expect($enrollment->fresh()->progress_percent)->toBe('50.00');
+
+    $this->actingAs($user)
+        ->get(route('learn.lessons.show', [
+            'course' => $course->slug,
+            'lesson' => $nextLesson,
+        ]))
+        ->assertOk();
+});
+
+test('user without enrollment cannot mark lesson as done', function () {
+    ['lesson' => $lesson] = createLearningFixtures();
+
+    $user = User::factory()->create(['role' => UserRole::Student]);
+
+    $this->actingAs($user)
+        ->postJson(route('learn.progress.complete', ['lesson' => $lesson]))
+        ->assertForbidden();
+});
+
+test('enrolled student cannot skip unfinished earlier lessons', function () {
+    ['course' => $course, 'lessons' => $lessons] = createSequentialLessonFixtures();
+
+    $user = User::factory()->create(['role' => UserRole::Student]);
+
+    $enrollment = Enrollment::create([
+        'user_id' => $user->id,
+        'course_id' => $course->id,
+        'status' => EnrollmentStatus::Active,
+        'progress_percent' => 0,
+        'enrolled_at' => now(),
+        'source' => EnrollmentSource::Manual,
+    ]);
+
+    \App\Models\LessonProgress::create([
+        'enrollment_id' => $enrollment->id,
+        'lesson_id' => $lessons[0]->id,
+        'watched_seconds' => 100,
+        'completed' => true,
+        'last_watched_at' => now(),
+    ]);
+
+    $this->actingAs($user)
+        ->get(route('learn.lessons.show', [
+            'course' => $course->slug,
+            'lesson' => $lessons[1],
+        ]))
+        ->assertOk();
+
+    $this->actingAs($user)
+        ->get(route('learn.lessons.show', [
+            'course' => $course->slug,
+            'lesson' => $lessons[2],
+        ]))
+        ->assertForbidden();
+
+    $this->actingAs($user)
+        ->get(route('learn.lessons.show', [
+            'course' => $course->slug,
+            'lesson' => $lessons[3],
+        ]))
+        ->assertForbidden();
+});
+
+test('resume redirects to first incomplete lesson not last watched lesson', function () {
+    ['course' => $course, 'lessons' => $lessons] = createSequentialLessonFixtures();
+
+    $user = User::factory()->create(['role' => UserRole::Student]);
+
+    $enrollment = Enrollment::create([
+        'user_id' => $user->id,
+        'course_id' => $course->id,
+        'status' => EnrollmentStatus::Active,
+        'progress_percent' => 0,
+        'enrolled_at' => now(),
+        'source' => EnrollmentSource::Manual,
+    ]);
+
+    \App\Models\LessonProgress::create([
+        'enrollment_id' => $enrollment->id,
+        'lesson_id' => $lessons[0]->id,
+        'watched_seconds' => 100,
+        'completed' => true,
+        'last_watched_at' => now()->subHour(),
+    ]);
+
+    \App\Models\LessonProgress::create([
+        'enrollment_id' => $enrollment->id,
+        'lesson_id' => $lessons[3]->id,
+        'watched_seconds' => 10,
+        'completed' => false,
+        'last_watched_at' => now(),
+    ]);
+
+    $this->actingAs($user)
+        ->get(route('learn.show', ['course' => $course->slug]))
+        ->assertRedirect(route('learn.lessons.show', [
+            'course' => $course->slug,
+            'lesson' => $lessons[1],
+        ]));
+});
+
+test('player navigation next points to immediate next lesson only', function () {
+    ['course' => $course, 'lessons' => $lessons] = createSequentialLessonFixtures();
+
+    $user = User::factory()->create(['role' => UserRole::Student]);
+
+    $enrollment = Enrollment::create([
+        'user_id' => $user->id,
+        'course_id' => $course->id,
+        'status' => EnrollmentStatus::Active,
+        'progress_percent' => 0,
+        'enrolled_at' => now(),
+        'source' => EnrollmentSource::Manual,
+    ]);
+
+    \App\Models\LessonProgress::create([
+        'enrollment_id' => $enrollment->id,
+        'lesson_id' => $lessons[0]->id,
+        'watched_seconds' => 100,
+        'completed' => true,
+        'last_watched_at' => now(),
+    ]);
+
+    $this->actingAs($user)
+        ->get(route('learn.lessons.show', [
+            'course' => $course->slug,
+            'lesson' => $lessons[0],
+        ]))
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page
+            ->component('learn/player')
+            ->where('navigation.next.id', $lessons[1]->id));
+});
+
+test('enrolled student can stream lesson video through proxy endpoint', function () {
+    ['course' => $course, 'lesson' => $lesson] = createLearningFixtures();
+
+    $user = User::factory()->create(['role' => UserRole::Student]);
+
+    Enrollment::create([
+        'user_id' => $user->id,
+        'course_id' => $course->id,
+        'status' => EnrollmentStatus::Active,
+        'progress_percent' => 0,
+        'enrolled_at' => now(),
+        'source' => EnrollmentSource::Manual,
+    ]);
+
+    $this->actingAs($user)
+        ->withHeader('Sec-Fetch-Dest', 'video')
+        ->get(route('learn.lessons.stream', ['lesson' => $lesson]))
+        ->assertOk()
+        ->assertHeader('Content-Disposition', 'inline; filename="lesson.bin"');
+});
+
+test('lesson stream cannot be opened directly in browser tab', function () {
+    ['lesson' => $lesson] = createLearningFixtures();
+
+    $user = User::factory()->create(['role' => UserRole::Student]);
+
+    Enrollment::create([
+        'user_id' => $user->id,
+        'course_id' => $lesson->chapter->course_id,
+        'status' => EnrollmentStatus::Active,
+        'progress_percent' => 0,
+        'enrolled_at' => now(),
+        'source' => EnrollmentSource::Manual,
+    ]);
+
+    $this->actingAs($user)
+        ->withHeader('Sec-Fetch-Dest', 'document')
+        ->withHeader('Sec-Fetch-Mode', 'navigate')
+        ->get(route('learn.lessons.stream', ['lesson' => $lesson]))
+        ->assertForbidden();
+});
+
+test('user without enrollment cannot stream paid lesson video', function () {
+    ['lesson' => $lesson] = createLearningFixtures();
+
+    $user = User::factory()->create(['role' => UserRole::Student]);
+
+    $this->actingAs($user)
+        ->withHeader('Sec-Fetch-Dest', 'video')
+        ->get(route('learn.lessons.stream', ['lesson' => $lesson]))
+        ->assertForbidden();
 });
 
 test('account courses page links to learn route', function () {

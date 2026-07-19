@@ -5,6 +5,9 @@ namespace App\Providers;
 use App\Contracts\Files\FileServiceInterface;
 use App\Contracts\Learning\EnrollmentProgressServiceInterface;
 use App\Contracts\Learning\LearningServiceInterface;
+use App\Contracts\Payment\OrderServiceInterface;
+use App\Contracts\Payment\SePayServiceInterface;
+use App\Contracts\Payment\SePayWebhookKeyServiceInterface;
 use App\Contracts\Video\VideoStreamServiceInterface;
 use App\Contracts\Enrollment\EnrollmentServiceInterface;
 use App\Contracts\Admin\AdminDashboardServiceInterface;
@@ -50,6 +53,9 @@ use App\Listeners\RecordUserLogin;
 use App\Services\Enrollment\EnrollmentService;
 use App\Services\Learning\EnrollmentProgressService;
 use App\Services\Learning\LearningService;
+use App\Services\Payment\OrderService;
+use App\Services\Payment\SePayService;
+use App\Services\Payment\SePayWebhookKeyService;
 use App\Services\Video\VideoStreamService;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Date;
@@ -90,6 +96,9 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(LearningServiceInterface::class, LearningService::class);
         $this->app->bind(EnrollmentProgressServiceInterface::class, EnrollmentProgressService::class);
         $this->app->bind(VideoStreamServiceInterface::class, VideoStreamService::class);
+        $this->app->bind(OrderServiceInterface::class, OrderService::class);
+        $this->app->bind(SePayWebhookKeyServiceInterface::class, SePayWebhookKeyService::class);
+        $this->app->bind(SePayServiceInterface::class, SePayService::class);
         $this->app->bind(PostServiceInterface::class, PostService::class);
     }
 

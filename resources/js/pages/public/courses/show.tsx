@@ -1,4 +1,4 @@
-import { Head, Link, usePage } from '@inertiajs/react';
+import { Head, Link, router, usePage } from '@inertiajs/react';
 import {
     Accordion,
     Badge,
@@ -33,6 +33,7 @@ import {
 } from '@/lib/format';
 import CourseReviewsSection from '@/components/public/course-reviews-section';
 import type { Auth, CourseDetail, CourseReviewItem, CourseReviewSummary } from '@/types';
+import type { CoursePurchaseState } from '@/types/checkout';
 
 type Props = {
     course: CourseDetail;
@@ -40,6 +41,7 @@ type Props = {
     reviews: CourseReviewItem[];
     userReview: CourseReviewItem | null;
     canReview: boolean;
+    purchaseState: CoursePurchaseState | null;
 };
 
 export default function CourseShow({
@@ -48,6 +50,7 @@ export default function CourseShow({
     reviews,
     userReview,
     canReview,
+    purchaseState,
 }: Props) {
     const { auth } = usePage<{ auth: Auth }>().props;
     const thumbnail = courseThumbnailUrl(course.thumbnail_path, course.slug);
@@ -354,15 +357,42 @@ export default function CourseShow({
                                     )}
 
                                     {auth.user ? (
-                                        <Button
-                                            color="pink"
-                                            size="md"
-                                            fullWidth
-                                            leftSection={<ShoppingCart size={18} />}
-                                            disabled
-                                        >
-                                            Mua khóa (Phase 5)
-                                        </Button>
+                                        purchaseState?.is_enrolled ? (
+                                            <Button
+                                                component={Link}
+                                                href={`/learn/${course.slug}`}
+                                                color="pink"
+                                                size="md"
+                                                fullWidth
+                                                leftSection={<PlayCircle size={18} />}
+                                            >
+                                                Vào học ngay
+                                            </Button>
+                                        ) : purchaseState?.pending_order_code ? (
+                                            <Button
+                                                component={Link}
+                                                href={`/orders/${purchaseState.pending_order_code}/payment`}
+                                                color="pink"
+                                                size="md"
+                                                fullWidth
+                                                variant="light"
+                                                leftSection={<ShoppingCart size={18} />}
+                                            >
+                                                Tiếp tục thanh toán
+                                            </Button>
+                                        ) : (
+                                            <Button
+                                                color="pink"
+                                                size="md"
+                                                fullWidth
+                                                leftSection={<ShoppingCart size={18} />}
+                                                onClick={() =>
+                                                    router.post(`/courses/${course.slug}/checkout`)
+                                                }
+                                            >
+                                                Mua khóa
+                                            </Button>
+                                        )
                                     ) : (
                                         <Button
                                             component={Link}

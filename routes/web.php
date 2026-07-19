@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Checkout\CheckoutController;
+use App\Http\Controllers\Checkout\PaymentController;
 use App\Http\Controllers\Account\LoginHistoryController;
 use App\Http\Controllers\Account\MyCoursesController;
 use App\Http\Controllers\Account\PaymentHistoryController;
@@ -17,13 +19,17 @@ use App\Http\Controllers\Admin\PostCategoryController;
 use App\Http\Controllers\Admin\PostController as AdminPostController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Learn\LearningController;
+use App\Http\Controllers\Learn\LessonStreamController;
 use App\Http\Controllers\Learn\ProgressController;
 use App\Http\Controllers\Public\ConsultationController;
+use App\Http\Controllers\Webhook\SePayWebhookController;
 use App\Http\Controllers\Public\CourseController as PublicCourseController;
 use App\Http\Controllers\Public\HomeController;
 use App\Http\Controllers\Public\PageController;
 use App\Http\Controllers\Public\PostController as PublicPostController;
 use Illuminate\Support\Facades\Route;
+
+Route::post('/webhooks/sepay', SePayWebhookController::class)->name('webhooks.sepay');
 
 Route::middleware('site.online')->group(function () {
     Route::get('/', HomeController::class)->name('home');
@@ -44,6 +50,9 @@ Route::middleware('site.online')->group(function () {
 
     Route::get('/learn/{course}/lessons/{lesson}', [LearningController::class, 'show'])
         ->name('learn.lessons.show');
+    Route::get('/learn/lessons/{lesson}/stream', LessonStreamController::class)
+        ->middleware('throttle:120,1')
+        ->name('learn.lessons.stream');
 });
 
 Route::middleware(['auth', 'verified'])->group(function () {
@@ -51,6 +60,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('/learn/{course}', [LearningController::class, 'redirect'])->name('learn.show');
     Route::patch('/learn/progress', [ProgressController::class, 'update'])->name('learn.progress.update');
+    Route::post('/learn/lessons/{lesson}/complete', [ProgressController::class, 'complete'])->name('learn.progress.complete');
+
+    Route::post('/courses/{slug}/checkout', [CheckoutController::class, 'store'])->name('checkout.store');
+    Route::get('/orders/{code}/payment', [PaymentController::class, 'show'])->name('checkout.payment');
+    Route::get('/orders/{code}/qr-image', [PaymentController::class, 'qrImage'])->name('checkout.qr-image');
+    Route::get('/orders/{code}/status', [PaymentController::class, 'status'])->name('checkout.status');
 
     Route::prefix('account')->name('account.')->group(function () {
         Route::redirect('/', '/account/courses');

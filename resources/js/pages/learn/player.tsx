@@ -11,12 +11,15 @@ import {
     Title,
 } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
-import { ChevronLeft, ChevronRight, Lock, PlayCircle } from 'lucide-react';
+import { ChevronLeft, ChevronRight, CheckCircle2, Lock, PlayCircle } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import VideoWatermarkOverlay from '@/components/learn/video-watermark-overlay';
 import { useGuardedVideo } from '@/hooks/use-guarded-video';
 import { useLearnPageGuard } from '@/hooks/use-learn-page-guard';
+import { useVideoCaptureGuard } from '@/hooks/use-video-capture-guard';
+import { useVideoWatermark } from '@/hooks/use-video-watermark';
 import LearnLayout from '@/layouts/learn-layout';
-import { patchLearnProgress } from '@/lib/learn-progress';
+import { patchLearnProgress, postMarkLessonComplete } from '@/lib/learn-progress';
 import { formatDuration } from '@/lib/format';
 import type { LearnPlayerProps } from '@/types';
 
@@ -25,15 +28,18 @@ const HEARTBEAT_INTERVAL_MS = 20_000;
 export default function LearnPlayer({
     course,
     currentLesson,
-    videoUrl,
+    videoStreamUrl,
     chapters,
     navigation,
     canTrackProgress,
     unlock_ratio: unlockRatio,
+    watermark,
+    capture_guard: captureGuard,
 }: LearnPlayerProps) {
     const videoRef = useRef<HTMLVideoElement>(null);
     const lastSentRef = useRef(0);
     const unlockReloadedRef = useRef(false);
+    const [markingDone, setMarkingDone] = useState(false);
     const [progressPercent, setProgressPercent] = useState(
         Number.parseFloat(course.progress_percent),
     );
@@ -46,10 +52,51 @@ export default function LearnPlayer({
         videoRef,
         resumeAt: currentLesson.watched_seconds,
         lessonKey: currentLesson.id,
-        enabled: Boolean(videoUrl),
+        enabled: Boolean(videoStreamUrl),
     });
 
     useLearnPageGuard(true);
+
+    useVideoCaptureGuard({
+        videoRef,
+        config: captureGuard,
+        lessonKey: currentLesson.id,
+        active: Boolean(videoStreamUrl),
+    });
+
+    const videoWatermark = useVideoWatermark({
+        watermark,
+        lessonKey: currentLesson.id,
+        active: Boolean(videoStreamUrl),
+    });
+
+    const reloadAfterUnlock = useCallback(
+        (hadNextLesson: boolean) => {
+            if (unlockReloadedRef.current) {
+                return;
+            }
+
+            unlockReloadedRef.current = true;
+
+            router.reload({
+                only: ['chapters', 'navigation'],
+                preserveScroll: true,
+                onSuccess: (page) => {
+                    const nextLesson = (page.props as LearnPlayerProps).navigation?.next;
+
+                    if (nextLesson && !hadNextLesson) {
+                        notifications.show({
+                            title: 'Đã mở khóa bài tiếp theo',
+                            message: `Bạn có thể học: «${nextLesson.title}»`,
+                            color: 'green',
+                            autoClose: 6000,
+                        });
+                    }
+                },
+            });
+        },
+        [],
+    );
 
     const sendProgress = useCallback(
         async (seconds: number, force = false) => {
@@ -80,34 +127,63 @@ export default function LearnPlayer({
 
                 if (
                     !unlockReloadedRef.current &&
-                    result.watched_seconds >= unlockThreshold
+                    (result.completed ||
+                        result.watched_seconds >= unlockThreshold)
                 ) {
-                    unlockReloadedRef.current = true;
-                    const hadNextLesson = navigation.next !== null;
-
-                    router.reload({
-                        only: ['chapters', 'navigation'],
-                        preserveScroll: true,
-                        onSuccess: (page) => {
-                            const nextLesson = (page.props as LearnPlayerProps).navigation?.next;
-
-                            if (nextLesson && !hadNextLesson) {
-                                notifications.show({
-                                    title: 'Đã mở khóa bài tiếp theo',
-                                    message: `Bạn có thể học: «${nextLesson.title}»`,
-                                    color: 'green',
-                                    autoClose: 6000,
-                                });
-                            }
-                        },
-                    });
+                    reloadAfterUnlock(navigation.next !== null);
                 }
             } catch {
                 // Ignore transient network errors during heartbeat.
             }
         },
-        [canTrackProgress, currentLesson.duration_seconds, currentLesson.id, navigation.next, unlockRatio],
+        [
+            canTrackProgress,
+            currentLesson.duration_seconds,
+            currentLesson.id,
+            navigation.next,
+            reloadAfterUnlock,
+            unlockRatio,
+        ],
     );
+
+    const handleMarkAsDone = useCallback(async () => {
+        if (!canTrackProgress || lessonCompleted || markingDone) {
+            return;
+        }
+
+        setMarkingDone(true);
+
+        try {
+            const result = await postMarkLessonComplete(currentLesson.id);
+            lastSentRef.current = result.watched_seconds;
+            setLessonCompleted(true);
+            setProgressPercent(Number.parseFloat(result.progress_percent));
+
+            notifications.show({
+                title: 'Đã đánh dấu hoàn thành',
+                message: 'Bài học này được ghi nhận là đã học. Bạn có thể chuyển sang bài tiếp theo.',
+                color: 'green',
+                autoClose: 5000,
+            });
+
+            reloadAfterUnlock(navigation.next !== null);
+        } catch {
+            notifications.show({
+                title: 'Không thể lưu',
+                message: 'Vui lòng thử lại sau.',
+                color: 'red',
+            });
+        } finally {
+            setMarkingDone(false);
+        }
+    }, [
+        canTrackProgress,
+        currentLesson.id,
+        lessonCompleted,
+        markingDone,
+        navigation.next,
+        reloadAfterUnlock,
+    ]);
 
     useEffect(() => {
         lastSentRef.current = currentLesson.watched_seconds;
@@ -119,7 +195,7 @@ export default function LearnPlayer({
     useEffect(() => {
         const video = videoRef.current;
 
-        if (!video || !videoUrl) {
+        if (!video || !videoStreamUrl) {
             return;
         }
 
@@ -146,7 +222,7 @@ export default function LearnPlayer({
         };
 
         const handleError = () => {
-            router.reload({ only: ['videoUrl', 'videoUrlExpiresAt'] });
+            router.reload({ preserveScroll: true });
         };
 
         video.addEventListener('loadedmetadata', handleLoadedMetadata);
@@ -169,7 +245,7 @@ export default function LearnPlayer({
             video.removeEventListener('error', handleError);
             window.clearInterval(interval);
         };
-    }, [currentLesson.id, currentLesson.watched_seconds, sendProgress, videoUrl]);
+    }, [currentLesson.id, currentLesson.watched_seconds, sendProgress, videoStreamUrl]);
 
     const sidebar = (
         <Stack gap="md">
@@ -266,23 +342,31 @@ export default function LearnPlayer({
                         </Group>
                     </Group>
 
-                    {videoUrl ? (
+                    {videoStreamUrl ? (
                         <div
-                            className="overflow-hidden rounded-xl bg-black shadow-lg select-none"
+                            className="learn-video-shell overflow-hidden rounded-xl bg-black shadow-lg select-none"
                             onContextMenu={(event) => event.preventDefault()}
                         >
                             <video
                                 ref={videoRef}
-                                key={`${currentLesson.id}-${videoUrl}`}
-                                src={videoUrl}
+                                key={`${currentLesson.id}-${videoStreamUrl}`}
+                                src={videoStreamUrl}
                                 controls
-                                controlsList="nodownload noplaybackrate"
+                                controlsList="nodownload noplaybackrate noremoteplayback"
                                 disablePictureInPicture
+                                disableRemotePlayback
                                 className="aspect-video w-full bg-black"
                                 preload="metadata"
                                 playsInline
                                 onContextMenu={(event) => event.preventDefault()}
                             />
+                            {videoWatermark.label && (
+                                <VideoWatermarkOverlay
+                                    label={videoWatermark.label}
+                                    visible={videoWatermark.visible}
+                                    corner={videoWatermark.corner}
+                                />
+                            )}
                         </div>
                     ) : (
                         <Alert color="yellow" title="Chưa có video">
@@ -294,6 +378,20 @@ export default function LearnPlayer({
                         <Alert color="blue" variant="light">
                             Đăng nhập và đăng ký khóa học để lưu tiến độ học tập.
                         </Alert>
+                    )}
+
+                    {canTrackProgress && !lessonCompleted && (
+                        <Group justify="flex-end">
+                            <Button
+                                variant="light"
+                                color="green"
+                                leftSection={<CheckCircle2 className="size-4" />}
+                                loading={markingDone}
+                                onClick={() => void handleMarkAsDone()}
+                            >
+                                Đánh dấu đã học
+                            </Button>
+                        </Group>
                     )}
 
                     <Group justify="space-between">

@@ -8,43 +8,45 @@
 
 ### Config
 
-- [ ] `.env`: `SEPAY_*` keys (API, webhook secret, bank account)
-- [ ] `config/sepay.php` — bank, account name, template nội dung CK
+- [x] `.env`: `SEPAY_*` keys (bank account, webhook API key)
+- [x] `config/sepay.php` — bank, account name, thời hạn thanh toán 15 phút
 
 ### Backend
 
-- [ ] `OrderService::createForCourse(User, Course)` — tạo order pending + unique `code`
-- [ ] `SePayService::generateQr(Order)` — gọi API SePay lấy QR image / payload
-- [ ] `POST /courses/{slug}/checkout` — auth required, 1 course per order (gói hiện tại)
-- [ ] `GET /orders/{code}/payment` — trang chờ thanh toán + QR + countdown expires
-- [ ] `POST /webhooks/sepay` — `SePayWebhookController`
-  - Verify signature/HMAC
-  - Parse mã đơn từ nội dung CK
-  - Khớp `amount` (cho phép tolerance 0 VNĐ)
+- [x] `OrderService::createForCourse(User, Course)` — tạo order pending + unique `code`
+- [x] `SePayService::generateQr(Order)` — VietQR URL qua `vietqr.app/img`
+- [x] `POST /courses/{slug}/checkout` — auth required, 1 course per order (gói hiện tại)
+- [x] `GET /orders/{code}/payment` — trang chờ thanh toán + QR + countdown expires
+- [x] `GET /orders/{code}/status` — polling trạng thái đơn
+- [x] `POST /webhooks/sepay` — `SePayWebhookController`
+  - Verify `Authorization: Apikey {key}` — key giải mã runtime từ `.env` (dạng `enc:...`)
+  - Parse mã đơn từ `code` hoặc nội dung CK
+  - Khớp `amount` (tolerance 0 VNĐ)
   - Idempotent: skip nếu `sepay_transaction_id` đã xử lý
   - Update order → paid, tạo `Enrollment`, log `payments`
-- [ ] Order expiry job: cancel pending sau 24h (scheduled)
+- [x] `php artisan sepay:rotate-webhook-key` — sinh key mới + cập nhật `.env`
+- [x] `php artisan orders:expire-pending` — scheduled mỗi phút
 
 ### Frontend
 
-- [ ] Nút "Mua khóa" trên course detail → checkout flow
-- [ ] `pages/checkout/payment.tsx`
+- [x] Nút "Mua khóa" trên course detail → checkout flow
+- [x] `pages/public/checkout/payment.tsx`
   - Hiển thị QR (Mantine Image)
   - Số tiền, mã đơn, hướng dẫn CK
-  - Polling hoặc Inertia reload: check order status mỗi 5s
+  - Polling: check order status mỗi 5s
   - Success → redirect `/account/courses` + notification
 
 ### Admin visibility (tối thiểu)
 
-- [ ] Route admin list orders (Phase 3)
+- [x] Route admin list orders (Phase 3)
 
 ### Tests
 
-- [ ] Tạo order pending với code unique
-- [ ] Webhook hợp lệ → enrollment created
-- [ ] Webhook trùng transaction → không duplicate enrollment
-- [ ] Webhook sai amount → reject
-- [ ] Guest không checkout được
+- [x] Tạo order pending với code unique
+- [x] Webhook hợp lệ → enrollment created
+- [x] Webhook trùng transaction → không duplicate enrollment
+- [x] Webhook sai amount → reject
+- [x] Guest không checkout được
 
 ## Mã đơn hàng (gợi ý format)
 
@@ -54,6 +56,28 @@ VD: ELN202607150001
 ```
 
 Nội dung chuyển khoản SePay: chỉ chứa `code` để parser đơn giản.
+
+## Thời hạn thanh toán
+
+**15 phút / đơn** (`SEPAY_PAYMENT_EXPIRY_MINUTES=15`). Hết hạn → status `expired`, học viên tạo đơn mới.
+
+## Webhook auth (API Key)
+
+SePay gửi header:
+
+```
+Authorization: Apikey YOUR_API_KEY
+```
+
+**Lưu trữ:** `.env` chỉ chứa bản **mã hóa** (`enc:...`, khóa `APP_KEY`). Plaintext **chỉ hiện một lần** khi chạy rotate.
+
+```bash
+php artisan sepay:rotate-webhook-key          # sinh + mã hóa + ghi .env, in key một lần
+php artisan sepay:rotate-webhook-key --show   # chỉ xem ****xxxx (4 ký tự cuối)
+php artisan sepay:rotate-webhook-key --dry-run # xem key thử, chưa ghi .env
+```
+
+Quên/mất full key → **bắt buộc rotate** (không khôi phục từ `.env`). Sau rotate: cập nhật cùng key trên SePay Dashboard.
 
 ## Acceptance criteria
 
@@ -65,6 +89,7 @@ Nội dung chuyển khoản SePay: chỉ chứa `code` để parser đơn giản
 
 - Đăng ký webhook URL production khi deploy ([deployment.md](../deployment.md))
 - Lưu raw payload vào `payments.payload` để đối soát
+- Cấu hình cấu trúc mã thanh toán trên SePay khớp prefix `ELN`
 
 ## Không làm trong phase này
 

@@ -35,14 +35,33 @@ export type LearnPlayerProps = {
         completed: boolean;
         is_free_preview: boolean;
     };
-    videoUrl: string | null;
-    videoUrlExpiresAt: string | null;
+    videoStreamUrl: string | null;
     chapters: LearnChapter[];
     navigation: {
         prev: LearnNavigationItem | null;
         next: LearnNavigationItem | null;
     };
+    canTrackProgress: boolean;
     unlock_ratio: number;
+    watermark: LearnVideoWatermark;
+    capture_guard: LearnVideoCaptureGuard;
+};
+
+export type LearnVideoCaptureGuard = {
+    enabled: boolean;
+    pause_on_hidden: boolean;
+    block_capture_shortcuts: boolean;
+};
+
+export type LearnVideoWatermark = {
+    enabled: boolean;
+    label: string | null;
+    min_interval_seconds: number;
+    max_interval_seconds: number;
+    min_visible_seconds: number;
+    max_visible_seconds: number;
+    initial_delay_min_seconds: number;
+    initial_delay_max_seconds: number;
 };
 
 export type LearnProgressResponse = {
