@@ -64,10 +64,7 @@ export default function AdminUsersIndex({ users, filters }: Props) {
     return (
         <>
             <Head title="Người dùng" />
-            <AdminPageHeader
-                title="Người dùng"
-                description="Quản lý học viên và quyền admin."
-                actions={
+            <AdminPageHeader title="Người dùng" actions={
                     <Button leftSection={<Plus size={16} />} onClick={() => setCreateOpen(true)}>
                         Thêm người dùng
                     </Button>
@@ -185,7 +182,6 @@ export default function AdminUsersIndex({ users, filters }: Props) {
 
                         <Switch
                             label="Bắt buộc đổi mật khẩu lần đăng nhập đầu tiên"
-                            description="Người dùng phải đặt mật khẩu mới trước khi dùng hệ thống."
                             {...createForm.getInputProps('must_change_password', { type: 'checkbox' })}
                         />
 

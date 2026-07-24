@@ -1,5 +1,5 @@
 import { Head, Link } from '@inertiajs/react';
-import { Badge, Button, Group, Stack, Table, Text, Title } from '@mantine/core';
+import { Badge, Button, Group, Stack, Table, Title } from '@mantine/core';
 import { Award, Download, ExternalLink } from 'lucide-react';
 import { EmptyState } from '@/components/account/account-ui';
 import { formatDateTime } from '@/lib/format';
@@ -14,18 +14,15 @@ export default function AccountCertificates({ certificates }: Props) {
         <>
             <Head title="Chứng chỉ của tôi" />
 
-            <Title order={2} mb="xs">
+            <Title order={2} mb="xl">
                 Chứng chỉ của tôi
             </Title>
-            <Text c="dimmed" mb="xl">
-                Tải chứng chỉ PDF và tra cứu bằng mã học viên trên website.
-            </Text>
 
             {certificates.length === 0 ? (
                 <EmptyState
                     icon={<Award className="size-12" />}
                     title="Chưa có chứng chỉ"
-                    description="Hoàn thành 100% khóa học để nhận chứng chỉ và mã tra cứu qua email."
+                    description="Hoàn thành khóa học để nhận chứng chỉ."
                     action={
                         <Button component={Link} href="/account/courses" color="pink" radius="xl">
                             Xem khóa học của tôi

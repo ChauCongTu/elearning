@@ -84,7 +84,7 @@ class PostService implements PostServiceInterface
 
         return collect($sections)->map(function (array $section) {
             $categorySlug = $section['category_slug'] ?? null;
-            $limit = $section['limit'] ?? 2;
+            $limit = $section['limit'] ?? 4;
 
             $articles = $categorySlug
                 ? $this->listByCategorySlug($categorySlug, $limit)

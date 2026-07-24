@@ -94,10 +94,7 @@ export default function AdminCategoriesIndex({ categories }: Props) {
     return (
         <>
             <Head title="Danh mục khóa học" />
-            <AdminPageHeader
-                title="Danh mục khóa học"
-                description="Quản lý danh mục hiển thị trên trang khóa học."
-                actions={
+            <AdminPageHeader title="Danh mục khóa học" actions={
                     <Button leftSection={<Plus size={16} />} onClick={openCreate}>
                         Thêm danh mục
                     </Button>

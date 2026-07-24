@@ -36,10 +36,11 @@ export default function ArticleTeasers({ sections }: Props) {
                                     </Text>
                                 </Link>
                             </Group>
-                            <SimpleGrid cols={{ base: 1, md: 2 }} spacing="lg">
+                            <SimpleGrid cols={{ base: 1, sm: 2, lg: 4 }} spacing="md">
                                 {section.articles.map((article) => (
                                     <PostCard
                                         key={article.slug ?? article.title}
+                                        compact
                                         post={{
                                             id: '0',
                                             post_category_id: null,

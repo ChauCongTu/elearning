@@ -351,7 +351,6 @@ export default function AdminCourseCurriculum({ course, chapters }: Props) {
                     />
                     <Switch
                         label="Xuất bản"
-                        description="Tắt để ẩn chương khỏi học viên."
                         {...chapterForm.getInputProps('is_published', { type: 'checkbox' })}
                     />
                     <Group justify="flex-end">
@@ -385,23 +384,16 @@ export default function AdminCourseCurriculum({ course, chapters }: Props) {
                         suffix=" phút"
                         min={0}
                         decimalScale={1}
-                        description="Thời lượng video ước tính."
                         {...lessonForm.getInputProps('duration_minutes')}
                     />
                     <FileInput
                         label="Video bài học"
-                        description={
-                            editingLesson?.video_s3_key
-                                ? 'Đã có video — chọn file mới để thay thế, bỏ trống để giữ nguyên.'
-                                : 'MP4/WebM, tối đa ~500MB.'
-                        }
                         accept="video/mp4,video/webm,video/quicktime"
                         clearable
                         {...lessonForm.getInputProps('video')}
                     />
                     <Switch
                         label="Cho xem thử miễn phí"
-                        description="Hiển thị preview trên trang khóa học công khai."
                         {...lessonForm.getInputProps('is_free_preview', { type: 'checkbox' })}
                     />
                     <Switch

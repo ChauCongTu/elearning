@@ -25,7 +25,7 @@ export default function AdminOrdersIndex({ orders, filters }: Props) {
     return (
         <>
             <Head title="Đơn hàng" />
-            <AdminPageHeader title="Đơn hàng" description="Theo dõi thanh toán và trạng thái đơn." />
+            <AdminPageHeader title="Đơn hàng" />
 
             <div className="admin-filter-bar">
                 <Group align="flex-end" wrap="wrap">

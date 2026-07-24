@@ -6,6 +6,7 @@ import type { PostSummary } from '@/types';
 
 type Props = {
     post: PostSummary;
+    compact?: boolean;
 };
 
 function formatDate(value: string | null): string {
@@ -20,8 +21,10 @@ function formatDate(value: string | null): string {
     }).format(new Date(value));
 }
 
-export default function PostCard({ post }: Props) {
+export default function PostCard({ post, compact = false }: Props) {
     const image = mediaUrl(post.featured_image, post.featured_image_url);
+    const imageHeight = compact ? 140 : 180;
+    const excerptLines = compact ? 2 : 3;
 
     return (
         <Card
@@ -33,24 +36,24 @@ export default function PostCard({ post }: Props) {
             style={{ textDecoration: 'none', color: 'inherit', height: '100%', overflow: 'hidden' }}
         >
             <Box
-                h={180}
+                h={imageHeight}
                 style={{
                     background: image
                         ? `linear-gradient(180deg, transparent 35%, rgba(0,0,0,0.45) 100%), url(${image}) center/cover no-repeat`
                         : courseGradient(post.slug),
                 }}
             />
-            <Stack gap="sm" p="lg" h="100%">
+            <Stack gap="sm" p={compact ? 'md' : 'lg'} h="100%">
                 {post.category && (
                     <Badge variant="light" color="brand" w="fit-content">
                         {post.category.name}
                     </Badge>
                 )}
-                <Title order={4} lineClamp={2} lh={1.35}>
+                <Title order={compact ? 5 : 4} lineClamp={2} lh={1.35}>
                     {post.title}
                 </Title>
                 {post.excerpt && (
-                    <Text size="sm" c="dimmed" lineClamp={3} style={{ flex: 1 }} lh={1.65}>
+                    <Text size="sm" c="dimmed" lineClamp={excerptLines} style={{ flex: 1 }} lh={1.55}>
                         {post.excerpt}
                     </Text>
                 )}

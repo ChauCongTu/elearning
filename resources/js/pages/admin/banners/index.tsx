@@ -129,7 +129,6 @@ export default function AdminBannersIndex({ banners }: Props) {
             <Head title="Banner" />
             <AdminPageHeader
                 title="Banner trang chủ"
-                description="Quản lý banner slider hiển thị trên homepage."
                 actions={
                     <Button leftSection={<Plus size={16} />} onClick={openCreate}>
                         Thêm banner
@@ -214,7 +213,6 @@ export default function AdminBannersIndex({ banners }: Props) {
                     <TextInput
                         label="Link khi click"
                         placeholder="https://..."
-                        description="Mở tab mới khi khách bấm banner. Tự thêm ?source=APP_URL để tracking."
                         type="url"
                         {...form.getInputProps('link_url')}
                         error={form.errors.link_url || errors?.link_url}
@@ -248,7 +246,6 @@ export default function AdminBannersIndex({ banners }: Props) {
                     <Switch label="Kích hoạt" {...form.getInputProps('is_active', { type: 'checkbox' })} />
                     <ImageUploadField
                         label={editing ? 'Ảnh mới (tùy chọn)' : 'Ảnh banner'}
-                        description="Banner ngang thiết kế sẵn (khuyến nghị 1600×700px, tỷ lệ 16:7). Ảnh hiển thị trọn trên trang chủ, không bị cắt."
                         existingUrl={editing?.image_url ?? editing?.image_path}
                         value={form.values.image}
                         onChange={(file) => form.setFieldValue('image', file)}

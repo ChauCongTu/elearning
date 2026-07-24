@@ -30,7 +30,6 @@ export default function AdminStudentFormFields({
             {showAutoCode && (
                 <Switch
                     label="Tự sinh mã học viên"
-                    description="Dùng định dạng ELN{year}-xxxx khi không nhập mã thủ công."
                     {...form.getInputProps('auto_generate_code', { type: 'checkbox' })}
                 />
             )}
@@ -43,7 +42,7 @@ export default function AdminStudentFormFields({
             <TextInput label="Ngày cấp CMND" type="date" {...form.getInputProps('cmnd_issue_date')} />
             <Select
                 label="Nơi cấp CMND"
-                placeholder="Chọn mã C1/C2 hoặc nhập tay bên dưới"
+                placeholder="C1 / C2"
                 clearable
                 searchable
                 data={formOptions.cmnd_issue_places}
@@ -55,24 +54,20 @@ export default function AdminStudentFormFields({
 
             <Select
                 label="Khóa học (hệ thống)"
-                placeholder="Liên kết khóa online (tùy chọn)"
+                placeholder="Chọn khóa"
                 clearable
                 searchable
                 data={formOptions.courses.map((course) => ({ value: course.id, label: course.title }))}
                 {...form.getInputProps('course_id')}
             />
-            <TextInput
-                label="Tên khóa học (tra cứu)"
-                description="Text hiển thị công khai — tự điền khi chọn khóa hệ thống."
-                {...form.getInputProps('course')}
-            />
+            <TextInput label="Tên khóa học (tra cứu)" {...form.getInputProps('course')} />
             <TextInput label="Lớp" {...form.getInputProps('class_name')} />
             <TextInput label="Ngày tốt nghiệp" type="date" {...form.getInputProps('graduation_date')} />
 
             {enrollmentOptions.length > 0 && (
                 <Select
-                    label="Ghi danh liên kết"
-                    placeholder="Chọn ghi danh của user (tùy chọn)"
+                    label="Ghi danh"
+                    placeholder="Chọn ghi danh"
                     clearable
                     searchable
                     data={enrollmentOptions}
@@ -81,7 +76,7 @@ export default function AdminStudentFormFields({
             )}
 
             <Select
-                label="Nguồn dữ liệu"
+                label="Nguồn"
                 data={formOptions.sources.map((source) => ({ value: source.value, label: source.label }))}
                 {...form.getInputProps('source')}
             />

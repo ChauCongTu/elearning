@@ -140,7 +140,6 @@ export default function AdminCourseFormPage({ course, categories }: Props) {
             <Group justify="space-between" mb="lg" wrap="wrap" align="flex-start">
                 <AdminPageHeader
                     title={isEdit ? 'Sửa khóa học' : 'Thêm khóa học'}
-                    description="Nội dung bên trái, cấu hình giá & xuất bản bên phải."
                 />
                 <Group wrap="wrap">
                     <Button component={Link} href="/admin/courses" variant="default">
@@ -187,7 +186,6 @@ export default function AdminCourseFormPage({ course, categories }: Props) {
 
                     <Textarea
                         label="Mô tả ngắn"
-                        description="Hiển thị trên thẻ khóa học và kết quả tìm kiếm."
                         placeholder="Tóm tắt 1–2 câu thu hút học viên"
                         minRows={3}
                         maxLength={1000}
@@ -200,7 +198,6 @@ export default function AdminCourseFormPage({ course, categories }: Props) {
 
                     <AdminRichTextField
                         label="Mô tả đầy đủ"
-                        description="Nội dung landing page khóa học — heading, danh sách, liên kết, ảnh."
                         value={form.values.description}
                         onChange={(value) => form.setFieldValue('description', value)}
                         error={form.errors.description as string | undefined}
@@ -217,7 +214,6 @@ export default function AdminCourseFormPage({ course, categories }: Props) {
                     <Divider my="xl" label="Lợi ích nổi bật" labelPosition="left" />
 
                     <TagsInput
-                        description="Nhấn Enter sau mỗi lợi ích — hiển thị trên trang khóa học."
                         placeholder="VD: Học thực hành trên mẫu thật"
                         {...form.getInputProps('benefits')}
                     />
@@ -242,12 +238,10 @@ export default function AdminCourseFormPage({ course, categories }: Props) {
                             <Stack gap="sm">
                                 <Switch
                                     label="Xuất bản"
-                                    description="Bật để học viên xem và mua khóa học."
                                     {...form.getInputProps('is_published', { type: 'checkbox' })}
                                 />
                                 <Switch
                                     label="Khóa nổi bật"
-                                    description="Hiển thị ở section nổi bật trang chủ."
                                     {...form.getInputProps('is_featured', { type: 'checkbox' })}
                                 />
                             </Stack>
@@ -282,7 +276,6 @@ export default function AdminCourseFormPage({ course, categories }: Props) {
                                 Ảnh thumbnail
                             </Title>
                             <ImageUploadField
-                                description="Ảnh ngang, tối thiểu 800×450px. JPG/PNG, tối đa 5MB."
                                 existingUrl={course?.thumbnail_url ?? course?.thumbnail_path}
                                 value={form.values.thumbnail}
                                 onChange={(file) => form.setFieldValue('thumbnail', file)}
@@ -308,7 +301,6 @@ export default function AdminCourseFormPage({ course, categories }: Props) {
                                     suffix=" đ"
                                     thousandSeparator=","
                                     min={0}
-                                    description="Để trống nếu không giảm giá."
                                     {...form.getInputProps('compare_price')}
                                 />
                                 {discount !== null && (
@@ -364,11 +356,10 @@ export default function AdminCourseFormPage({ course, categories }: Props) {
 
                         <Paper className="admin-course-editor__card" p="md" radius="md">
                             <Title order={6} mb="md">
-                                Hiển thị marketing
+                                Marketing
                             </Title>
                             <NumberInput
-                                label="Cộng thêm lượt mua"
-                                description="Cộng vào số đơn đã thanh toán thực tế trên trang khóa học."
+                                label="Số lượt mua ban đầu"
                                 min={0}
                                 {...form.getInputProps('purchase_count_offset')}
                             />
@@ -380,12 +371,9 @@ export default function AdminCourseFormPage({ course, categories }: Props) {
                         </Paper>
 
                         <Paper className="admin-course-editor__card" p="md" radius="md">
-                            <Title order={6} mb="xs">
+                            <Title order={6} mb="md">
                                 Template chứng chỉ PDF
                             </Title>
-                            <Text size="sm" c="dimmed" mb="md">
-                                Mặc định dùng layout hệ thống. Markdown/LaTeX cho phép tùy chỉnh theo khóa.
-                            </Text>
                             <Stack gap="md">
                                 <Select
                                     label="Loại template"
@@ -400,7 +388,6 @@ export default function AdminCourseFormPage({ course, categories }: Props) {
                                     <>
                                         <Textarea
                                             label="Nội dung template"
-                                            description="Để trống sẽ dùng file mẫu hệ thống."
                                             placeholder={
                                                 form.values.certificate_template_type === 'latex'
                                                     ? '\\documentclass{article}...'

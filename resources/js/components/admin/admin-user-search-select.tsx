@@ -15,7 +15,7 @@ type Props = {
 
 export default function AdminUserSearchSelect({
     label = 'Liên kết tài khoản',
-    description = 'Tùy chọn — gắn hồ sơ tra cứu với user đăng nhập trên hệ thống.',
+    description,
     value,
     onChange,
     linkedUser,
@@ -66,8 +66,8 @@ export default function AdminUserSearchSelect({
     return (
         <Select
             label={label}
-            description={description}
-            placeholder="Tìm theo tên hoặc email..."
+            {...(description ? { description } : {})}
+            placeholder="Tìm tên hoặc email..."
             searchable
             clearable={clearable}
             disabled={disabled}

@@ -84,11 +84,7 @@ export default function Profile() {
             <h1 className="sr-only">Hồ sơ cá nhân</h1>
 
             <div className="space-y-6">
-                <Heading
-                    variant="small"
-                    title="Hồ sơ cá nhân"
-                    description="Cập nhật thông tin tài khoản và ảnh đại diện."
-                />
+                <Heading variant="small" title="Hồ sơ cá nhân" />
 
                 {mustVerifyEmail && user.email_verified_at === null && (
                     <div className="rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">

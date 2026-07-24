@@ -51,19 +51,11 @@ export default function Home({
             <VideoGallery videos={siteContent.videos} />
 
             {featuredCourses.length > 0 && (
-                <CourseShowcase
-                    courses={featuredCourses}
-                    title="Khóa học nổi bật"
-                    description="Các chương trình được học viên quan tâm nhất."
-                />
+                <CourseShowcase courses={featuredCourses} title="Khóa học nổi bật" />
             )}
 
             {latestCourses.length > 0 && (
-                <CourseShowcase
-                    courses={latestCourses}
-                    title="Khóa học mới"
-                    description="Cập nhật chương trình mới nhất trên nền tảng."
-                />
+                <CourseShowcase courses={latestCourses} title="Khóa học mới" />
             )}
 
             <ArticleTeasers sections={articleSections} />

@@ -14,16 +14,13 @@ export default function AccountLoginHistory({ entries }: Props) {
         <>
             <Head title="Lịch sử đăng nhập" />
 
-            <Heading
-                title="Lịch sử đăng nhập"
-                description="Theo dõi các phiên đăng nhập gần đây trên tài khoản của bạn."
-            />
+            <Heading title="Lịch sử đăng nhập" />
 
             {entries.length === 0 ? (
                 <EmptyState
                     icon={<History className="size-12" />}
                     title="Chưa có lịch sử đăng nhập"
-                    description="Các lần đăng nhập sẽ được ghi lại tại đây."
+                    description="Chưa có phiên đăng nhập nào được ghi nhận."
                 />
             ) : (
                 <div className="mt-6 overflow-x-auto rounded-xl border border-gray-100">

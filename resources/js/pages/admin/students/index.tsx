@@ -88,10 +88,7 @@ export default function AdminStudentsIndex({ students, filters, filterOptions, f
     return (
         <>
             <Head title="Tra cứu học viên" />
-            <AdminPageHeader
-                title="Tra cứu học viên"
-                description="Quản lý dữ liệu tra cứu, liên kết tài khoản, import CSV và thu hồi chứng chỉ."
-                actions={
+            <AdminPageHeader title="Tra cứu học viên" actions={
                     <Group>
                         <Button
                             variant="default"

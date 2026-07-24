@@ -56,7 +56,7 @@ export default function AccountCourses({ enrollments }: Props) {
                     <EmptyState
                         icon={<GraduationCap className="size-12" />}
                         title="Chưa có khóa học nào"
-                        description="Khám phá các khóa học online và bắt đầu hành trình học tập của bạn."
+                        description="Xem danh sách khóa học và đăng ký học."
                         action={
                             <Button
                                 component={Link}

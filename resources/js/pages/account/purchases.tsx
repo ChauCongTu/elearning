@@ -15,16 +15,13 @@ export default function AccountPurchases({ orders }: Props) {
         <>
             <Head title="Lịch sử mua khóa học" />
 
-            <Heading
-                title="Lịch sử mua khóa học"
-                description="Các đơn hàng và khóa học bạn đã đăng ký mua."
-            />
+            <Heading title="Lịch sử mua khóa học" />
 
             {orders.length === 0 ? (
                 <EmptyState
                     icon={<ShoppingBag className="size-12" />}
                     title="Chưa có đơn mua nào"
-                    description="Khi bạn mua khóa học, lịch sử đơn hàng sẽ hiển thị tại đây."
+                    description="Mua khóa học để xem lịch sử tại đây."
                     action={
                         <Button asChild className="bg-pink-600 hover:bg-pink-700">
                             <Link href="/courses">Khám phá khóa học</Link>

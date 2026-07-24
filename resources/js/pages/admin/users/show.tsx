@@ -106,7 +106,7 @@ export default function AdminUserShow({ user, courses, formOptions }: Props) {
                         </CopyButton>
                     </Group>
                     <Text size="sm" mt="xs">
-                        Gửi mật khẩu này cho người dùng. Họ sẽ phải đổi mật khẩu khi đăng nhập lần đầu.
+                        Gửi cho người dùng trước khi đăng nhập lần đầu.
                     </Text>
                 </Alert>
             )}
@@ -119,7 +119,6 @@ export default function AdminUserShow({ user, courses, formOptions }: Props) {
                     <Group align="flex-end" wrap="wrap">
                         <Select
                             label="Vai trò"
-                            description="Admin có toàn quyền quản trị. Không thể tự hạ quyền của chính mình."
                             data={[
                                 { value: 'student', label: 'Học viên' },
                                 { value: 'admin', label: 'Quản trị viên' },
@@ -138,14 +137,9 @@ export default function AdminUserShow({ user, courses, formOptions }: Props) {
                         <Title order={4} mb="sm">
                             Quyền vận hành
                         </Title>
-                        <Text size="sm" c="dimmed" mb="md">
-                            Chỉ tài khoản root mới cấp được quyền này. Admin được cấp có thể xác nhận thanh toán
-                            thủ công và cấp học cho học viên.
-                        </Text>
                         <Stack gap="md">
                             <Switch
                                 label="Xác nhận thanh toán & cấp học thủ công"
-                                description="Dùng khi khách CK tài khoản khác, trả tiền mặt hoặc cần mở khóa không qua đơn."
                                 {...permissionForm.getInputProps('can_complete_orders', { type: 'checkbox' })}
                             />
                             <Button
@@ -166,11 +160,8 @@ export default function AdminUserShow({ user, courses, formOptions }: Props) {
                 {canManualEnroll && (
                     <div className="dashboard-panel">
                         <Title order={4} mb="sm">
-                            Cấp quyền học thủ công
+                            Cấp quyền học
                         </Title>
-                        <Text size="sm" c="dimmed" mb="md">
-                            Dùng khi khách chuyển khoản tay — cấp quyền học ngay không cần đơn hàng.
-                        </Text>
                         <Group align="flex-end" wrap="wrap">
                             <Select
                                 label="Khóa học"
@@ -202,11 +193,7 @@ export default function AdminUserShow({ user, courses, formOptions }: Props) {
                             Thêm hồ sơ
                         </Button>
                     </Group>
-                    <Text size="sm" c="dimmed" mb="md">
-                        Mỗi hồ sơ có mã tra cứu riêng — có thể gắn với khóa online hoặc nhập thủ công cho học viên
-                        legacy.
-                    </Text>
-                    <Table striped highlightOnHover withTableBorder>
+                    <Table striped highlightOnHover withTableBorder mt="sm">
                         <Table.Thead>
                             <Table.Tr>
                                 <Table.Th>Mã HV</Table.Th>

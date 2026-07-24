@@ -23,10 +23,7 @@ export default function AdminCoursesIndex({ courses, filters }: Props) {
     return (
         <>
             <Head title="Khóa học" />
-            <AdminPageHeader
-                title="Khóa học"
-                description="Quản lý nội dung, giá và trạng thái xuất bản."
-                actions={
+            <AdminPageHeader title="Khóa học" actions={
                     <Button component={Link} href="/admin/courses/create" leftSection={<Plus size={16} />}>
                         Thêm khóa học
                     </Button>

@@ -10,10 +10,7 @@ export default function VerifyEmail({ status }: Props) {
     return (
         <>
             <Head title="Xác minh email" />
-            <AuthShell
-                title="Xác minh email"
-                description="Vui lòng xác minh địa chỉ email trước khi tiếp tục. Kiểm tra hộp thư đến hoặc thư mục spam."
-            >
+            <AuthShell title="Xác minh email">
                 {status === 'verification-link-sent' && (
                     <Text size="sm" c="teal" ta="center">
                         Liên kết xác minh mới đã được gửi đến email của bạn.

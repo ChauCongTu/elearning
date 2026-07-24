@@ -23,10 +23,7 @@ export default function RequiredPassword({ passwordRules }: Props) {
     return (
         <>
             <Head title="Đổi mật khẩu bắt buộc" />
-            <AuthShell
-                title="Đổi mật khẩu"
-                description="Đây là lần đăng nhập đầu tiên. Vui lòng đặt mật khẩu mới để tiếp tục."
-            >
+            <AuthShell title="Đổi mật khẩu">
                 <Alert color="orange" variant="light" mb="md">
                     Quản trị viên yêu cầu bạn đổi mật khẩu trước khi sử dụng tài khoản.
                 </Alert>

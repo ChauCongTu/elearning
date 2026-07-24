@@ -10,10 +10,7 @@ type Props = {
 export default function ServiceHighlights({ services }: Props) {
     return (
         <Container size="xl" py={72}>
-            <SectionHeading
-                title="Dịch vụ nổi bật"
-                description="Trải nghiệm dịch vụ thẩm mỹ cao cấp — nơi vẻ đẹp được chăm chút bằng tay nghề và tâm huyết."
-            />
+            <SectionHeading title="Dịch vụ nổi bật" />
             <SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }} spacing="lg">
                 {services.map((service) => (
                     <Card key={service.title} padding="lg" radius="xl" className="public-soft-card public-card-hover">

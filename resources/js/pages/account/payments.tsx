@@ -14,16 +14,13 @@ export default function AccountPayments({ payments }: Props) {
         <>
             <Head title="Lịch sử thanh toán" />
 
-            <Heading
-                title="Lịch sử thanh toán"
-                description="Các giao dịch thanh toán khóa học — kích hoạt tự động 24/7."
-            />
+            <Heading title="Lịch sử thanh toán" />
 
             {payments.length === 0 ? (
                 <EmptyState
                     icon={<CreditCard className="size-12" />}
                     title="Chưa có giao dịch nào"
-                    description="Lịch sử thanh toán sẽ được ghi nhận sau khi bạn hoàn tất mua khóa học."
+                    description="Thanh toán khóa học để xem lịch sử tại đây."
                 />
             ) : (
                 <div className="mt-6 overflow-x-auto rounded-xl border border-gray-100">

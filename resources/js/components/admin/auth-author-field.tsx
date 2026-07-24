@@ -13,7 +13,6 @@ export default function AuthAuthorField({ value }: Props) {
     return (
         <TextInput
             label="Tác giả"
-            description="Tự động lấy từ tài khoản đang đăng nhập."
             value={displayName}
             disabled
             readOnly

@@ -12,7 +12,7 @@ type Props = {
 export default function CourseShowcase({
     courses,
     title = 'Khóa học đang tuyển sinh',
-    description = 'Chương trình đào tạo bài bản từ cơ bản đến nâng cao, hướng dẫn bởi chuyên gia hàng đầu.',
+    description,
 }: Props) {
     return (
         <Container size="xl" py={64}>

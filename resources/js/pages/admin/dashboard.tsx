@@ -53,10 +53,7 @@ export default function AdminDashboard({ overview }: Props) {
     return (
         <>
             <Head title="Quản trị" />
-            <AdminPageHeader
-                title="Tổng quan"
-                description="Theo dõi doanh thu, đơn hàng và hoạt động học viên."
-            />
+            <AdminPageHeader title="Tổng quan" />
 
             <SimpleGrid cols={{ base: 1, sm: 2, lg: 4 }} spacing="md" mb="xl">
                 <KpiCard

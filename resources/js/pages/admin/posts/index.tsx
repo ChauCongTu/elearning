@@ -25,7 +25,6 @@ export default function AdminPostsIndex({ posts, categories, filters }: Props) {
             <Head title="Tin tức" />
             <AdminPageHeader
                 title="Tin tức"
-                description="Quản lý bài viết blog và tin tức."
                 actions={
                     <Button component={Link} href="/admin/posts/create" leftSection={<Plus size={16} />}>
                         Viết bài mới

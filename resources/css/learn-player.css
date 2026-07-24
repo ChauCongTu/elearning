@@ -5,7 +5,13 @@
 
 .learn-video-shell__video {
     display: block;
-    cursor: pointer;
+}
+
+.learn-video-tap-layer {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    touch-action: manipulation;
 }
 
 .learn-video-ui {
@@ -92,6 +98,52 @@
 .learn-video-ui__center-play:hover {
     background: rgb(236 72 153 / 0.85);
     transform: translate(-50%, -50%) scale(1.05);
+}
+
+.learn-video-ui__seek-hint {
+    position: absolute;
+    top: 50%;
+    z-index: 5;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.85rem 1.1rem;
+    border-radius: 999px;
+    background: rgb(0 0 0 / 0.55);
+    color: #fff;
+    font-size: 0.95rem;
+    font-weight: 700;
+    line-height: 1;
+    pointer-events: none;
+    animation: learn-video-seek-hint 0.75s ease forwards;
+}
+
+.learn-video-ui__seek-hint--left {
+    left: 18%;
+    transform: translate(-50%, -50%);
+}
+
+.learn-video-ui__seek-hint--right {
+    left: 82%;
+    transform: translate(-50%, -50%);
+}
+
+@keyframes learn-video-seek-hint {
+    0% {
+        opacity: 0;
+        scale: 0.82;
+    }
+
+    18% {
+        opacity: 1;
+        scale: 1;
+    }
+
+    100% {
+        opacity: 0;
+        scale: 1.08;
+    }
 }
 
 .learn-video-ui__bottom {

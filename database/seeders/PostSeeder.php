@@ -98,6 +98,34 @@ class PostSeeder extends Seeder
                 'excerpt' => 'Học phun xăm online phù hợp cho lý thuyết và ôn tập, nhưng thực hành tay nghề vẫn cần được kèm sát trực tiếp.',
                 'content' => '<p>Kết hợp học online lý thuyết và offline thực hành là lộ trình hiệu quả nhất cho người bận rộn muốn vào nghề bài bản.</p>',
             ],
+            [
+                'category' => 'kien-thuc',
+                'slug' => 'cham-soc-da-sau-phun',
+                'title' => 'Chăm Sóc Da Sau Phun: Những Điều Cần Biết',
+                'excerpt' => 'Giai đoạn hồi phục quyết định độ bền màu và an toàn cho khách.',
+                'content' => '<p>Tránh nắng, không bóc vảy, dưỡng ẩm đúng cách là ba nguyên tắc cơ bản sau khi phun.</p>',
+            ],
+            [
+                'category' => 'kien-thuc',
+                'slug' => 'chon-mau-phun-moi',
+                'title' => 'Cách Chọn Màu Phun Môi Phù Hợp Tone Da',
+                'excerpt' => 'Màu sắc hài hòa giúp kết quả tự nhiên và khách hài lòng lâu dài.',
+                'content' => '<p>Tham khảo undertone da, sắc tố môi gốc và thói quen trang điểm của khách trước khi chốt màu.</p>',
+            ],
+            [
+                'category' => 'tin-tuc-noi-bat',
+                'slug' => 'khai-giang-khoa-moi',
+                'title' => 'Khai Giảng Khóa Phun Xăm Tháng Mới',
+                'excerpt' => 'Thông tin lịch khai giảng và ưu đãi đăng ký sớm.',
+                'content' => '<p>Liên hệ hotline để giữ chỗ và nhận tư vấn lộ trình học phù hợp.</p>',
+            ],
+            [
+                'category' => 'tin-tuc-noi-bat',
+                'slug' => 'workshop-phun-moi-nano',
+                'title' => 'Workshop Phun Môi Nano Cùng Chuyên Gia',
+                'excerpt' => 'Buổi demo kỹ thuật và Q&A dành cho học viên và khách quan tâm.',
+                'content' => '<p>Sự kiện giới hạn số lượng — đăng ký trước qua Zalo hoặc hotline.</p>',
+            ],
         ];
 
         foreach ($posts as $index => $data) {

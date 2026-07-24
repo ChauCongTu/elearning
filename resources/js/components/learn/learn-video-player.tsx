@@ -4,6 +4,8 @@ import {
     Minimize,
     Pause,
     Play,
+    RotateCcw,
+    RotateCw,
     Volume2,
     VolumeX,
 } from 'lucide-react';
@@ -23,6 +25,16 @@ import { formatVideoTime } from '@/lib/format';
 const CONTROLS_HIDE_DELAY_MS = 2800;
 const SEEK_GRACE_SECONDS = 3;
 const SEEK_STEP_SECONDS = 5;
+const DOUBLE_TAP_WINDOW_MS = 300;
+const SEEK_HINT_VISIBLE_MS = 750;
+
+type SeekHint = {
+    id: number;
+    side: 'left' | 'right';
+    seconds: number;
+};
+
+type TapSide = 'left' | 'right';
 
 type LearnVideoPlayerProps = {
     videoRef: RefObject<HTMLVideoElement | null>;
@@ -72,6 +84,10 @@ export default function LearnVideoPlayer({
     const progressRef = useRef<HTMLDivElement>(null);
     const hideTimerRef = useRef<number | null>(null);
     const draggingRef = useRef(false);
+    const lastTapRef = useRef<{ time: number; side: TapSide | null }>({
+        time: 0,
+        side: null,
+    });
 
     const [isPlaying, setIsPlaying] = useState(false);
     const [currentTime, setCurrentTime] = useState(startAt);
@@ -82,6 +98,7 @@ export default function LearnVideoPlayer({
     const [controlsVisible, setControlsVisible] = useState(true);
     const [isScrubbing, setIsScrubbing] = useState(false);
     const [shortcutsHelpVisible, setShortcutsHelpVisible] = useState(false);
+    const [seekHint, setSeekHint] = useState<SeekHint | null>(null);
     const shortcutsHelpVisibleRef = useRef(false);
 
     const clearHideTimer = useCallback(() => {
@@ -132,11 +149,38 @@ export default function LearnVideoPlayer({
         [duration, maxAllowedSeek, videoRef],
     );
 
-    const togglePlay = useCallback(async () => {
+    const play = useCallback(async () => {
         if (playbackBlocked) {
             return;
         }
 
+        const video = videoRef.current;
+
+        if (!video || (!video.paused && !video.ended)) {
+            return;
+        }
+
+        try {
+            await video.play();
+        } catch {
+            // Autoplay or gesture restrictions — ignore.
+        }
+
+        revealControls();
+    }, [playbackBlocked, revealControls, videoRef]);
+
+    const pause = useCallback(() => {
+        const video = videoRef.current;
+
+        if (!video || video.paused) {
+            return;
+        }
+
+        video.pause();
+        revealControls();
+    }, [revealControls, videoRef]);
+
+    const togglePlay = useCallback(async () => {
         const video = videoRef.current;
 
         if (!video) {
@@ -144,17 +188,11 @@ export default function LearnVideoPlayer({
         }
 
         if (video.paused || video.ended) {
-            try {
-                await video.play();
-            } catch {
-                // Autoplay or gesture restrictions — ignore.
-            }
+            await play();
         } else {
-            video.pause();
+            pause();
         }
-
-        revealControls();
-    }, [playbackBlocked, revealControls, videoRef]);
+    }, [pause, play, videoRef]);
 
     const toggleMute = useCallback(() => {
         const video = videoRef.current;
@@ -189,6 +227,80 @@ export default function LearnVideoPlayer({
     const focusShell = useCallback(() => {
         shellRef.current?.focus({ preventScroll: true });
     }, [shellRef]);
+
+    const seekRelative = useCallback(
+        (deltaSeconds: number, side: TapSide) => {
+            const video = videoRef.current;
+
+            if (!video) {
+                return;
+            }
+
+            seekTo(video.currentTime + deltaSeconds);
+
+            const hintId = Date.now();
+            setSeekHint({ id: hintId, side, seconds: Math.abs(deltaSeconds) });
+            window.setTimeout(() => {
+                setSeekHint((current) => (current?.id === hintId ? null : current));
+            }, SEEK_HINT_VISIBLE_MS);
+
+            revealControls();
+        },
+        [revealControls, seekTo, videoRef],
+    );
+
+    const resolveTapSide = useCallback(
+        (clientX: number): TapSide | null => {
+            const shell = shellRef.current;
+
+            if (!shell) {
+                return null;
+            }
+
+            const rect = shell.getBoundingClientRect();
+
+            return clientX - rect.left < rect.width / 2 ? 'left' : 'right';
+        },
+        [shellRef],
+    );
+
+    const handleDoubleTapSeek = useCallback(
+        (clientX: number) => {
+            const side = resolveTapSide(clientX);
+
+            if (!side) {
+                return;
+            }
+
+            lastTapRef.current = { time: 0, side: null };
+            seekRelative(side === 'left' ? -SEEK_STEP_SECONDS : SEEK_STEP_SECONDS, side);
+        },
+        [resolveTapSide, seekRelative],
+    );
+
+    const handleSurfaceTap = useCallback(
+        (clientX: number) => {
+            focusShell();
+            revealControls();
+
+            const side = resolveTapSide(clientX);
+
+            if (!side) {
+                return;
+            }
+
+            const now = Date.now();
+            const last = lastTapRef.current;
+
+            if (now - last.time <= DOUBLE_TAP_WINDOW_MS && last.side === side) {
+                handleDoubleTapSeek(clientX);
+                return;
+            }
+
+            lastTapRef.current = { time: now, side };
+        },
+        [focusShell, handleDoubleTapSeek, revealControls, resolveTapSide],
+    );
 
     const toggleShortcutsHelp = useCallback(() => {
         setShortcutsHelpVisible((visible) => {
@@ -285,6 +397,8 @@ export default function LearnVideoPlayer({
         setControlsVisible(true);
         setShortcutsHelpVisible(false);
         shortcutsHelpVisibleRef.current = false;
+        lastTapRef.current = { time: 0, side: null };
+        setSeekHint(null);
         clearHideTimer();
     }, [clearHideTimer, lessonKey, startAt]);
 
@@ -449,11 +563,37 @@ export default function LearnVideoPlayer({
                 preload="metadata"
                 playsInline
                 onContextMenu={(event) => event.preventDefault()}
-                onClick={() => {
-                    focusShell();
-                    void togglePlay();
+            />
+
+            <div
+                className="learn-video-tap-layer"
+                aria-hidden
+                onClick={(event) => {
+                    if (event.detail >= 2) {
+                        return;
+                    }
+
+                    handleSurfaceTap(event.clientX);
+                }}
+                onDoubleClick={(event) => {
+                    event.preventDefault();
+                    handleDoubleTapSeek(event.clientX);
                 }}
             />
+
+            {seekHint && (
+                <div
+                    className={`learn-video-ui__seek-hint learn-video-ui__seek-hint--${seekHint.side}`}
+                    aria-live="polite"
+                >
+                    {seekHint.side === 'left' ? (
+                        <RotateCcw className="size-9" strokeWidth={1.75} />
+                    ) : (
+                        <RotateCw className="size-9" strokeWidth={1.75} />
+                    )}
+                    <span>{seekHint.seconds} giây</span>
+                </div>
+            )}
 
             <VideoPlayerShortcutsHelp
                 visible={shortcutsHelpVisible}
@@ -473,14 +613,18 @@ export default function LearnVideoPlayer({
                     <span className="learn-video-ui__brand">{appName}</span>
                 </div>
 
-                {!isPlaying && (
+                {controlsVisible && !shortcutsHelpVisible && (
                     <button
                         type="button"
                         className="learn-video-ui__center-play"
-                        aria-label="Phát video"
-                        onClick={() => void togglePlay()}
+                        aria-label={isPlaying ? 'Tạm dừng' : 'Phát video'}
+                        onClick={() => (isPlaying ? pause() : void play())}
                     >
-                        <Play className="size-10 fill-white text-white" strokeWidth={1.5} />
+                        {isPlaying ? (
+                            <Pause className="size-10 text-white" strokeWidth={1.5} />
+                        ) : (
+                            <Play className="size-10 fill-white text-white" strokeWidth={1.5} />
+                        )}
                     </button>
                 )}
 
@@ -538,7 +682,7 @@ export default function LearnVideoPlayer({
                             type="button"
                             className="learn-video-ui__btn"
                             aria-label={isPlaying ? 'Tạm dừng' : 'Phát'}
-                            onClick={() => void togglePlay()}
+                            onClick={() => (isPlaying ? pause() : void play())}
                         >
                             {isPlaying ? (
                                 <Pause className="size-5" />

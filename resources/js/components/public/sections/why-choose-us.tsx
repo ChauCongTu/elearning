@@ -14,11 +14,7 @@ export default function WhyChooseUs({ items }: Props) {
     return (
         <Box py={72} className="public-surface-alt">
             <Container size="xl">
-                <SectionHeading
-                    eyebrow="Lý do chọn chúng tôi"
-                    title="Vì sao chọn Bông Nhài Trắng"
-                    description="Không chỉ dạy nghề — chúng tôi dẫn dắt bạn xây dựng sự nghiệp bền vững trong ngành thẩm mỹ."
-                />
+                <SectionHeading eyebrow="Lý do chọn chúng tôi" title="Vì sao chọn Bông Nhài Trắng" />
                 <SimpleGrid cols={{ base: 1, sm: 2, lg: 4 }} spacing="lg">
                     {items.map((item, index) => {
                         const Icon = icons[index % icons.length];

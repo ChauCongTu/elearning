@@ -21,7 +21,6 @@ export default function Register({ passwordRules }: Props) {
             <Head title="Đăng ký" />
             <AuthShell
                 title="Tạo tài khoản"
-                description="Đăng ký miễn phí để mua và học khóa online."
                 footer={
                     <Text size="sm" ta="center" c="dimmed">
                         Đã có tài khoản?{' '}
@@ -58,7 +57,6 @@ export default function Register({ passwordRules }: Props) {
                                 name="phone"
                                 type="tel"
                                 placeholder="0912345678"
-                                description="Tùy chọn — dùng để tư vấn khóa học"
                                 error={errors.phone}
                             />
                             <PasswordInput

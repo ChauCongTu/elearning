@@ -13,10 +13,7 @@ export default function ResetPassword({ token, email, passwordRules }: Props) {
     return (
         <>
             <Head title="Đặt lại mật khẩu" />
-            <AuthShell
-                title="Đặt lại mật khẩu"
-                description="Nhập mật khẩu mới cho tài khoản của bạn."
-            >
+            <AuthShell title="Đặt lại mật khẩu">
                 <Form
                     {...update.form()}
                     transform={(data) => ({ ...data, token, email })}

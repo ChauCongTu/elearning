@@ -15,7 +15,7 @@ export default function SettingsLayout({ children }: PropsWithChildren) {
 
     return (
         <div>
-            <Heading title="Cài đặt tài khoản" description="Quản lý hồ sơ và bảo mật." />
+            <Heading title="Cài đặt tài khoản" />
 
             <div className="dashboard-settings-grid mt-6">
                 <aside>

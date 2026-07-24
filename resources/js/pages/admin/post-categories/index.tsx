@@ -85,10 +85,7 @@ export default function AdminPostCategoriesIndex({ categories }: Props) {
     return (
         <>
             <Head title="Danh mục tin tức" />
-            <AdminPageHeader
-                title="Danh mục tin tức"
-                description="Phân loại bài viết trên trang tin tức."
-                actions={
+            <AdminPageHeader title="Danh mục tin tức" actions={
                     <Button leftSection={<Plus size={16} />} onClick={openCreate}>
                         Thêm danh mục
                     </Button>

@@ -12,10 +12,7 @@ export default function CategoryShowcase({ items }: Props) {
     return (
         <Box py={72} className="public-surface-alt">
             <Container size="xl">
-                <SectionHeading
-                    title="Lĩnh vực đào tạo"
-                    description="Khám phá các chương trình đào tạo theo từng chuyên môn."
-                />
+                <SectionHeading title="Lĩnh vực đào tạo" />
                 <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="lg">
                     {items.map((item) => (
                         <Stack

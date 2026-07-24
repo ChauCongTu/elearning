@@ -9,10 +9,7 @@ type Props = {
 export default function VideoGallery({ videos }: Props) {
     return (
         <Container size="xl" py={72}>
-            <SectionHeading
-                title="Video nổi bật"
-                description="Cùng khám phá hành trình học nghề và dịch vụ tại học viện."
-            />
+            <SectionHeading title="Video nổi bật" />
             <SimpleGrid cols={{ base: 1, md: 3 }} spacing="lg">
                 {videos.map((video) => (
                     <Stack key={video.title} gap="sm">

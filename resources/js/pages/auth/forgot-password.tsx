@@ -10,7 +10,6 @@ export default function ForgotPassword({ status }: { status?: string }) {
             <Head title="Quên mật khẩu" />
             <AuthShell
                 title="Quên mật khẩu"
-                description="Nhập email để nhận liên kết đặt lại mật khẩu."
                 footer={
                     <Text size="sm" ta="center" c="dimmed">
                         <Anchor component={Link} href={login()}>

@@ -46,9 +46,6 @@ export default function ImageUploadField({
                         fit="cover"
                         mah={previewHeight}
                     />
-                    <Text size="xs" c="dimmed">
-                        Xem trước ảnh sẽ hiển thị sau khi lưu.
-                    </Text>
                 </Group>
             )}
         </Box>

@@ -90,7 +90,6 @@ export default function AdminPostFormPage({ post, categories }: Props) {
             <Group justify="space-between" mb="lg" wrap="wrap">
                 <AdminPageHeader
                     title={isEdit ? 'Sửa bài viết' : 'Viết bài mới'}
-                    description="Soạn nội dung bên trái, cấu hình meta bên phải."
                 />
                 <Group>
                     <Button component={Link} href="/admin/posts" variant="default">
@@ -112,7 +111,6 @@ export default function AdminPostFormPage({ post, categories }: Props) {
                     />
                     <AdminRichTextField
                         label="Nội dung"
-                        description="Soạn thảo bài viết — có thể chèn ảnh trực tiếp."
                         value={form.values.content}
                         onChange={(value) => form.setFieldValue('content', value)}
                         minHeight={520}
@@ -143,7 +141,6 @@ export default function AdminPostFormPage({ post, categories }: Props) {
                         <AuthAuthorField value={authorName} />
                         <Textarea
                             label="Tóm tắt"
-                            description="Hiển thị trên thẻ bài viết."
                             minRows={4}
                             maxLength={1000}
                             {...form.getInputProps('excerpt')}
@@ -153,7 +150,6 @@ export default function AdminPostFormPage({ post, categories }: Props) {
                         </Text>
                         <ImageUploadField
                             label="Ảnh đại diện"
-                            description="Tỷ lệ 16:9 khuyến nghị."
                             existingUrl={post?.featured_image}
                             value={form.values.featured_image}
                             onChange={(file) => form.setFieldValue('featured_image', file)}

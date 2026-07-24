@@ -24,7 +24,6 @@ export default function Login({ status, canResetPassword }: Props) {
             <Head title="Đăng nhập" />
             <AuthShell
                 title="Đăng nhập"
-                description="Nhập email và mật khẩu để tiếp tục học."
                 footer={
                     <Text size="sm" ta="center" c="dimmed">
                         Chưa có tài khoản?{' '}

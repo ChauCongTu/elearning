@@ -181,19 +181,19 @@
                 "key": "featured",
                 "title": "Tin tức nổi bật",
                 "category_slug": "tin-tuc-noi-bat",
-                "limit": 2
+                "limit": 4
             },
             {
                 "key": "career",
                 "title": "Hướng nghiệp",
                 "category_slug": "huong-nghiep",
-                "limit": 2
+                "limit": 4
             },
             {
                 "key": "knowledge",
                 "title": "Kiến thức",
                 "category_slug": "kien-thuc",
-                "limit": 2
+                "limit": 4
             }
         ],
         "consultation": {
