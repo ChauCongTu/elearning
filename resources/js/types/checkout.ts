@@ -21,6 +21,7 @@ export type CheckoutOrder = {
         title: string;
         slug: string;
         thumbnail_path: string | null;
+        thumbnail_url?: string | null;
     } | null;
     qr: CheckoutQr;
 };

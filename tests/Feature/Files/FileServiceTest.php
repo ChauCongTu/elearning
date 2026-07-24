@@ -52,6 +52,25 @@ test('file service uses configured upload disk', function () {
         ->and(app(FileServiceInterface::class)->disk())->toBe('public');
 });
 
+test('file service returns signed url for s3 disk', function () {
+    Storage::fake('s3');
+    config([
+        'filesystems.upload_disk' => 's3',
+        'filesystems.disks.s3.options' => ['ACL' => ''],
+        'filesystems.upload_url_ttl_minutes' => 60,
+    ]);
+
+    Storage::disk('s3')->put('courses/thumbnails/demo.jpg', 'binary');
+
+    $service = app(FileServiceInterface::class);
+    $url = $service->url('courses/thumbnails/demo.jpg');
+
+    expect($url)
+        ->not->toBeNull()
+        ->and($url)->toContain('courses/thumbnails/demo.jpg')
+        ->and($url)->not->toContain('/storage/');
+});
+
 test('file service uploads lesson video to s3 without creating directory placeholder', function () {
     Storage::fake('s3');
     config([

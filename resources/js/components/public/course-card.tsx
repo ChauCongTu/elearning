@@ -18,7 +18,7 @@ type Props = {
 };
 
 export default function CourseCard({ course }: Props) {
-    const thumbnail = courseThumbnailUrl(course.thumbnail_path, course.slug);
+    const thumbnail = courseThumbnailUrl(course.thumbnail_path, course.slug, course.thumbnail_url);
 
     return (
         <Card

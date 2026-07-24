@@ -37,7 +37,7 @@ export default function MyCourseRow({ enrollment, featured = false }: Props) {
 
     const progress = Math.min(Number.parseFloat(enrollment.progress_percent), 100);
     const isCompleted = progress >= 100 || enrollment.completed_at !== null;
-    const thumbnail = courseThumbnailUrl(course.thumbnail_path, course.slug);
+    const thumbnail = courseThumbnailUrl(course.thumbnail_path, course.slug, course.thumbnail_url);
 
     if (featured) {
         return (

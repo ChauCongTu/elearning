@@ -59,7 +59,7 @@ export default function AccountPurchases({ orders }: Props) {
                                 {order.items.map((item) => {
                                     const course = item.course;
                                     const thumbnail = course
-                                        ? courseThumbnailUrl(course.thumbnail_path, course.slug)
+                                        ? courseThumbnailUrl(course.thumbnail_path, course.slug, course.thumbnail_url)
                                         : null;
 
                                     return (

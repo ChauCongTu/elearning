@@ -63,6 +63,7 @@ export type AdminCourseListItem = {
     is_published: boolean;
     is_featured: boolean;
     thumbnail_path: string | null;
+    thumbnail_url?: string | null;
     category: { id: string; name: string } | null;
     updated_at: string | null;
 };
@@ -77,6 +78,7 @@ export type AdminCourseForm = {
     price: string;
     compare_price: string | null;
     thumbnail_path: string | null;
+    thumbnail_url?: string | null;
     instructor_name: string | null;
     instructor_title: string | null;
     duration_label: string | null;
@@ -180,6 +182,7 @@ export type AdminBanner = {
     id: string;
     title: string;
     image_path: string;
+    image_url?: string | null;
     link_url: string | null;
     sort_order: number;
     is_active: boolean;

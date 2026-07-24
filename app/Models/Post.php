@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\ResolvesMediaUrl;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -23,6 +24,15 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 ])]
 class Post extends BaseModel
 {
+    use ResolvesMediaUrl;
+
+    protected $appends = ['featured_image_url'];
+
+    public function getFeaturedImageUrlAttribute(): ?string
+    {
+        return $this->resolveMediaUrl($this->featured_image);
+    }
+
     public function category(): BelongsTo
     {
         return $this->belongsTo(PostCategory::class, 'post_category_id');

@@ -6,6 +6,7 @@ export type PurchaseOrderItem = {
         title: string;
         slug: string;
         thumbnail_path: string | null;
+        thumbnail_url?: string | null;
     } | null;
 };
 

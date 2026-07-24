@@ -77,6 +77,7 @@ class AdminBannerService implements AdminBannerServiceInterface
             'id' => $banner->id,
             'title' => $banner->title,
             'image_path' => $banner->image_path,
+            'image_url' => $banner->image_url,
             'link_url' => $banner->link_url,
             'sort_order' => $banner->sort_order,
             'is_active' => $banner->is_active,

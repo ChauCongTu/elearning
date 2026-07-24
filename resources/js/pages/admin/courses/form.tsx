@@ -283,7 +283,7 @@ export default function AdminCourseFormPage({ course, categories }: Props) {
                             </Title>
                             <ImageUploadField
                                 description="Ảnh ngang, tối thiểu 800×450px. JPG/PNG, tối đa 5MB."
-                                existingUrl={course?.thumbnail_path}
+                                existingUrl={course?.thumbnail_url ?? course?.thumbnail_path}
                                 value={form.values.thumbnail}
                                 onChange={(file) => form.setFieldValue('thumbnail', file)}
                                 previewHeight={140}

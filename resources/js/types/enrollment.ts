@@ -9,6 +9,7 @@ export type EnrollmentCard = {
         slug: string;
         excerpt: string | null;
         thumbnail_path: string | null;
+        thumbnail_url?: string | null;
         duration_label: string | null;
         lesson_count_label: string | null;
     } | null;

@@ -123,6 +123,7 @@ class AdminCourseService implements AdminCourseServiceInterface
             'is_published' => $course->is_published,
             'is_featured' => $course->is_featured,
             'thumbnail_path' => $course->thumbnail_path,
+            'thumbnail_url' => $course->thumbnail_url,
             'category' => $course->category ? [
                 'id' => $course->category->id,
                 'name' => $course->category->name,
@@ -146,6 +147,7 @@ class AdminCourseService implements AdminCourseServiceInterface
             'price' => (string) $course->price,
             'compare_price' => $course->compare_price !== null ? (string) $course->compare_price : null,
             'thumbnail_path' => $course->thumbnail_path,
+            'thumbnail_url' => $course->thumbnail_url,
             'instructor_name' => $course->instructor_name,
             'instructor_title' => $course->instructor_title,
             'duration_label' => $course->duration_label,

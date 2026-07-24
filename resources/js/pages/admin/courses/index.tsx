@@ -76,7 +76,7 @@ export default function AdminCoursesIndex({ courses, filters }: Props) {
                 </Table.Thead>
                 <Table.Tbody>
                     {courses.data.map((course) => {
-                        const thumb = courseThumbnailUrl(course.thumbnail_path, course.slug);
+                        const thumb = courseThumbnailUrl(course.thumbnail_path, course.slug, course.thumbnail_url);
                         return (
                             <Table.Tr key={course.id}>
                                 <Table.Td>

@@ -129,6 +129,7 @@ class AdminPostService implements AdminPostServiceInterface
             'excerpt' => $post->excerpt,
             'content' => $post->content,
             'featured_image' => $post->featured_image,
+            'featured_image_url' => $post->featured_image_url,
             'author_name' => $post->author_name,
             'is_published' => $post->is_published,
             'is_featured' => $post->is_featured,

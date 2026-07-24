@@ -54,7 +54,7 @@ export default function CourseShow({
     purchaseState,
 }: Props) {
     const { auth } = usePage<{ auth: Auth }>().props;
-    const thumbnail = courseThumbnailUrl(course.thumbnail_path, course.slug);
+    const thumbnail = courseThumbnailUrl(course.thumbnail_path, course.slug, course.thumbnail_url);
     const totalLessons = course.chapters.reduce(
         (sum, chapter) => sum + chapter.lessons.length,
         0,

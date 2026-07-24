@@ -18,6 +18,7 @@ export type Course = {
     price: string;
     compare_price: string | null;
     thumbnail_path: string | null;
+    thumbnail_url?: string | null;
     is_featured: boolean;
     duration_label: string | null;
     lesson_count_label: string | null;
@@ -55,6 +56,7 @@ export type Banner = {
     id: string;
     title: string | null;
     image_path: string;
+    image_url?: string | null;
     link_url: string | null;
 };
 

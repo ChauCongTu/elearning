@@ -20,7 +20,7 @@ type Props = {
 
 export default function CourseEnrollmentCard({ course }: Props) {
     const site = useSiteConfig();
-    const thumbnail = courseThumbnailUrl(course.thumbnail_path, course.slug);
+    const thumbnail = courseThumbnailUrl(course.thumbnail_path, course.slug, course.thumbnail_url);
     const badge = course.meta?.badge ?? (course.is_featured ? 'Nổi bật' : null);
 
     return (

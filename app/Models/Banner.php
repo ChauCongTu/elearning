@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\ResolvesMediaUrl;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -17,6 +18,15 @@ use Illuminate\Database\Eloquent\Model;
 ])]
 class Banner extends BaseModel
 {
+    use ResolvesMediaUrl;
+
+    protected $appends = ['image_url'];
+
+    public function getImageUrlAttribute(): ?string
+    {
+        return $this->resolveMediaUrl($this->image_path);
+    }
+
     public function scopeActive(Builder $query): Builder
     {
         return $query

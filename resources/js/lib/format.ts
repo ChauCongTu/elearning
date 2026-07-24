@@ -82,7 +82,14 @@ export function formatDuration(seconds: number): string {
     return remaining > 0 ? `${minutes} phút ${remaining}s` : `${minutes} phút`;
 }
 
-export function mediaUrl(path: string | null | undefined): string | null {
+export function mediaUrl(
+    path: string | null | undefined,
+    resolvedUrl?: string | null,
+): string | null {
+    if (resolvedUrl) {
+        return resolvedUrl;
+    }
+
     if (!path) {
         return null;
     }
@@ -105,8 +112,9 @@ export function mediaUrl(path: string | null | undefined): string | null {
 export function courseThumbnailUrl(
     thumbnailPath: string | null | undefined,
     _slug?: string,
+    thumbnailUrl?: string | null,
 ): string | null {
-    return mediaUrl(thumbnailPath);
+    return mediaUrl(thumbnailPath, thumbnailUrl);
 }
 
 export function courseGradient(slug: string): string {

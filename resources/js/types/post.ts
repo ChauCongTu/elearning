@@ -12,6 +12,7 @@ export type PostSummary = {
     slug: string;
     excerpt: string | null;
     featured_image: string | null;
+    featured_image_url?: string | null;
     author_name: string | null;
     is_featured: boolean;
     published_at: string | null;

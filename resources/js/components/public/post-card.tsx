@@ -21,7 +21,7 @@ function formatDate(value: string | null): string {
 }
 
 export default function PostCard({ post }: Props) {
-    const image = mediaUrl(post.featured_image);
+    const image = mediaUrl(post.featured_image, post.featured_image_url);
 
     return (
         <Card

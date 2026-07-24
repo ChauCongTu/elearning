@@ -34,7 +34,7 @@ function formatDate(value: string | null): string {
 }
 
 export default function PostShow({ post, relatedPosts }: Props) {
-    const featuredImage = mediaUrl(post.featured_image);
+    const featuredImage = mediaUrl(post.featured_image, post.featured_image_url);
 
     return (
         <>

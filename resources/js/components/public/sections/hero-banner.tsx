@@ -42,7 +42,7 @@ function buildSlides(banners: Banner[], slides: HeroSlide[], tagline: string): P
             offer: 'Ưu đãi học phí — tuyển sinh liên tục',
             cta_label: 'Đăng ký ngay',
             cta_url: banner.link_url ?? '',
-            image_url: mediaUrl(banner.image_path),
+            image_url: banner.image_url ?? mediaUrl(banner.image_path),
             fullImage: true,
         }));
     }

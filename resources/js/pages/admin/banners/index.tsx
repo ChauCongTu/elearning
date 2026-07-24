@@ -150,7 +150,7 @@ export default function AdminBannersIndex({ banners }: Props) {
                 </Table.Thead>
                 <Table.Tbody>
                     {banners.map((banner) => {
-                        const img = mediaUrl(banner.image_path);
+                        const img = mediaUrl(banner.image_path, banner.image_url);
                         return (
                             <Table.Tr key={banner.id}>
                                 <Table.Td>
@@ -249,7 +249,7 @@ export default function AdminBannersIndex({ banners }: Props) {
                     <ImageUploadField
                         label={editing ? 'Ảnh mới (tùy chọn)' : 'Ảnh banner'}
                         description="Banner ngang thiết kế sẵn (khuyến nghị 1600×700px, tỷ lệ 16:7). Ảnh hiển thị trọn trên trang chủ, không bị cắt."
-                        existingUrl={editing?.image_path}
+                        existingUrl={editing?.image_url ?? editing?.image_path}
                         value={form.values.image}
                         onChange={(file) => form.setFieldValue('image', file)}
                         error={(form.errors.image as string | undefined) || errors?.image}

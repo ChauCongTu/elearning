@@ -58,7 +58,21 @@ class FileService implements FileServiceInterface
             return asset($path);
         }
 
-        return Storage::disk($this->disk())->url($path);
+        $disk = $this->disk();
+        $storage = Storage::disk($disk);
+
+        if ($disk === 's3') {
+            if (! $storage->exists($path)) {
+                return null;
+            }
+
+            return $storage->temporaryUrl(
+                $path,
+                now()->addMinutes((int) config('filesystems.upload_url_ttl_minutes', 120)),
+            );
+        }
+
+        return $storage->url($path);
     }
 
     public function exists(?string $path): bool

@@ -39,6 +39,7 @@ export type ArticleItem = {
     url: string;
     slug?: string;
     featured_image?: string | null;
+    featured_image_url?: string | null;
     published_at?: string | null;
 };
 
