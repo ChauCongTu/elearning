@@ -67,6 +67,9 @@ class AdminCourseService implements AdminCourseServiceInterface
             'is_published' => $data['is_published'] ?? false,
             'published_at' => ($data['is_published'] ?? false) ? now() : null,
             'meta' => $data['meta'] ?? null,
+            'purchase_count_offset' => $data['purchase_count_offset'] ?? 0,
+            'certificate_template_type' => $data['certificate_template_type'] ?? null,
+            'certificate_template' => $data['certificate_template'] ?? null,
         ]);
 
         return $course;
@@ -152,6 +155,11 @@ class AdminCourseService implements AdminCourseServiceInterface
             'is_featured' => $course->is_featured,
             'is_published' => $course->is_published,
             'published_at' => $course->published_at?->toIso8601String(),
+            'certificate_template_type' => $course->certificate_template_type?->value,
+            'certificate_template' => $course->certificate_template,
+            'certificate_placeholders' => app(\App\Contracts\Student\CertificateTemplateRendererInterface::class)->availablePlaceholders(),
+            'purchase_count_offset' => (int) ($course->purchase_count_offset ?? 0),
+            'purchase_count' => $course->displayPurchaseCount(),
         ];
     }
 }

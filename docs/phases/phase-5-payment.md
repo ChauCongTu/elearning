@@ -99,4 +99,4 @@ Quên/mất full key → **bắt buộc rotate** (không khôi phục từ `.env
 
 ## Tiếp theo
 
-→ [phase-6-certificates.md](./phase-6-certificates.md)
+→ [phase-6-student-lookup.md](./phase-6-student-lookup.md)

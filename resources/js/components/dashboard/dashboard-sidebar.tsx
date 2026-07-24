@@ -1,7 +1,9 @@
 import { Link, usePage } from '@inertiajs/react';
 import {
     ArrowLeftRight,
+    Award,
     BookOpen,
+    ClipboardList,
     CreditCard,
     ExternalLink,
     FolderTree,
@@ -36,6 +38,7 @@ const studentSection: DashboardNavSection = {
     label: 'Học viên',
     items: [
         { title: 'Khóa học của tôi', href: '/account/courses', icon: GraduationCap },
+        { title: 'Chứng chỉ', href: '/account/certificates', icon: Award },
         { title: 'Lịch sử mua khóa', href: '/account/purchases', icon: ShoppingBag },
         { title: 'Lịch sử thanh toán', href: '/account/payments', icon: CreditCard },
         { title: 'Lịch sử đăng nhập', href: '/account/login-history', icon: History },
@@ -58,6 +61,7 @@ const adminSection: DashboardNavSection = {
         { title: 'Danh mục', href: '/admin/categories', icon: FolderTree, adminOnly: true },
         { title: 'Khóa học', href: '/admin/courses', icon: BookOpen, adminOnly: true },
         { title: 'Đơn hàng', href: '/admin/orders', icon: ShoppingBag, adminOnly: true },
+        { title: 'Tra cứu HV', href: '/admin/students', icon: ClipboardList, adminOnly: true },
         { title: 'Banner', href: '/admin/banners', icon: Image, adminOnly: true },
         { title: 'Tin tức', href: '/admin/posts', icon: Newspaper, adminOnly: true },
         { title: 'DM tin tức', href: '/admin/post-categories', icon: Tags, adminOnly: true },
@@ -171,6 +175,8 @@ export function dashboardPageTitle(pathname: string): string {
     if (pathname.startsWith('/admin/courses')) return 'Khóa học';
     if (pathname.startsWith('/admin/orders/') && pathname !== '/admin/orders') return 'Chi tiết đơn hàng';
     if (pathname.startsWith('/admin/orders')) return 'Đơn hàng';
+    if (pathname.startsWith('/admin/students/') && pathname !== '/admin/students') return 'Chi tiết học viên';
+    if (pathname.startsWith('/admin/students')) return 'Tra cứu học viên';
     if (pathname.startsWith('/admin/banners')) return 'Banner';
     if (pathname.startsWith('/admin/posts/create')) return 'Viết bài mới';
     if (pathname.includes('/admin/posts/') && pathname.includes('/edit')) return 'Sửa bài viết';
@@ -182,6 +188,7 @@ export function dashboardPageTitle(pathname: string): string {
     if (pathname.startsWith('/account/purchases')) return 'Lịch sử mua khóa';
     if (pathname.startsWith('/account/payments')) return 'Lịch sử thanh toán';
     if (pathname.startsWith('/account/login-history')) return 'Lịch sử đăng nhập';
+    if (pathname.startsWith('/account/certificates')) return 'Chứng chỉ của tôi';
     if (pathname.startsWith('/account/courses')) return 'Khóa học của tôi';
     if (pathname.startsWith('/settings/security')) return 'Bảo mật tài khoản';
     if (pathname.startsWith('/settings/profile')) return 'Hồ sơ cá nhân';

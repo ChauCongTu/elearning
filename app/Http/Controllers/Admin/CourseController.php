@@ -131,6 +131,9 @@ class CourseController extends Controller
             'is_featured' => ['nullable', 'boolean'],
             'is_published' => ['nullable', 'boolean'],
             'thumbnail' => ['nullable', 'image', 'max:5120'],
+            'certificate_template_type' => ['nullable', 'string', 'in:default,markdown,latex'],
+            'certificate_template' => ['nullable', 'string', 'max:50000'],
+            'purchase_count_offset' => ['nullable', 'integer', 'min:0'],
         ], [
             'title.required' => 'Vui lòng nhập tên khóa học.',
             'price.required' => 'Vui lòng nhập giá khóa học.',
@@ -140,6 +143,14 @@ class CourseController extends Controller
             $data['benefits'] = array_values(array_filter(
                 array_map('trim', explode("\n", $request->input('benefits')))
             ));
+        }
+
+        if (($data['certificate_template'] ?? null) === '') {
+            $data['certificate_template'] = null;
+        }
+
+        if (($data['certificate_template_type'] ?? null) === '') {
+            $data['certificate_template_type'] = null;
         }
 
         return $data;

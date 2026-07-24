@@ -5,10 +5,16 @@ namespace App\Providers;
 use App\Contracts\Files\FileServiceInterface;
 use App\Contracts\Learning\EnrollmentProgressServiceInterface;
 use App\Contracts\Learning\LearningServiceInterface;
+use App\Contracts\Payment\OrderManualCompletionServiceInterface;
+use App\Contracts\Mail\TransactionalMailServiceInterface;
 use App\Contracts\Payment\OrderServiceInterface;
 use App\Contracts\Payment\SePayServiceInterface;
 use App\Contracts\Payment\SePayWebhookKeyServiceInterface;
 use App\Contracts\Video\VideoStreamServiceInterface;
+use App\Contracts\Student\CertificateServiceInterface;
+use App\Contracts\Student\CertificateTemplateRendererInterface;
+use App\Contracts\Student\StudentLookupServiceInterface;
+use App\Contracts\Student\StudentSyncServiceInterface;
 use App\Contracts\Enrollment\EnrollmentServiceInterface;
 use App\Contracts\Admin\AdminDashboardServiceInterface;
 use App\Contracts\Admin\AdminBannerServiceInterface;
@@ -18,6 +24,7 @@ use App\Contracts\Admin\AdminCurriculumServiceInterface;
 use App\Contracts\Admin\AdminOrderServiceInterface;
 use App\Contracts\Admin\AdminPostCategoryServiceInterface;
 use App\Contracts\Admin\AdminPostServiceInterface;
+use App\Contracts\Admin\AdminStudentServiceInterface;
 use App\Contracts\Admin\AdminUserServiceInterface;
 use App\Contracts\Catalog\CategoryServiceInterface;
 use App\Contracts\Catalog\CourseCatalogServiceInterface;
@@ -39,6 +46,7 @@ use App\Services\Admin\AdminCurriculumService;
 use App\Services\Admin\AdminOrderService;
 use App\Services\Admin\AdminPostCategoryService;
 use App\Services\Admin\AdminPostService;
+use App\Services\Admin\AdminStudentService;
 use App\Services\Admin\AdminUserService;
 use App\Services\Catalog\CategoryService;
 use App\Services\Catalog\CourseCatalogService;
@@ -49,19 +57,27 @@ use App\Services\Content\HomePageService;
 use App\Services\Content\PostCategoryService;
 use App\Services\Content\PostService;
 use App\Services\Content\SiteContentService;
+use App\Listeners\SendRegistrationWelcomeEmail;
 use App\Listeners\RecordUserLogin;
 use App\Services\Enrollment\EnrollmentService;
 use App\Services\Learning\EnrollmentProgressService;
 use App\Services\Learning\LearningService;
+use App\Services\Mail\TransactionalMailService;
+use App\Services\Payment\OrderManualCompletionService;
 use App\Services\Payment\OrderService;
 use App\Services\Payment\SePayService;
 use App\Services\Payment\SePayWebhookKeyService;
+use App\Services\Student\CertificateService;
+use App\Services\Student\CertificateTemplateRenderer;
+use App\Services\Student\StudentLookupService;
+use App\Services\Student\StudentSyncService;
 use App\Services\Video\VideoStreamService;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Auth\Events\Login;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\ServiceProvider;
 
 use Illuminate\Validation\Rules\Password;
@@ -87,6 +103,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(AdminCourseServiceInterface::class, AdminCourseService::class);
         $this->app->bind(AdminCurriculumServiceInterface::class, AdminCurriculumService::class);
         $this->app->bind(AdminUserServiceInterface::class, AdminUserService::class);
+        $this->app->bind(AdminStudentServiceInterface::class, AdminStudentService::class);
         $this->app->bind(AdminOrderServiceInterface::class, AdminOrderService::class);
         $this->app->bind(AdminBannerServiceInterface::class, AdminBannerService::class);
         $this->app->bind(AdminPostCategoryServiceInterface::class, AdminPostCategoryService::class);
@@ -97,9 +114,15 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(EnrollmentProgressServiceInterface::class, EnrollmentProgressService::class);
         $this->app->bind(VideoStreamServiceInterface::class, VideoStreamService::class);
         $this->app->bind(OrderServiceInterface::class, OrderService::class);
+        $this->app->bind(OrderManualCompletionServiceInterface::class, OrderManualCompletionService::class);
         $this->app->bind(SePayWebhookKeyServiceInterface::class, SePayWebhookKeyService::class);
         $this->app->bind(SePayServiceInterface::class, SePayService::class);
         $this->app->bind(PostServiceInterface::class, PostService::class);
+        $this->app->bind(StudentLookupServiceInterface::class, StudentLookupService::class);
+        $this->app->bind(StudentSyncServiceInterface::class, StudentSyncService::class);
+        $this->app->bind(CertificateServiceInterface::class, CertificateService::class);
+        $this->app->bind(CertificateTemplateRendererInterface::class, CertificateTemplateRenderer::class);
+        $this->app->bind(TransactionalMailServiceInterface::class, TransactionalMailService::class);
     }
 
     /**
@@ -108,6 +131,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Event::listen(Login::class, RecordUserLogin::class);
+        Event::listen(Registered::class, SendRegistrationWelcomeEmail::class);
 
         $this->configureDefaults();
     }

@@ -2,6 +2,7 @@
 
 namespace App\Services\Payment;
 
+use App\Contracts\Mail\TransactionalMailServiceInterface;
 use App\Contracts\Payment\OrderServiceInterface;
 use App\Enums\EnrollmentSource;
 use App\Enums\EnrollmentStatus;
@@ -16,6 +17,10 @@ use Illuminate\Support\Facades\DB;
 
 class OrderService implements OrderServiceInterface
 {
+    public function __construct(
+        private TransactionalMailServiceInterface $transactionalMail,
+    ) {}
+
     public function purchaseStateForCourse(User $user, Course $course): array
     {
         $isEnrolled = Enrollment::query()
@@ -86,7 +91,11 @@ class OrderService implements OrderServiceInterface
                 'price' => $course->price,
             ]);
 
-            return $order->load(['items.course:id,title,slug']);
+            $order = $order->load(['items.course:id,title,slug', 'user']);
+
+            $this->transactionalMail->sendOrderCreated($order);
+
+            return $order;
         });
     }
 
@@ -101,10 +110,25 @@ class OrderService implements OrderServiceInterface
 
     public function expirePendingOrders(): int
     {
-        return Order::query()
+        $orders = Order::query()
             ->where('status', OrderStatus::Pending)
             ->where('expires_at', '<=', now())
+            ->with(['user', 'items.course:id,title,slug'])
+            ->get();
+
+        if ($orders->isEmpty()) {
+            return 0;
+        }
+
+        $count = Order::query()
+            ->whereIn('id', $orders->pluck('id'))
             ->update(['status' => OrderStatus::Expired]);
+
+        foreach ($orders as $order) {
+            $this->transactionalMail->sendOrderExpired($order);
+        }
+
+        return $count;
     }
 
     private function generateOrderCode(): string

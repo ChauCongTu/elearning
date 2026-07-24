@@ -2,10 +2,12 @@
 
 use App\Http\Controllers\Checkout\CheckoutController;
 use App\Http\Controllers\Checkout\PaymentController;
+use App\Http\Controllers\Account\CertificateController;
 use App\Http\Controllers\Account\LoginHistoryController;
 use App\Http\Controllers\Account\MyCoursesController;
 use App\Http\Controllers\Account\PaymentHistoryController;
 use App\Http\Controllers\Account\PurchaseHistoryController;
+use App\Http\Controllers\Account\RequiredPasswordController;
 use App\Http\Controllers\Account\CourseReviewController as AccountCourseReviewController;
 use App\Http\Controllers\Admin\BannerController;
 use App\Http\Controllers\Admin\CategoryController;
@@ -17,6 +19,7 @@ use App\Http\Controllers\Admin\EditorUploadController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\PostCategoryController;
 use App\Http\Controllers\Admin\PostController as AdminPostController;
+use App\Http\Controllers\Admin\StudentController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Learn\LearningController;
 use App\Http\Controllers\Learn\LessonStreamController;
@@ -27,6 +30,7 @@ use App\Http\Controllers\Public\CourseController as PublicCourseController;
 use App\Http\Controllers\Public\HomeController;
 use App\Http\Controllers\Public\PageController;
 use App\Http\Controllers\Public\PostController as PublicPostController;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 Route::post('/webhooks/sepay', SePayWebhookController::class)->name('webhooks.sepay');
@@ -46,13 +50,29 @@ Route::middleware('site.online')->group(function () {
     Route::get('/bang-gia', [PageController::class, 'pricing'])->name('pages.pricing');
     Route::get('/ve-chung-toi', [PageController::class, 'about'])->name('pages.about');
     Route::get('/lien-he', [PageController::class, 'contact'])->name('pages.contact');
-    Route::get('/thong-tin', [PageController::class, 'info'])->name('pages.info');
+    Route::get('/thong-tin', [PageController::class, 'info'])
+        ->middleware('throttle:30,1')
+        ->name('pages.info');
+
+    Route::get('/tra-cuu-hoc-vien', function (Request $request) {
+        return redirect()->route('pages.info', array_filter([
+            'q' => $request->query('q'),
+        ]));
+    })->middleware('throttle:30,1')->name('student-lookup');
 
     Route::get('/learn/{course}/lessons/{lesson}', [LearningController::class, 'show'])
         ->name('learn.lessons.show');
     Route::get('/learn/lessons/{lesson}/stream', LessonStreamController::class)
         ->middleware('throttle:120,1')
         ->name('learn.lessons.stream');
+});
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/account/password/required', [RequiredPasswordController::class, 'edit'])
+        ->name('password.required');
+    Route::put('/account/password/required', [RequiredPasswordController::class, 'update'])
+        ->middleware('throttle:6,1')
+        ->name('password.required.update');
 });
 
 Route::middleware(['auth', 'verified'])->group(function () {
@@ -75,6 +95,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/login-history', LoginHistoryController::class)->name('login-history');
         Route::post('/courses/{slug}/reviews', [AccountCourseReviewController::class, 'store'])
             ->name('courses.reviews.store');
+        Route::get('/certificates', [CertificateController::class, 'index'])->name('certificates');
+        Route::get('/certificates/{certificate}/download', [CertificateController::class, 'download'])
+            ->name('certificates.download');
     });
 });
 
@@ -83,9 +106,12 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::post('/uploads/editor-image', [EditorUploadController::class, 'store'])->name('uploads.editor-image');
 
     Route::get('/users', [UserController::class, 'index'])->name('users.index');
+    Route::post('/users', [UserController::class, 'store'])->name('users.store');
     Route::get('/users/{user}', [UserController::class, 'show'])->name('users.show');
     Route::patch('/users/{user}', [UserController::class, 'update'])->name('users.update');
     Route::post('/users/{user}/enrollments', [UserController::class, 'grantEnrollment'])->name('users.enrollments.store');
+    Route::post('/users/{user}/students', [UserController::class, 'storeStudent'])->name('users.students.store');
+    Route::put('/users/{user}/students/{student}', [UserController::class, 'updateStudent'])->name('users.students.update')->scopeBindings();
 
     Route::get('/categories', [CategoryController::class, 'index'])->name('categories.index');
     Route::post('/categories', [CategoryController::class, 'store'])->name('categories.store');
@@ -114,6 +140,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
 
     Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
     Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
+    Route::post('/orders/{order}/complete', [OrderController::class, 'complete'])->name('orders.complete');
 
     Route::get('/banners', [BannerController::class, 'index'])->name('banners.index');
     Route::post('/banners', [BannerController::class, 'store'])->name('banners.store');
@@ -136,7 +163,21 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::delete('/post-categories/{postCategory}', [PostCategoryController::class, 'destroy'])->name('post-categories.destroy');
 
     Route::get('/reviews', [AdminCourseReviewController::class, 'index'])->name('reviews.index');
+    Route::post('/reviews', [AdminCourseReviewController::class, 'store'])->name('reviews.store');
     Route::patch('/reviews/{review}', [AdminCourseReviewController::class, 'update'])->name('reviews.update');
+    Route::delete('/reviews/{review}', [AdminCourseReviewController::class, 'destroy'])->name('reviews.destroy');
+
+    Route::get('/students', [StudentController::class, 'index'])->name('students.index');
+    Route::get('/students/users/search', [StudentController::class, 'searchUsers'])->name('students.users.search');
+    Route::get('/students/sample-csv', [StudentController::class, 'downloadSample'])->name('students.sample-csv');
+    Route::post('/students', [StudentController::class, 'store'])->name('students.store');
+    Route::post('/students/import', [StudentController::class, 'import'])->name('students.import');
+    Route::get('/students/{student}', [StudentController::class, 'show'])->name('students.show');
+    Route::put('/students/{student}', [StudentController::class, 'update'])->name('students.update');
+    Route::post('/students/{student}/revoke', [StudentController::class, 'revoke'])->name('students.revoke');
+    Route::post('/students/{student}/restore', [StudentController::class, 'restore'])->name('students.restore');
+    Route::post('/students/{student}/resend-email', [StudentController::class, 'resendEmail'])->name('students.resend-email');
+    Route::get('/students/{student}/certificate', [StudentController::class, 'downloadCertificate'])->name('students.certificate');
 });
 
 require __DIR__.'/settings.php';

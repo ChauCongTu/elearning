@@ -9,7 +9,7 @@ import {
     Text,
     Title,
 } from '@mantine/core';
-import { Clock, GraduationCap, PlayCircle } from 'lucide-react';
+import { Clock, GraduationCap, PlayCircle, ShoppingBag } from 'lucide-react';
 import { courseGradient, courseThumbnailUrl, formatPrice } from '@/lib/format';
 import { useSiteConfig } from '@/hooks/use-site-config';
 import type { Course } from '@/types';
@@ -70,6 +70,13 @@ export default function CourseEnrollmentCard({ course }: Props) {
                         </Group>
                     )}
                 </Group>
+
+                {(course.purchase_count ?? 0) > 0 && (
+                    <Group gap={4} c="dimmed">
+                        <ShoppingBag size={14} />
+                        <Text size="xs">{course.purchase_count} học viên đã mua</Text>
+                    </Group>
+                )}
 
                 {course.instructor_name && (
                     <Group gap={6}>

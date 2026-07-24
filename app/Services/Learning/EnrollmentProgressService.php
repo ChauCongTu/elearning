@@ -3,12 +3,22 @@
 namespace App\Services\Learning;
 
 use App\Contracts\Learning\EnrollmentProgressServiceInterface;
+use App\Contracts\Mail\TransactionalMailServiceInterface;
+use App\Contracts\Student\CertificateServiceInterface;
 use App\Models\Enrollment;
 use App\Models\Lesson;
 use App\Models\LessonProgress;
+use App\Support\LessonProgressRules;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\ValidationException;
 
 class EnrollmentProgressService implements EnrollmentProgressServiceInterface
 {
+    public function __construct(
+        private TransactionalMailServiceInterface $transactionalMail,
+        private CertificateServiceInterface $certificates,
+    ) {}
+
     public function updateProgress(Enrollment $enrollment, Lesson $lesson, int $watchedSeconds): LessonProgress
     {
         $watchedSeconds = max(0, $watchedSeconds);
@@ -23,7 +33,7 @@ class EnrollmentProgressService implements EnrollmentProgressServiceInterface
         $capped = min($watchedSeconds, $previous + $maxAdvance);
 
         $record->watched_seconds = max($previous, $capped);
-        $record->completed = $this->shouldMarkCompleted($lesson, $record->watched_seconds);
+        $record->completed = LessonProgressRules::shouldMarkCompleted($lesson, $record->watched_seconds);
         $record->last_watched_at = now();
         $record->save();
 
@@ -39,10 +49,19 @@ class EnrollmentProgressService implements EnrollmentProgressServiceInterface
             'lesson_id' => $lesson->id,
         ]);
 
-        $duration = max(0, (int) $lesson->duration_seconds);
-        $minimumWatch = $duration > 0 ? $duration : max(1, (int) ($record->watched_seconds ?? 0));
+        $watchedSeconds = (int) ($record->watched_seconds ?? 0);
 
-        $record->watched_seconds = max((int) ($record->watched_seconds ?? 0), $minimumWatch);
+        if (! LessonProgressRules::meetsUnlockThreshold($lesson, $watchedSeconds)) {
+            throw ValidationException::withMessages([
+                'lesson' => 'Cần xem ít nhất 80% bài học trước khi đánh dấu hoàn thành.',
+            ]);
+        }
+
+        $duration = max(0, (int) $lesson->duration_seconds);
+        $completionThreshold = LessonProgressRules::completionThresholdSeconds($lesson);
+        $targetWatch = $completionThreshold ?? $watchedSeconds;
+
+        $record->watched_seconds = max($watchedSeconds, $targetWatch);
         $record->completed = true;
         $record->last_watched_at = now();
         $record->save();
@@ -84,22 +103,25 @@ class EnrollmentProgressService implements EnrollmentProgressServiceInterface
 
         $percent = round(($completedLessons / $totalLessons) * 100, 2);
 
+        $wasCompleted = $enrollment->isCompleted();
+
         $enrollment->update([
             'progress_percent' => min(100, $percent),
             'completed_at' => $percent >= 100 ? ($enrollment->completed_at ?? now()) : null,
         ]);
-    }
 
-    private function shouldMarkCompleted(Lesson $lesson, int $watchedSeconds): bool
-    {
-        $duration = $lesson->duration_seconds;
+        if (! $wasCompleted && $enrollment->fresh()->isCompleted()) {
+            $completedEnrollment = $enrollment->fresh(['user', 'course']);
+            $this->transactionalMail->sendCourseCompleted($completedEnrollment);
 
-        if ($duration <= 0) {
-            return $watchedSeconds > 0;
+            try {
+                $this->certificates->issue($completedEnrollment);
+            } catch (\Throwable $exception) {
+                Log::error('Certificate issue failed after course completion', [
+                    'enrollment_id' => $enrollment->id,
+                    'message' => $exception->getMessage(),
+                ]);
+            }
         }
-
-        $threshold = (int) floor($duration * (float) config('video.completion_ratio', 0.9));
-
-        return $watchedSeconds >= max(1, $threshold);
     }
 }

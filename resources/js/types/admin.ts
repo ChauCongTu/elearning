@@ -1,3 +1,5 @@
+import type { AdminUserStudentProfile } from './student';
+
 export type Paginated<T> = {
     data: T[];
     current_page: number;
@@ -84,6 +86,11 @@ export type AdminCourseForm = {
     is_featured: boolean;
     is_published: boolean;
     published_at: string | null;
+    purchase_count_offset?: number;
+    purchase_count?: number;
+    certificate_template_type: 'default' | 'markdown' | 'latex' | null;
+    certificate_template: string | null;
+    certificate_placeholders?: string[];
 };
 
 export type AdminLesson = {
@@ -115,6 +122,8 @@ export type AdminUserListItem = {
 };
 
 export type AdminUserDetail = AdminUserListItem & {
+    can_complete_orders?: boolean;
+    is_root_account?: boolean;
     enrollments: {
         id: string;
         status: string;
@@ -123,6 +132,7 @@ export type AdminUserDetail = AdminUserListItem & {
         enrolled_at: string | null;
         course: { id: string; title: string; slug: string } | null;
     }[];
+    students: AdminUserStudentProfile[];
 };
 
 export type AdminOrderListItem = {
@@ -156,6 +166,13 @@ export type AdminOrderDetail = {
         gateway: string;
         amount: string;
         received_at: string | null;
+    }[];
+    manual_completions: {
+        id: string;
+        note: string | null;
+        ip_address: string | null;
+        created_at: string | null;
+        completed_by: { id: string; name: string; email: string } | null;
     }[];
 };
 

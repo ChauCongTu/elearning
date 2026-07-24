@@ -6,6 +6,7 @@ use App\Contracts\Files\FileServiceInterface;
 use App\Enums\Gender;
 use App\Enums\UserRole;
 use App\Models\Concerns\Auditable;
+use App\Notifications\VerifyEmailNotification;
 use Database\Factories\UserFactory;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -23,10 +24,13 @@ use Illuminate\Support\Carbon;
  * @property string $name
  * @property string $email
  * @property string|null $phone
- * @property UserRole $role
+ * @property bool $can_complete_orders
+ * @property bool $is_root_account
+ * @property bool $must_change_password
  * @property string|null $avatar
  * @property Gender|null $gender
  * @property int|null $birth_year
+ * @property string|null $cmnd
  * @property string|null $preference
  * @property Carbon|null $last_login_at
  * @property string|null $last_login_ip
@@ -49,9 +53,13 @@ use Illuminate\Support\Carbon;
     'phone',
     'password',
     'role',
+    'can_complete_orders',
+    'is_root_account',
+    'must_change_password',
     'avatar',
     'gender',
     'birth_year',
+    'cmnd',
     'preference',
     'created_by',
     'updated_by',
@@ -71,6 +79,11 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasMany(Enrollment::class);
     }
 
+    public function students(): HasMany
+    {
+        return $this->hasMany(Student::class);
+    }
+
     public function orders(): HasMany
     {
         return $this->hasMany(Order::class);
@@ -79,6 +92,21 @@ class User extends Authenticatable implements MustVerifyEmail
     public function isAdmin(): bool
     {
         return $this->role === UserRole::Admin;
+    }
+
+    public function isRoot(): bool
+    {
+        return (bool) $this->is_root_account;
+    }
+
+    public function canCompleteOrders(): bool
+    {
+        return $this->isRoot() || ($this->isAdmin() && (bool) $this->can_complete_orders);
+    }
+
+    public function sendEmailVerificationNotification(): void
+    {
+        $this->notify(new VerifyEmailNotification);
     }
 
     public function avatarUrl(): ?string
@@ -93,6 +121,9 @@ class User extends Authenticatable implements MustVerifyEmail
             'last_login_at' => 'datetime',
             'password' => 'hashed',
             'role' => UserRole::class,
+            'can_complete_orders' => 'boolean',
+            'is_root_account' => 'boolean',
+            'must_change_password' => 'boolean',
             'gender' => Gender::class,
             'birth_year' => 'integer',
             'legacy_wp_id' => 'integer',

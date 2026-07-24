@@ -370,7 +370,27 @@ test('enrolled student can access next lesson after watching eighty percent of p
             ->where('currentLesson.id', $nextLesson->id));
 });
 
-test('mark as done completes lesson without watching and unlocks next lesson', function () {
+test('mark as done requires at least eighty percent watch time', function () {
+    ['course' => $course, 'lesson' => $lesson, 'previewLesson' => $nextLesson] = createLearningFixtures();
+
+    $user = User::factory()->create(['role' => UserRole::Student]);
+
+    Enrollment::create([
+        'user_id' => $user->id,
+        'course_id' => $course->id,
+        'status' => EnrollmentStatus::Active,
+        'progress_percent' => 0,
+        'enrolled_at' => now(),
+        'source' => EnrollmentSource::Manual,
+    ]);
+
+    $this->actingAs($user)
+        ->postJson(route('learn.progress.complete', ['lesson' => $lesson]))
+        ->assertUnprocessable()
+        ->assertJsonValidationErrors('lesson');
+});
+
+test('mark as done unlocks next lesson after eighty percent watch', function () {
     ['course' => $course, 'lesson' => $lesson, 'previewLesson' => $nextLesson] = createLearningFixtures();
 
     $user = User::factory()->create(['role' => UserRole::Student]);
@@ -384,23 +404,21 @@ test('mark as done completes lesson without watching and unlocks next lesson', f
         'source' => EnrollmentSource::Manual,
     ]);
 
+    \App\Models\LessonProgress::create([
+        'enrollment_id' => $enrollment->id,
+        'lesson_id' => $lesson->id,
+        'watched_seconds' => 80,
+        'completed' => false,
+        'last_watched_at' => now(),
+    ]);
+
     $this->actingAs($user)
         ->postJson(route('learn.progress.complete', ['lesson' => $lesson]))
         ->assertOk()
         ->assertJson([
-            'watched_seconds' => 100,
+            'watched_seconds' => 90,
             'completed' => true,
-            'progress_percent' => '50.00',
         ]);
-
-    $this->assertDatabaseHas('lesson_progress', [
-        'enrollment_id' => $enrollment->id,
-        'lesson_id' => $lesson->id,
-        'watched_seconds' => 100,
-        'completed' => true,
-    ]);
-
-    expect($enrollment->fresh()->progress_percent)->toBe('50.00');
 
     $this->actingAs($user)
         ->get(route('learn.lessons.show', [
@@ -408,6 +426,124 @@ test('mark as done completes lesson without watching and unlocks next lesson', f
             'lesson' => $nextLesson,
         ]))
         ->assertOk();
+});
+
+test('one student progress does not unlock lessons for another student', function () {
+    ['course' => $course, 'lessons' => $lessons] = createSequentialLessonFixtures(3);
+
+    $studentA = User::factory()->create(['role' => UserRole::Student]);
+    $studentB = User::factory()->create(['role' => UserRole::Student]);
+
+    $enrollmentA = Enrollment::create([
+        'user_id' => $studentA->id,
+        'course_id' => $course->id,
+        'status' => EnrollmentStatus::Active,
+        'progress_percent' => 0,
+        'enrolled_at' => now(),
+        'source' => EnrollmentSource::Manual,
+    ]);
+
+    Enrollment::create([
+        'user_id' => $studentB->id,
+        'course_id' => $course->id,
+        'status' => EnrollmentStatus::Active,
+        'progress_percent' => 0,
+        'enrolled_at' => now(),
+        'source' => EnrollmentSource::Manual,
+    ]);
+
+    \App\Models\LessonProgress::create([
+        'enrollment_id' => $enrollmentA->id,
+        'lesson_id' => $lessons[0]->id,
+        'watched_seconds' => 100,
+        'completed' => true,
+        'last_watched_at' => now(),
+    ]);
+
+    $this->actingAs($studentA)
+        ->get(route('learn.lessons.show', [
+            'course' => $course->slug,
+            'lesson' => $lessons[1],
+        ]))
+        ->assertOk();
+
+    $this->actingAs($studentB)
+        ->get(route('learn.lessons.show', [
+            'course' => $course->slug,
+            'lesson' => $lessons[1],
+        ]))
+        ->assertForbidden();
+});
+
+test('zero duration lesson does not unlock next lesson from minimal watch', function () {
+    $category = \App\Models\Category::create([
+        'name' => 'Phun xăm',
+        'slug' => 'phun-xam-zero-duration',
+        'sort_order' => 0,
+        'is_active' => true,
+    ]);
+
+    $course = Course::create([
+        'category_id' => $category->id,
+        'title' => 'Khóa zero duration',
+        'slug' => 'khoa-zero-duration',
+        'price' => 1_000_000,
+        'is_published' => true,
+        'published_at' => now(),
+    ]);
+
+    $chapter = Chapter::create([
+        'course_id' => $course->id,
+        'title' => 'Chương 1',
+        'sort_order' => 0,
+        'is_published' => true,
+    ]);
+
+    $first = Lesson::create([
+        'chapter_id' => $chapter->id,
+        'title' => 'Bài không duration',
+        'sort_order' => 0,
+        'video_s3_key' => 'lessons/videos/no-duration.mp4',
+        'duration_seconds' => 0,
+        'is_free_preview' => false,
+        'is_published' => true,
+    ]);
+
+    $second = Lesson::create([
+        'chapter_id' => $chapter->id,
+        'title' => 'Bài kế tiếp',
+        'sort_order' => 1,
+        'video_s3_key' => 'lessons/videos/next.mp4',
+        'duration_seconds' => 100,
+        'is_free_preview' => false,
+        'is_published' => true,
+    ]);
+
+    $user = User::factory()->create(['role' => UserRole::Student]);
+
+    $enrollment = Enrollment::create([
+        'user_id' => $user->id,
+        'course_id' => $course->id,
+        'status' => EnrollmentStatus::Active,
+        'progress_percent' => 0,
+        'enrolled_at' => now(),
+        'source' => EnrollmentSource::Manual,
+    ]);
+
+    \App\Models\LessonProgress::create([
+        'enrollment_id' => $enrollment->id,
+        'lesson_id' => $first->id,
+        'watched_seconds' => 5,
+        'completed' => false,
+        'last_watched_at' => now(),
+    ]);
+
+    $this->actingAs($user)
+        ->get(route('learn.lessons.show', [
+            'course' => $course->slug,
+            'lesson' => $second,
+        ]))
+        ->assertForbidden();
 });
 
 test('user without enrollment cannot mark lesson as done', function () {

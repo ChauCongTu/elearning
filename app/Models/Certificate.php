@@ -3,16 +3,14 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 #[Fillable([
     'enrollment_id',
-    'verification_code',
-    'student_name',
-    'course_title',
+    'student_id',
+    'file_path',
     'issued_at',
-    'pdf_path',
+    'certificate_email_sent_at',
 ])]
 class Certificate extends BaseModel
 {
@@ -21,10 +19,16 @@ class Certificate extends BaseModel
         return $this->belongsTo(Enrollment::class);
     }
 
+    public function student(): BelongsTo
+    {
+        return $this->belongsTo(Student::class);
+    }
+
     protected function casts(): array
     {
         return [
             'issued_at' => 'datetime',
+            'certificate_email_sent_at' => 'datetime',
         ];
     }
 }

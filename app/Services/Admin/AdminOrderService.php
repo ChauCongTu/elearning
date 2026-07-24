@@ -46,6 +46,7 @@ class AdminOrderService implements AdminOrderServiceInterface
             'user:id,name,email,phone',
             'items.course:id,title,slug',
             'payments',
+            'manualCompletions.completedByUser:id,name,email',
         ]);
 
         return [
@@ -77,6 +78,17 @@ class AdminOrderService implements AdminOrderServiceInterface
                 'gateway' => $payment->gateway,
                 'amount' => (string) $payment->amount,
                 'received_at' => $payment->received_at?->toIso8601String(),
+            ])->all(),
+            'manual_completions' => $order->manualCompletions->map(fn ($log) => [
+                'id' => $log->id,
+                'note' => $log->note,
+                'ip_address' => $log->ip_address,
+                'created_at' => $log->created_at?->toIso8601String(),
+                'completed_by' => $log->completedByUser ? [
+                    'id' => $log->completedByUser->id,
+                    'name' => $log->completedByUser->name,
+                    'email' => $log->completedByUser->email,
+                ] : null,
             ])->all(),
         ];
     }

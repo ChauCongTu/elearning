@@ -10,6 +10,7 @@ use App\Models\Enrollment;
 use App\Models\Lesson;
 use App\Models\LessonProgress;
 use App\Models\User;
+use App\Support\LessonProgressRules;
 use Illuminate\Database\Eloquent\Collection;
 
 class LearningService implements LearningServiceInterface
@@ -356,23 +357,6 @@ class LearningService implements LearningServiceInterface
      */
     private function lessonMeetsUnlockRequirement(Lesson $lesson, ?array $progress): bool
     {
-        if (($progress['completed'] ?? false) === true) {
-            return true;
-        }
-
-        return $this->meetsUnlockThreshold($lesson, (int) ($progress['watched_seconds'] ?? 0));
-    }
-
-    private function meetsUnlockThreshold(Lesson $lesson, int $watchedSeconds): bool
-    {
-        $duration = $lesson->duration_seconds;
-
-        if ($duration <= 0) {
-            return $watchedSeconds > 0;
-        }
-
-        $threshold = (int) floor($duration * (float) config('video.unlock_ratio', 0.8));
-
-        return $watchedSeconds >= max(1, $threshold);
+        return LessonProgressRules::priorLessonUnlocksNext($lesson, $progress);
     }
 }

@@ -12,6 +12,14 @@ class LoginResponse implements LoginResponseContract
     {
         $user = $request->user();
 
+        if ($user?->must_change_password) {
+            if ($request->wantsJson()) {
+                return new JsonResponse(['must_change_password' => true], 200);
+            }
+
+            return redirect()->route('password.required');
+        }
+
         if ($user?->isAdmin()) {
             $home = route('admin.dashboard');
         } elseif ($user && ! $user->hasVerifiedEmail()) {

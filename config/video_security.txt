@@ -1,0 +1,26 @@
+Bảo mật video học — tóm tắt kỹ thuật
+Nguyên tắc: Web player không chặn tuyệt đối tải/quay màn hình. Mục tiêu là ẩn nguồn gốc file, kiểm soát quyền xem, hạn chế tua/lộ nội dung, và truy vết leak.
+
+1. Lưu trữ & phân phối
+Video trên S3 private (lessons/videos/*) — không URL công khai vĩnh viễn.
+Client không nhận video_s3_key hay signed URL S3; chỉ nhận /learn/lessons/{id}/stream.
+Laravel proxy stream same-origin: hỗ trợ HTTP Range (seek), header no-store, Content-Disposition: inline, throttle 120 req/phút.
+Chặn mở link stream tab mới qua Sec-Fetch-Dest (chỉ cho video / range request từ player).
+2. Kiểm soát truy cập
+Mỗi request stream kiểm tra: đăng nhập, khóa publish, enrollment / free preview, mở khóa tuần tự (≥80% bài trước).
+Admin bypass; user không ghi danh → 403.
+3. Bảo vệ player (client)
+<video>: controlsList=nodownload, chặn PiP, remote playback, playback rate > 1.
+Chặn chuột phải, kéo-thả, phím DevTools / view source / save / print (useLearnPageGuard).
+4. Chống tua & hack tiến độ
+Client (useGuardedVideo): không tua quá vị trí đã xem + 3s; reset tốc độ phát > 1x.
+Server: mỗi heartbeat chỉ tăng tối đa +35 giây so với DB (max_progress_advance_seconds).
+5. Watermark truy vết
+Overlay Tên - email xuất hiện ngẫu nhiên ở 4 góc video (chỉ khi đã đăng nhập).
+Deterrent khi quay màn hình — không burn vào file gốc.
+6. Capture guard (best-effort)
+Pause khi ẩn tab; chặn phím chụp màn hình phổ biến; chặn copy trên vùng video.
+Không chặn OBS, quay màn hình điện thoại, camera vật lý.
+7. Curriculum & tiến độ
+Mở bài tuần tự; hoàn thành tự động ≥90% hoặc đánh dấu thủ công.
+Heartbeat tiến độ mỗi ~15–20s; lưu server-side.

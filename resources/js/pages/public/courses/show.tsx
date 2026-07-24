@@ -23,6 +23,7 @@ import {
     Lock,
     PlayCircle,
     ShoppingCart,
+    Users,
 } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import {
@@ -332,6 +333,15 @@ export default function CourseShow({
                                             </Text>
                                         )}
                                     </div>
+
+                                    {(course.purchase_count ?? 0) > 0 && (
+                                        <Group gap={6}>
+                                            <Users size={16} />
+                                            <Text size="sm" c="dimmed">
+                                                {course.purchase_count} học viên đã mua
+                                            </Text>
+                                        </Group>
+                                    )}
 
                                     {course.instructor_name && (
                                         <Group gap="sm" className="course-sidebar__instructor">

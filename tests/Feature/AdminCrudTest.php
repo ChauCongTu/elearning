@@ -49,7 +49,10 @@ test('admin can create course', function () {
 });
 
 test('admin manual enrollment creates record', function () {
-    $admin = User::factory()->admin()->create();
+    $admin = User::factory()->create([
+        'role' => UserRole::Admin,
+        'can_complete_orders' => true,
+    ]);
     $student = User::factory()->create(['role' => UserRole::Student]);
     $course = Course::create([
         'title' => 'Khóa cấp quyền',
@@ -89,4 +92,57 @@ test('student cannot access admin categories', function () {
     $this->actingAs($student)
         ->get(route('admin.categories.index'))
         ->assertRedirect(route('account.courses'));
+});
+
+test('admin can create user', function () {
+    $admin = User::factory()->admin()->create();
+
+    $response = $this->actingAs($admin)
+        ->post(route('admin.users.store'), [
+            'name' => 'Học viên mới',
+            'email' => 'new-student@example.com',
+            'phone' => '0901234567',
+            'must_change_password' => true,
+            'role' => 'student',
+        ]);
+
+    $response->assertRedirect();
+    $response->assertSessionHas('generated_password');
+
+    $this->assertDatabaseHas('users', [
+        'name' => 'Học viên mới',
+        'email' => 'new-student@example.com',
+        'role' => UserRole::Student->value,
+        'must_change_password' => true,
+    ]);
+});
+
+test('admin create user always generates password', function () {
+    $admin = User::factory()->admin()->create();
+
+    $response = $this->actingAs($admin)
+        ->post(route('admin.users.store'), [
+            'name' => 'User auto pass',
+            'email' => 'auto-pass@example.com',
+            'must_change_password' => true,
+            'role' => 'student',
+        ]);
+
+    $response->assertRedirect();
+    $response->assertSessionHas('generated_password');
+
+    expect(User::query()->where('email', 'auto-pass@example.com')->value('must_change_password'))->toBeTrue();
+});
+
+test('user with must change password is redirected after login', function () {
+    $user = User::factory()->create([
+        'role' => UserRole::Student,
+        'must_change_password' => true,
+        'password' => 'Password1!',
+    ]);
+
+    $this->post(route('login'), [
+        'email' => $user->email,
+        'password' => 'Password1!',
+    ])->assertRedirect(route('password.required'));
 });

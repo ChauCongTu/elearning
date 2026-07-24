@@ -1,5 +1,6 @@
-import { Head } from '@inertiajs/react';
-import { Stack, Table, Text, Title } from '@mantine/core';
+import { Head, router } from '@inertiajs/react';
+import { Button, Group, Modal, Stack, Table, Text, Textarea, Title } from '@mantine/core';
+import { useState } from 'react';
 import AdminPageHeader from '@/components/admin/admin-page-header';
 import OrderStatusBadge from '@/components/admin/order-status-badge';
 import { formatDateTime, formatPaymentMethod, formatPrice } from '@/lib/format';
@@ -7,13 +8,45 @@ import type { AdminOrderDetail } from '@/types';
 
 type Props = {
     order: AdminOrderDetail;
+    canCompleteOrder: boolean;
 };
 
-export default function AdminOrderShow({ order }: Props) {
+export default function AdminOrderShow({ order, canCompleteOrder }: Props) {
+    const [completeOpen, setCompleteOpen] = useState(false);
+    const [note, setNote] = useState('');
+    const [submitting, setSubmitting] = useState(false);
+
+    const canComplete = canCompleteOrder && !['paid', 'cancelled'].includes(order.status);
+
+    const submitComplete = () => {
+        setSubmitting(true);
+        router.post(
+            `/admin/orders/${order.id}/complete`,
+            { note },
+            {
+                onFinish: () => {
+                    setSubmitting(false);
+                    setCompleteOpen(false);
+                    setNote('');
+                },
+            },
+        );
+    };
+
     return (
         <>
             <Head title={`Đơn ${order.code}`} />
-            <AdminPageHeader title={`Đơn ${order.code}`} description={`Tạo lúc ${formatDateTime(order.created_at)}`} />
+            <AdminPageHeader
+                title={`Đơn ${order.code}`}
+                description={`Tạo lúc ${formatDateTime(order.created_at)}`}
+                actions={
+                    canComplete ? (
+                        <Button color="teal" onClick={() => setCompleteOpen(true)}>
+                            Xác nhận thanh toán
+                        </Button>
+                    ) : undefined
+                }
+            />
 
             <Stack gap="xl">
                 <div className="dashboard-panel">
@@ -97,7 +130,63 @@ export default function AdminOrderShow({ order }: Props) {
                         </Table>
                     </div>
                 )}
+
+                {order.manual_completions.length > 0 && (
+                    <div className="dashboard-panel">
+                        <Title order={4} mb="md">
+                            Log xác nhận thủ công
+                        </Title>
+                        <Stack gap="sm">
+                            {order.manual_completions.map((log) => (
+                                <div key={log.id}>
+                                    <Text size="sm">
+                                        <strong>{log.completed_by?.name ?? 'Admin'}</strong> —{' '}
+                                        {formatDateTime(log.created_at)}
+                                    </Text>
+                                    {log.note && (
+                                        <Text size="sm" c="dimmed">
+                                            {log.note}
+                                        </Text>
+                                    )}
+                                    {log.ip_address && (
+                                        <Text size="xs" c="dimmed">
+                                            IP: {log.ip_address}
+                                        </Text>
+                                    )}
+                                </div>
+                            ))}
+                        </Stack>
+                    </div>
+                )}
             </Stack>
+
+            <Modal
+                opened={completeOpen}
+                onClose={() => setCompleteOpen(false)}
+                title="Xác nhận thanh toán thủ công"
+            >
+                <Stack gap="md">
+                    <Text size="sm" c="dimmed">
+                        Dùng khi khách chuyển khoản tài khoản khác hoặc thanh toán trực tiếp. Hệ thống
+                        sẽ mở khóa học và ghi log người thực hiện.
+                    </Text>
+                    <Textarea
+                        label="Ghi chú (tuỳ chọn)"
+                        placeholder="VD: CK Vietcombank cá nhân, nhận tiền mặt tại quầy..."
+                        minRows={3}
+                        value={note}
+                        onChange={(event) => setNote(event.currentTarget.value)}
+                    />
+                    <Group justify="flex-end">
+                        <Button variant="default" onClick={() => setCompleteOpen(false)}>
+                            Hủy
+                        </Button>
+                        <Button color="teal" loading={submitting} onClick={submitComplete}>
+                            Xác nhận thanh toán
+                        </Button>
+                    </Group>
+                </Stack>
+            </Modal>
         </>
     );
 }

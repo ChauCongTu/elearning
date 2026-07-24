@@ -41,7 +41,7 @@ class CourseReviewService implements CourseReviewServiceInterface
             ->with('user:id,name')
             ->latest()
             ->limit($limit)
-            ->get(['id', 'user_id', 'course_id', 'rating', 'body', 'created_at']);
+            ->get(['id', 'user_id', 'reviewer_name', 'course_id', 'rating', 'body', 'is_admin_created', 'created_at']);
     }
 
     public function findUserReview(User $user, Course $course): ?CourseReview
@@ -95,5 +95,23 @@ class CourseReviewService implements CourseReviewServiceInterface
         $review->update(['is_published' => $published]);
 
         return $review->fresh(['user:id,name,email', 'course:id,title,slug']);
+    }
+
+    public function createAdminReview(array $data, User $admin): CourseReview
+    {
+        return CourseReview::query()->create([
+            'course_id' => $data['course_id'],
+            'user_id' => null,
+            'reviewer_name' => trim($data['reviewer_name']),
+            'rating' => $data['rating'],
+            'body' => $data['body'] ?? null,
+            'is_published' => $data['is_published'] ?? true,
+            'is_admin_created' => true,
+        ]);
+    }
+
+    public function deleteReview(CourseReview $review): void
+    {
+        $review->delete();
     }
 }

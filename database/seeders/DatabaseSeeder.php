@@ -14,6 +14,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             ElearningSeeder::class,
             PostSeeder::class,
+            StudentSeeder::class,
         ]);
     }
 }

@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Enums\OrderStatus;
+use App\Enums\CertificateTemplateType;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -27,10 +29,20 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
     'is_published',
     'legacy_product_id',
     'meta',
+    'purchase_count_offset',
+    'certificate_template_type',
+    'certificate_template',
     'published_at',
 ])]
 class Course extends BaseModel
 {
+    protected $appends = ['purchase_count'];
+
+    public function getPurchaseCountAttribute(): int
+    {
+        return $this->displayPurchaseCount();
+    }
+
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);
@@ -61,6 +73,25 @@ class Course extends BaseModel
         return $this->hasMany(OrderItem::class);
     }
 
+    public function displayPurchaseCount(): int
+    {
+        $real = array_key_exists('paid_order_items_count', $this->attributes)
+            ? (int) $this->attributes['paid_order_items_count']
+            : $this->orderItems()
+                ->whereHas('order', fn ($query) => $query->where('status', OrderStatus::Paid))
+                ->count();
+
+        return $real + (int) ($this->purchase_count_offset ?? 0);
+    }
+
+    public function scopeWithPurchaseCount($query)
+    {
+        return $query->withCount([
+            'orderItems as paid_order_items_count' => fn ($items) => $items
+                ->whereHas('order', fn ($order) => $order->where('status', OrderStatus::Paid)),
+        ]);
+    }
+
     public function publishedChapters(): HasMany
     {
         return $this->chapters()->where('is_published', true);
@@ -86,7 +117,9 @@ class Course extends BaseModel
             'is_featured' => 'boolean',
             'is_published' => 'boolean',
             'legacy_product_id' => 'integer',
+            'purchase_count_offset' => 'integer',
             'meta' => 'array',
+            'certificate_template_type' => CertificateTemplateType::class,
             'published_at' => 'datetime',
         ];
     }

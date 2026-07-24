@@ -11,7 +11,7 @@ Phase 0 Foundation
                     └── Phase 3 Admin
                             └── Phase 4 Learning (S3 + progress)
                                     └── Phase 5 Payment
-                                            └── Phase 6 Certificates
+                                            └── Phase 6 Tra cứu + Chứng chỉ + API
                                                     └── Phase 7 Migration
                                                             └── Phase 8 Deploy & Go-live
 ```
@@ -26,15 +26,13 @@ Phase 0 Foundation
 | 3 | [phase-3-admin.md](./phase-3-admin.md) | CRUD admin, banner, tin tức | 4–5 ngày |
 | 4 | [phase-4-learning.md](./phase-4-learning.md) | Player, S3, tiến độ | 4–5 ngày |
 | 5 | [phase-5-payment.md](./phase-5-payment.md) | Thanh toán tự động, webhook | 3–4 ngày |
-| 6 | [phase-6-certificates.md](./phase-6-certificates.md) | PDF + tra cứu | 2–3 ngày |
+| 6 | [phase-6-student-lookup.md](./phase-6-student-lookup.md) | Tra cứu, PDF, email, API JSON | 4–5 ngày |
 | 7 | [phase-7-migration.md](./phase-7-migration.md) | Import WordPress/WC | 3–4 ngày |
 | 8 | [phase-8-deploy-go-live.md](./phase-8-deploy-go-live.md) | Hostinger, UAT, bàn giao | 2–3 ngày |
 
 **Tổng:** ~20–30 ngày làm việc (khớp báo giá)
 
-> **Đánh số lại (17/07):** Admin (trước đây Phase 5) → **Phase 3**. Payment, Learning và các phase sau tăng +1 số.  
-> **Đổi thứ tự (18/07):** Learning → **Phase 4**, Payment → **Phase 5** (học online trước, thanh toán sau).  
-> **Đổi thứ tự (18/07):** Certificates → **Phase 6**, Migration → **Phase 7** (chứng chỉ trước, migration cuối trước go-live).
+> **Đổi thứ tự (20/07):** Phase 6 gộp tra cứu + chứng chỉ PDF + email + API. Migration → 7. Deploy → 8.
 
 ## Trạng thái hiện tại
 
@@ -44,8 +42,10 @@ Phase 0 Foundation
 | 1 | ✅ Hoàn thành |
 | 2 | ✅ Hoàn thành |
 | 3 | ✅ Hoàn thành |
-| 4 | ⬜ Tiếp theo |
-| 5–8 | ⬜ Chưa bắt đầu |
+| 4 | 🟡 ~90% |
+| 5 | ✅ Hoàn thành (code + test) |
+| 6 | ⬜ **Tiếp theo** — spec sẵn sàng |
+| 7–8 | ⬜ Chưa bắt đầu |
 
 ## Tài liệu gửi khách
 

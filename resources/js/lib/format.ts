@@ -15,6 +15,16 @@ export function formatDateTime(value: string | null | undefined): string {
     }).format(new Date(value));
 }
 
+export function formatDate(value: string | null | undefined): string {
+    if (!value) {
+        return '—';
+    }
+
+    return new Intl.DateTimeFormat('vi-VN', {
+        dateStyle: 'medium',
+    }).format(new Date(value));
+}
+
 export function formatCheckoutDate(value: string | null | undefined): string {
     if (!value) {
         return '—';
@@ -38,7 +48,27 @@ export function formatPaymentMethod(gateway: string | null | undefined): string 
         return 'Chuyển khoản ngân hàng';
     }
 
+    if (normalized === 'manual_admin') {
+        return 'Xác nhận thủ công (admin)';
+    }
+
     return 'Thanh toán trực tuyến';
+}
+
+export function formatVideoTime(seconds: number): string {
+    if (!Number.isFinite(seconds) || seconds < 0) {
+        return '0:00';
+    }
+
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const remaining = Math.floor(seconds % 60);
+
+    if (hours > 0) {
+        return `${hours}:${String(minutes).padStart(2, '0')}:${String(remaining).padStart(2, '0')}`;
+    }
+
+    return `${minutes}:${String(remaining).padStart(2, '0')}`;
 }
 
 export function formatDuration(seconds: number): string {

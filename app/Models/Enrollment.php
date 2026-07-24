@@ -41,6 +41,11 @@ class Enrollment extends BaseModel
         return $this->hasOne(Certificate::class);
     }
 
+    public function student(): HasOne
+    {
+        return $this->hasOne(Student::class);
+    }
+
     public function isActive(): bool
     {
         return $this->status === EnrollmentStatus::Active;

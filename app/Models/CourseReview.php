@@ -7,10 +7,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 #[Fillable([
     'user_id',
+    'reviewer_name',
     'course_id',
     'rating',
     'body',
     'is_published',
+    'is_admin_created',
 ])]
 class CourseReview extends BaseModel
 {
@@ -29,6 +31,7 @@ class CourseReview extends BaseModel
         return [
             'rating' => 'integer',
             'is_published' => 'boolean',
+            'is_admin_created' => 'boolean',
         ];
     }
 }

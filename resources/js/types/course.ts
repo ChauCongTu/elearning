@@ -26,6 +26,7 @@ export type Course = {
     benefits?: string[] | null;
     faq?: { q: string; a: string }[] | null;
     meta?: CourseMeta | null;
+    purchase_count?: number;
     category: Category | null;
 };
 

@@ -35,6 +35,11 @@ class Order extends BaseModel
         return $this->hasMany(Payment::class);
     }
 
+    public function manualCompletions(): HasMany
+    {
+        return $this->hasMany(OrderManualCompletion::class);
+    }
+
     public function isPaid(): bool
     {
         return $this->status === OrderStatus::Paid;

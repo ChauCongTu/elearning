@@ -34,4 +34,11 @@ interface CourseReviewServiceInterface
     public function listForAdmin(int $limit = 50): Collection;
 
     public function setPublished(CourseReview $review, bool $published): CourseReview;
+
+    /**
+     * @param  array{course_id: string, reviewer_name: string, rating: int, body?: string|null, is_published?: bool}  $data
+     */
+    public function createAdminReview(array $data, User $admin): CourseReview;
+
+    public function deleteReview(CourseReview $review): void;
 }

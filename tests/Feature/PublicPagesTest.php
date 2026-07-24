@@ -27,12 +27,14 @@ test('contact page renders', function () {
             ->has('siteContent.consultation'));
 });
 
-test('info page renders', function () {
+test('info page renders with student lookup section', function () {
     $this->get(route('pages.info'))
         ->assertOk()
         ->assertInertia(fn ($page) => $page
             ->component('public/pages/info')
-            ->has('siteContent.info.sections'));
+            ->has('siteContent.info.sections')
+            ->where('lookupQuery', '')
+            ->has('lookupResults', 0));
 });
 
 test('shared navigation includes landing pages', function () {

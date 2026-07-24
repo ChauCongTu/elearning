@@ -20,6 +20,7 @@ class CourseCatalogService implements CourseCatalogServiceInterface
 
         $query = Course::query()
             ->published()
+            ->withPurchaseCount()
             ->with('category:id,name,slug');
 
         if ($search !== '') {
@@ -48,6 +49,7 @@ class CourseCatalogService implements CourseCatalogServiceInterface
         return Course::query()
             ->where('slug', $slug)
             ->published()
+            ->withPurchaseCount()
             ->with([
                 'category:id,name,slug',
                 'chapters' => fn ($query) => $query
@@ -75,6 +77,7 @@ class CourseCatalogService implements CourseCatalogServiceInterface
     {
         return Course::query()
             ->published()
+            ->withPurchaseCount()
             ->with('category:id,name,slug')
             ->orderByDesc('is_featured')
             ->orderByDesc('published_at')
@@ -89,6 +92,7 @@ class CourseCatalogService implements CourseCatalogServiceInterface
         return Course::query()
             ->published()
             ->featured()
+            ->withPurchaseCount()
             ->with('category:id,name,slug')
             ->orderByDesc('published_at')
             ->limit($limit)
@@ -102,6 +106,7 @@ class CourseCatalogService implements CourseCatalogServiceInterface
     {
         return Course::query()
             ->published()
+            ->withPurchaseCount()
             ->with('category:id,name,slug')
             ->orderByDesc('published_at')
             ->limit($limit)

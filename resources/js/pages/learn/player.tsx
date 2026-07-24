@@ -2,7 +2,6 @@ import { Head, Link, router } from '@inertiajs/react';
 import {
     Alert,
     Badge,
-    Box,
     Button,
     Group,
     NavLink,
@@ -13,10 +12,16 @@ import {
 import { notifications } from '@mantine/notifications';
 import { ChevronLeft, ChevronRight, CheckCircle2, Lock, PlayCircle } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import LearnResumePromptModal, {
+    shouldOfferLearnResume,
+} from '@/components/learn/learn-resume-prompt-modal';
+import LearnVideoPlayer from '@/components/learn/learn-video-player';
 import VideoWatermarkOverlay from '@/components/learn/video-watermark-overlay';
 import { useGuardedVideo } from '@/hooks/use-guarded-video';
 import { useLearnPageGuard } from '@/hooks/use-learn-page-guard';
+import { useSiteConfig } from '@/hooks/use-site-config';
 import { useVideoCaptureGuard } from '@/hooks/use-video-capture-guard';
+import { useVideoShellFullscreen } from '@/hooks/use-video-shell-fullscreen';
 import { useVideoWatermark } from '@/hooks/use-video-watermark';
 import LearnLayout from '@/layouts/learn-layout';
 import { patchLearnProgress, postMarkLessonComplete } from '@/lib/learn-progress';
@@ -37,16 +42,38 @@ export default function LearnPlayer({
     capture_guard: captureGuard,
 }: LearnPlayerProps) {
     const videoRef = useRef<HTMLVideoElement>(null);
+    const shellRef = useRef<HTMLDivElement>(null);
     const lastSentRef = useRef(0);
     const unlockReloadedRef = useRef(false);
     const [markingDone, setMarkingDone] = useState(false);
+    const [watchedSeconds, setWatchedSeconds] = useState(currentLesson.watched_seconds);
     const [progressPercent, setProgressPercent] = useState(
         Number.parseFloat(course.progress_percent),
     );
     const [lessonCompleted, setLessonCompleted] = useState(currentLesson.completed);
+    const [resumePromptOpen, setResumePromptOpen] = useState(false);
+    const [videoStartAt, setVideoStartAt] = useState(0);
+    const { name: appName } = useSiteConfig();
+
+    const unlockThreshold =
+        currentLesson.duration_seconds > 0
+            ? Math.max(1, Math.floor(currentLesson.duration_seconds * unlockRatio))
+            : null;
+
+    const canMarkAsDone =
+        canTrackProgress &&
+        !lessonCompleted &&
+        unlockThreshold !== null &&
+        watchedSeconds >= unlockThreshold;
 
     const lessonUrl = (lessonId: string) =>
         `/learn/${course.slug}/lessons/${lessonId}`;
+
+    const { isFullscreen, toggleFullscreen } = useVideoShellFullscreen(
+        videoRef,
+        shellRef,
+        Boolean(videoStreamUrl),
+    );
 
     useGuardedVideo({
         videoRef,
@@ -114,21 +141,22 @@ export default function LearnPlayer({
 
             try {
                 const result = await patchLearnProgress(currentLesson.id, floored);
+                setWatchedSeconds(result.watched_seconds);
                 setLessonCompleted(result.completed);
                 setProgressPercent(Number.parseFloat(result.progress_percent));
 
-                const unlockThreshold =
+                const threshold =
                     currentLesson.duration_seconds > 0
                         ? Math.max(
                               1,
                               Math.floor(currentLesson.duration_seconds * unlockRatio),
                           )
-                        : 1;
+                        : null;
 
                 if (
                     !unlockReloadedRef.current &&
-                    (result.completed ||
-                        result.watched_seconds >= unlockThreshold)
+                    threshold !== null &&
+                    (result.completed || result.watched_seconds >= threshold)
                 ) {
                     reloadAfterUnlock(navigation.next !== null);
                 }
@@ -156,6 +184,7 @@ export default function LearnPlayer({
         try {
             const result = await postMarkLessonComplete(currentLesson.id);
             lastSentRef.current = result.watched_seconds;
+            setWatchedSeconds(result.watched_seconds);
             setLessonCompleted(true);
             setProgressPercent(Number.parseFloat(result.progress_percent));
 
@@ -188,9 +217,46 @@ export default function LearnPlayer({
     useEffect(() => {
         lastSentRef.current = currentLesson.watched_seconds;
         unlockReloadedRef.current = false;
+        setWatchedSeconds(currentLesson.watched_seconds);
         setLessonCompleted(currentLesson.completed);
         setProgressPercent(Number.parseFloat(course.progress_percent));
-    }, [course.progress_percent, currentLesson.completed, currentLesson.id, currentLesson.watched_seconds]);
+
+        const offerResume = shouldOfferLearnResume(
+            currentLesson.watched_seconds,
+            currentLesson.duration_seconds,
+            currentLesson.completed,
+            canTrackProgress,
+        );
+
+        if (offerResume) {
+            setResumePromptOpen(true);
+            setVideoStartAt(0);
+        } else {
+            setResumePromptOpen(false);
+            setVideoStartAt(
+                currentLesson.watched_seconds > 0 && !currentLesson.completed
+                    ? currentLesson.watched_seconds
+                    : 0,
+            );
+        }
+    }, [
+        canTrackProgress,
+        course.progress_percent,
+        currentLesson.completed,
+        currentLesson.duration_seconds,
+        currentLesson.id,
+        currentLesson.watched_seconds,
+    ]);
+
+    const handleContinueFromSaved = useCallback(() => {
+        setVideoStartAt(currentLesson.watched_seconds);
+        setResumePromptOpen(false);
+    }, [currentLesson.watched_seconds]);
+
+    const handleStartFromBeginning = useCallback(() => {
+        setVideoStartAt(0);
+        setResumePromptOpen(false);
+    }, []);
 
     useEffect(() => {
         const video = videoRef.current;
@@ -198,14 +264,6 @@ export default function LearnPlayer({
         if (!video || !videoStreamUrl) {
             return;
         }
-
-        const resumeAt = currentLesson.watched_seconds;
-
-        const handleLoadedMetadata = () => {
-            if (resumeAt > 0 && resumeAt < video.duration) {
-                video.currentTime = resumeAt;
-            }
-        };
 
         const handleTimeUpdate = () => {
             if (video.currentTime - lastSentRef.current >= 15) {
@@ -225,7 +283,6 @@ export default function LearnPlayer({
             router.reload({ preserveScroll: true });
         };
 
-        video.addEventListener('loadedmetadata', handleLoadedMetadata);
         video.addEventListener('timeupdate', handleTimeUpdate);
         video.addEventListener('pause', handlePause);
         video.addEventListener('ended', handleEnded);
@@ -238,7 +295,6 @@ export default function LearnPlayer({
         }, HEARTBEAT_INTERVAL_MS);
 
         return () => {
-            video.removeEventListener('loadedmetadata', handleLoadedMetadata);
             video.removeEventListener('timeupdate', handleTimeUpdate);
             video.removeEventListener('pause', handlePause);
             video.removeEventListener('ended', handleEnded);
@@ -279,7 +335,7 @@ export default function LearnPlayer({
                                         <NavLink
                                             key={lesson.id}
                                             label={lesson.title}
-                                            description="Xem ít nhất 80% bài trước để mở khóa"
+                                            description={`Xem ít nhất ${Math.round(unlockRatio * 100)}% bài trước để mở khóa`}
                                             leftSection={leftSection}
                                             disabled
                                         />
@@ -343,36 +399,53 @@ export default function LearnPlayer({
                     </Group>
 
                     {videoStreamUrl ? (
-                        <div
-                            className="learn-video-shell overflow-hidden rounded-xl bg-black shadow-lg select-none"
-                            onContextMenu={(event) => event.preventDefault()}
-                        >
-                            <video
-                                ref={videoRef}
-                                key={`${currentLesson.id}-${videoStreamUrl}`}
-                                src={videoStreamUrl}
-                                controls
-                                controlsList="nodownload noplaybackrate noremoteplayback"
-                                disablePictureInPicture
-                                disableRemotePlayback
-                                className="aspect-video w-full bg-black"
-                                preload="metadata"
-                                playsInline
-                                onContextMenu={(event) => event.preventDefault()}
-                            />
-                            {videoWatermark.label && (
-                                <VideoWatermarkOverlay
-                                    label={videoWatermark.label}
-                                    visible={videoWatermark.visible}
-                                    corner={videoWatermark.corner}
-                                />
-                            )}
-                        </div>
+                        <LearnVideoPlayer
+                            videoRef={videoRef}
+                            shellRef={shellRef}
+                            src={videoStreamUrl}
+                            lessonKey={currentLesson.id}
+                            lessonTitle={currentLesson.title}
+                            appName={appName}
+                            startAt={videoStartAt}
+                            maxSeekSeconds={watchedSeconds}
+                            playbackBlocked={resumePromptOpen}
+                            isFullscreen={isFullscreen}
+                            onToggleFullscreen={() => void toggleFullscreen()}
+                            hasPreviousLesson={navigation.prev !== null}
+                            hasNextLesson={navigation.next !== null}
+                            onPreviousLesson={
+                                navigation.prev
+                                    ? () => router.visit(lessonUrl(navigation.prev!.id))
+                                    : undefined
+                            }
+                            onNextLesson={
+                                navigation.next
+                                    ? () => router.visit(lessonUrl(navigation.next!.id))
+                                    : undefined
+                            }
+                            watermark={
+                                videoWatermark.label ? (
+                                    <VideoWatermarkOverlay
+                                        label={videoWatermark.label}
+                                        visible={videoWatermark.visible}
+                                        corner={videoWatermark.corner}
+                                    />
+                                ) : undefined
+                            }
+                        />
                     ) : (
                         <Alert color="yellow" title="Chưa có video">
                             Bài học này chưa được tải video lên. Vui lòng quay lại sau.
                         </Alert>
                     )}
+
+                    <LearnResumePromptModal
+                        opened={resumePromptOpen && Boolean(videoStreamUrl)}
+                        watchedSeconds={currentLesson.watched_seconds}
+                        lessonTitle={currentLesson.title}
+                        onContinue={handleContinueFromSaved}
+                        onStartOver={handleStartFromBeginning}
+                    />
 
                     {!canTrackProgress && (
                         <Alert color="blue" variant="light">
@@ -380,7 +453,7 @@ export default function LearnPlayer({
                         </Alert>
                     )}
 
-                    {canTrackProgress && !lessonCompleted && (
+                    {canMarkAsDone && (
                         <Group justify="flex-end">
                             <Button
                                 variant="light"
@@ -392,6 +465,13 @@ export default function LearnPlayer({
                                 Đánh dấu đã học
                             </Button>
                         </Group>
+                    )}
+
+                    {canTrackProgress && !lessonCompleted && unlockThreshold !== null && watchedSeconds < unlockThreshold && (
+                        <Text size="sm" c="dimmed" ta="right">
+                            Xem thêm để đánh dấu hoàn thành: {Math.round(unlockRatio * 100)}% (
+                            {formatDuration(unlockThreshold)}).
+                        </Text>
                     )}
 
                     <Group justify="space-between">

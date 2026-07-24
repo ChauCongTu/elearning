@@ -2,6 +2,7 @@
 
 namespace App\Services\Payment;
 
+use App\Contracts\Mail\TransactionalMailServiceInterface;
 use App\Contracts\Payment\SePayServiceInterface;
 use App\Contracts\Payment\SePayWebhookKeyServiceInterface;
 use App\Enums\EnrollmentSource;
@@ -18,6 +19,7 @@ class SePayService implements SePayServiceInterface
 {
     public function __construct(
         private SePayWebhookKeyServiceInterface $webhookKeys,
+        private TransactionalMailServiceInterface $transactionalMail,
     ) {}
     public function generateQr(Order $order): array
     {
@@ -148,7 +150,9 @@ class SePayService implements SePayServiceInterface
             throw new WebhookProcessingException('Amount mismatch.', 422);
         }
 
-        DB::transaction(function () use ($order, $payload, $transactionId, $transferAmount) {
+        $wasMarkedPaid = false;
+
+        DB::transaction(function () use ($order, $payload, $transactionId, $transferAmount, &$wasMarkedPaid) {
             $order->refresh();
 
             if ($order->isPaid()) {
@@ -183,7 +187,14 @@ class SePayService implements SePayServiceInterface
                     ],
                 );
             }
+
+            $wasMarkedPaid = true;
         });
+
+        if ($wasMarkedPaid) {
+            $order = $order->fresh(['user', 'items.course']);
+            $this->transactionalMail->sendOrderPaid($order);
+        }
 
         return [
             'status' => 'paid',

@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Public;
 
 use App\Contracts\Catalog\CourseCatalogServiceInterface;
 use App\Contracts\Content\SiteContentServiceInterface;
+use App\Contracts\Student\StudentLookupServiceInterface;
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -13,6 +15,7 @@ class PageController extends Controller
     public function __construct(
         private SiteContentServiceInterface $siteContent,
         private CourseCatalogServiceInterface $courses,
+        private StudentLookupServiceInterface $studentLookup,
     ) {}
 
     public function about(): Response
@@ -33,9 +36,18 @@ class PageController extends Controller
         return $this->render('public/pages/contact');
     }
 
-    public function info(): Response
+    public function info(Request $request): Response
     {
-        return $this->render('public/pages/info');
+        $keyword = trim((string) $request->query('q', ''));
+        $results = $keyword !== ''
+            ? $this->studentLookup->searchPublic($keyword)->values()->all()
+            : [];
+
+        return Inertia::render('public/pages/info', [
+            'siteContent' => $this->siteContent->all(),
+            'lookupQuery' => $keyword,
+            'lookupResults' => $results,
+        ]);
     }
 
     private function render(string $page): Response

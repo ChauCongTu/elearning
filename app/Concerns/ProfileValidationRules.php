@@ -20,6 +20,7 @@ trait ProfileValidationRules
             'phone' => $this->phoneRules(),
             'gender' => ['nullable', Rule::enum(Gender::class)],
             'birth_year' => ['nullable', 'integer', 'min:1940', 'max:'.date('Y')],
+            'cmnd' => ['nullable', 'string', 'max:20'],
             'preference' => ['nullable', 'string', 'max:2000'],
             'avatar' => ['nullable', 'image', 'max:2048'],
         ];

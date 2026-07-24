@@ -113,11 +113,13 @@ export default function CourseReviewsSection({
                             <Paper key={review.id} p="md" radius="lg" withBorder>
                                 <Group align="flex-start" wrap="nowrap">
                                     <Avatar radius="xl" color="brand">
-                                        {review.user?.name?.charAt(0) ?? '?'}
+                                        {(review.user?.name ?? review.reviewer_name ?? '?').charAt(0)}
                                     </Avatar>
                                     <Stack gap={4} style={{ flex: 1, minWidth: 0 }}>
                                         <Group justify="space-between" wrap="wrap" gap="xs">
-                                            <Text fw={600}>{review.user?.name ?? 'Học viên'}</Text>
+                                            <Text fw={600}>
+                                                {review.user?.name ?? review.reviewer_name ?? 'Học viên'}
+                                            </Text>
                                             <Text size="xs" c="dimmed">
                                                 {new Date(review.created_at).toLocaleDateString('vi-VN')}
                                             </Text>

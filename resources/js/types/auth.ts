@@ -4,6 +4,8 @@ export type User = {
     email: string;
     phone: string | null;
     role: 'student' | 'admin';
+    is_root_account?: boolean;
+    can_complete_orders?: boolean;
     avatar?: string | null;
     avatar_url?: string | null;
     gender?: 'male' | 'female' | 'other' | 'undisclosed' | null;

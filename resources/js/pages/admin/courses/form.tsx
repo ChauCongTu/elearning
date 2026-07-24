@@ -50,6 +50,9 @@ type FormValues = {
     is_featured: boolean;
     is_published: boolean;
     thumbnail: File | null;
+    certificate_template_type: string;
+    certificate_template: string;
+    purchase_count_offset: number;
 };
 
 function discountPercent(price: number, comparePrice: number | ''): number | null {
@@ -82,6 +85,9 @@ export default function AdminCourseFormPage({ course, categories }: Props) {
             is_featured: course?.is_featured ?? false,
             is_published: course?.is_published ?? false,
             thumbnail: null,
+            certificate_template_type: course?.certificate_template_type ?? 'default',
+            certificate_template: course?.certificate_template ?? '',
+            purchase_count_offset: course?.purchase_count_offset ?? 0,
         },
         validate: {
             title: (value) => (value.trim() ? null : 'Vui lòng nhập tên khóa học'),
@@ -353,6 +359,69 @@ export default function AdminCourseFormPage({ course, categories }: Props) {
                                         {...form.getInputProps('lesson_count_label')}
                                     />
                                 </Group>
+                            </Stack>
+                        </Paper>
+
+                        <Paper className="admin-course-editor__card" p="md" radius="md">
+                            <Title order={6} mb="md">
+                                Hiển thị marketing
+                            </Title>
+                            <NumberInput
+                                label="Cộng thêm lượt mua"
+                                description="Cộng vào số đơn đã thanh toán thực tế trên trang khóa học."
+                                min={0}
+                                {...form.getInputProps('purchase_count_offset')}
+                            />
+                            {isEdit && course?.purchase_count !== undefined && (
+                                <Text size="sm" c="dimmed" mt="xs">
+                                    Hiển thị công khai: {course.purchase_count} lượt mua
+                                </Text>
+                            )}
+                        </Paper>
+
+                        <Paper className="admin-course-editor__card" p="md" radius="md">
+                            <Title order={6} mb="xs">
+                                Template chứng chỉ PDF
+                            </Title>
+                            <Text size="sm" c="dimmed" mb="md">
+                                Mặc định dùng layout hệ thống. Markdown/LaTeX cho phép tùy chỉnh theo khóa.
+                            </Text>
+                            <Stack gap="md">
+                                <Select
+                                    label="Loại template"
+                                    data={[
+                                        { value: 'default', label: 'Mặc định (Blade)' },
+                                        { value: 'markdown', label: 'Markdown → PDF' },
+                                        { value: 'latex', label: 'LaTeX → PDF' },
+                                    ]}
+                                    {...form.getInputProps('certificate_template_type')}
+                                />
+                                {form.values.certificate_template_type !== 'default' && (
+                                    <>
+                                        <Textarea
+                                            label="Nội dung template"
+                                            description="Để trống sẽ dùng file mẫu hệ thống."
+                                            placeholder={
+                                                form.values.certificate_template_type === 'latex'
+                                                    ? '\\documentclass{article}...'
+                                                    : '# CHỨNG CHỈ\n\n**{{name}}** ...'
+                                            }
+                                            minRows={10}
+                                            autosize
+                                            styles={{ input: { fontFamily: 'monospace', fontSize: 12 } }}
+                                            {...form.getInputProps('certificate_template')}
+                                        />
+                                        <Text size="xs" c="dimmed">
+                                            Biến: {(course?.certificate_placeholders ?? [
+                                                '{{name}}',
+                                                '{{student_code}}',
+                                                '{{course}}',
+                                                '{{graduation_date_formatted}}',
+                                                '{{organization}}',
+                                            ]).join(', ')}
+                                        </Text>
+                                    </>
+                                )}
                             </Stack>
                         </Paper>
                     </Stack>

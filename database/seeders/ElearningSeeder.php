@@ -18,17 +18,24 @@ use App\Models\OrderItem;
 use App\Models\Payment;
 use App\Models\User;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 
 class ElearningSeeder extends Seeder
 {
     public function run(): void
     {
-        User::factory()->create([
-            'name' => 'Admin',
-            'email' => 'admin@example.com',
-            'role' => UserRole::Admin,
-            'email_verified_at' => now(),
-        ]);
+        User::query()->updateOrCreate(
+            ['id' => '019f6b6d-e671-719d-9171-c58c88a649e4'],
+            [
+                'name' => 'Admin',
+                'email' => 'admin@example.com',
+                'role' => UserRole::Admin,
+                'is_root_account' => true,
+                'can_complete_orders' => true,
+                'email_verified_at' => now(),
+                'password' => Hash::make('password'),
+            ],
+        );
 
         $student = User::factory()->create([
             'name' => 'Học viên Demo',
