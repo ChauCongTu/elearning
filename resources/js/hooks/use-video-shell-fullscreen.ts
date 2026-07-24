@@ -1,5 +1,8 @@
 import { useCallback, useEffect, useState, type RefObject } from 'react';
 
+const MOBILE_LANDSCAPE_HTML_CLASS = 'learn-video-mobile-landscape-active';
+const MOBILE_LANDSCAPE_SHELL_CLASS = 'learn-video-shell--mobile-landscape';
+
 function getFullscreenElement(): Element | null {
     return (
         document.fullscreenElement ??
@@ -7,6 +10,45 @@ function getFullscreenElement(): Element | null {
             .webkitFullscreenElement ??
         null
     );
+}
+
+function isPortraitViewport(): boolean {
+    return window.matchMedia('(orientation: portrait)').matches;
+}
+
+async function lockLandscapeOrientation(): Promise<boolean> {
+    try {
+        const orientation = screen.orientation as ScreenOrientation & {
+            lock?: (orientation: OrientationLockType) => Promise<void>;
+        };
+
+        if (typeof orientation?.lock === 'function') {
+            await orientation.lock('landscape');
+            return true;
+        }
+    } catch {
+        // iOS Safari and some browsers block orientation lock.
+    }
+
+    return false;
+}
+
+function unlockLandscapeOrientation(): void {
+    try {
+        screen.orientation?.unlock?.();
+    } catch {
+        // ignore
+    }
+}
+
+function enableForcedLandscape(shell: HTMLElement | null): void {
+    document.documentElement.classList.add(MOBILE_LANDSCAPE_HTML_CLASS);
+    shell?.classList.add(MOBILE_LANDSCAPE_SHELL_CLASS);
+}
+
+function disableForcedLandscape(shell: HTMLElement | null): void {
+    document.documentElement.classList.remove(MOBILE_LANDSCAPE_HTML_CLASS);
+    shell?.classList.remove(MOBILE_LANDSCAPE_SHELL_CLASS);
 }
 
 export async function exitVideoShellFullscreen(): Promise<void> {
@@ -43,13 +85,48 @@ export function useVideoShellFullscreen(
     enabled = true,
 ): {
     isFullscreen: boolean;
+    isMobileLandscape: boolean;
     toggleFullscreen: () => Promise<void>;
+    toggleMobileLandscape: () => Promise<void>;
 } {
     const [isFullscreen, setIsFullscreen] = useState(false);
+    const [isForcedLandscape, setIsForcedLandscape] = useState(false);
+
+    const isMobileLandscape = isFullscreen || isForcedLandscape;
+
+    const exitMobileLandscape = useCallback(async () => {
+        const shell = shellRef.current;
+
+        disableForcedLandscape(shell);
+        setIsForcedLandscape(false);
+        unlockLandscapeOrientation();
+        await exitVideoShellFullscreen();
+    }, [shellRef]);
+
+    const syncForcedLandscape = useCallback(() => {
+        const shell = shellRef.current;
+
+        if (!shell || !isForcedLandscape) {
+            return;
+        }
+
+        if (isPortraitViewport()) {
+            enableForcedLandscape(shell);
+        } else {
+            disableForcedLandscape(shell);
+        }
+    }, [isForcedLandscape, shellRef]);
 
     useEffect(() => {
         const sync = () => {
-            setIsFullscreen(getFullscreenElement() === shellRef.current);
+            const active = getFullscreenElement() === shellRef.current;
+            setIsFullscreen(active);
+
+            if (!active && isForcedLandscape) {
+                disableForcedLandscape(shellRef.current);
+                setIsForcedLandscape(false);
+                unlockLandscapeOrientation();
+            }
         };
 
         document.addEventListener('fullscreenchange', sync);
@@ -60,7 +137,25 @@ export function useVideoShellFullscreen(
             document.removeEventListener('fullscreenchange', sync);
             document.removeEventListener('webkitfullscreenchange', sync);
         };
-    }, [shellRef]);
+    }, [isForcedLandscape, shellRef]);
+
+    useEffect(() => {
+        if (!isForcedLandscape) {
+            return;
+        }
+
+        const handleOrientationChange = () => {
+            syncForcedLandscape();
+        };
+
+        window.addEventListener('orientationchange', handleOrientationChange);
+        window.addEventListener('resize', handleOrientationChange);
+
+        return () => {
+            window.removeEventListener('orientationchange', handleOrientationChange);
+            window.removeEventListener('resize', handleOrientationChange);
+        };
+    }, [isForcedLandscape, syncForcedLandscape]);
 
     useEffect(() => {
         const video = videoRef.current;
@@ -105,6 +200,14 @@ export function useVideoShellFullscreen(
         };
     }, [enabled, shellRef, videoRef]);
 
+    useEffect(
+        () => () => {
+            disableForcedLandscape(shellRef.current);
+            unlockLandscapeOrientation();
+        },
+        [shellRef],
+    );
+
     const toggleFullscreen = useCallback(async () => {
         const shell = shellRef.current;
 
@@ -113,12 +216,43 @@ export function useVideoShellFullscreen(
         }
 
         if (getFullscreenElement() === shell) {
-            await exitVideoShellFullscreen();
+            await exitMobileLandscape();
             return;
         }
 
         await enterVideoShellFullscreen(shell);
-    }, [shellRef]);
+    }, [exitMobileLandscape, shellRef]);
 
-    return { isFullscreen, toggleFullscreen };
+    const toggleMobileLandscape = useCallback(async () => {
+        const shell = shellRef.current;
+
+        if (!shell) {
+            return;
+        }
+
+        if (isMobileLandscape) {
+            await exitMobileLandscape();
+            return;
+        }
+
+        try {
+            await enterVideoShellFullscreen(shell);
+        } catch {
+            // Fall back to CSS rotation below.
+        }
+
+        await lockLandscapeOrientation();
+
+        if (isPortraitViewport()) {
+            enableForcedLandscape(shell);
+            setIsForcedLandscape(true);
+        }
+    }, [exitMobileLandscape, isMobileLandscape, shellRef]);
+
+    return {
+        isFullscreen,
+        isMobileLandscape,
+        toggleFullscreen,
+        toggleMobileLandscape,
+    };
 }

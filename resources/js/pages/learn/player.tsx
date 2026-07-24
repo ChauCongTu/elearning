@@ -69,7 +69,8 @@ export default function LearnPlayer({
     const lessonUrl = (lessonId: string) =>
         `/learn/${course.slug}/lessons/${lessonId}`;
 
-    const { isFullscreen, toggleFullscreen } = useVideoShellFullscreen(
+    const { isFullscreen, isMobileLandscape, toggleFullscreen, toggleMobileLandscape } =
+        useVideoShellFullscreen(
         videoRef,
         shellRef,
         Boolean(videoStreamUrl),
@@ -410,7 +411,9 @@ export default function LearnPlayer({
                             maxSeekSeconds={watchedSeconds}
                             playbackBlocked={resumePromptOpen}
                             isFullscreen={isFullscreen}
+                            isMobileLandscape={isMobileLandscape}
                             onToggleFullscreen={() => void toggleFullscreen()}
+                            onToggleMobileLandscape={() => void toggleMobileLandscape()}
                             hasPreviousLesson={navigation.prev !== null}
                             hasNextLesson={navigation.next !== null}
                             onPreviousLesson={

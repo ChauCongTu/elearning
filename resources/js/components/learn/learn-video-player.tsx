@@ -19,6 +19,7 @@ import {
     type RefObject,
 } from 'react';
 import VideoPlayerShortcutsHelp from '@/components/learn/video-player-shortcuts-help';
+import { useIsMobile } from '@/hooks/use-mobile';
 import { useVideoPlayerShortcuts } from '@/hooks/use-video-player-shortcuts';
 import { formatVideoTime } from '@/lib/format';
 
@@ -47,7 +48,9 @@ type LearnVideoPlayerProps = {
     maxSeekSeconds: number;
     playbackBlocked?: boolean;
     isFullscreen: boolean;
+    isMobileLandscape?: boolean;
     onToggleFullscreen: () => void;
+    onToggleMobileLandscape?: () => void;
     onPreviousLesson?: () => void;
     onNextLesson?: () => void;
     hasPreviousLesson?: boolean;
@@ -70,7 +73,9 @@ export default function LearnVideoPlayer({
     maxSeekSeconds,
     playbackBlocked = false,
     isFullscreen,
+    isMobileLandscape = false,
     onToggleFullscreen,
+    onToggleMobileLandscape,
     onPreviousLesson,
     onNextLesson,
     hasPreviousLesson = false,
@@ -81,6 +86,7 @@ export default function LearnVideoPlayer({
     onEnded,
     onError,
 }: LearnVideoPlayerProps) {
+    const isMobile = useIsMobile();
     const progressRef = useRef<HTMLDivElement>(null);
     const hideTimerRef = useRef<number | null>(null);
     const draggingRef = useRef(false);
@@ -88,6 +94,9 @@ export default function LearnVideoPlayer({
         time: 0,
         side: null,
     });
+    const pendingTapHideTimerRef = useRef<number | null>(null);
+    const controlsVisibleRef = useRef(true);
+    const isPlayingRef = useRef(false);
 
     const [isPlaying, setIsPlaying] = useState(false);
     const [currentTime, setCurrentTime] = useState(startAt);
@@ -108,6 +117,13 @@ export default function LearnVideoPlayer({
         }
     }, []);
 
+    const clearPendingTapHide = useCallback(() => {
+        if (pendingTapHideTimerRef.current !== null) {
+            window.clearTimeout(pendingTapHideTimerRef.current);
+            pendingTapHideTimerRef.current = null;
+        }
+    }, []);
+
     const scheduleHideControls = useCallback(() => {
         clearHideTimer();
 
@@ -119,9 +135,16 @@ export default function LearnVideoPlayer({
     }, [clearHideTimer]);
 
     const revealControls = useCallback(() => {
+        clearPendingTapHide();
         setControlsVisible(true);
         scheduleHideControls();
-    }, [scheduleHideControls]);
+    }, [clearPendingTapHide, scheduleHideControls]);
+
+    const hideControlsNow = useCallback(() => {
+        clearHideTimer();
+        clearPendingTapHide();
+        setControlsVisible(false);
+    }, [clearHideTimer, clearPendingTapHide]);
 
     const maxAllowedSeek = useCallback(
         (video: HTMLVideoElement) =>
@@ -272,16 +295,16 @@ export default function LearnVideoPlayer({
                 return;
             }
 
+            clearPendingTapHide();
             lastTapRef.current = { time: 0, side: null };
             seekRelative(side === 'left' ? -SEEK_STEP_SECONDS : SEEK_STEP_SECONDS, side);
         },
-        [resolveTapSide, seekRelative],
+        [clearPendingTapHide, resolveTapSide, seekRelative],
     );
 
     const handleSurfaceTap = useCallback(
         (clientX: number) => {
             focusShell();
-            revealControls();
 
             const side = resolveTapSide(clientX);
 
@@ -298,8 +321,37 @@ export default function LearnVideoPlayer({
             }
 
             lastTapRef.current = { time: now, side };
+            clearPendingTapHide();
+
+            if (shortcutsHelpVisibleRef.current) {
+                return;
+            }
+
+            if (!controlsVisibleRef.current) {
+                revealControls();
+                return;
+            }
+
+            if (!isPlayingRef.current) {
+                return;
+            }
+
+            pendingTapHideTimerRef.current = window.setTimeout(() => {
+                pendingTapHideTimerRef.current = null;
+
+                if (isPlayingRef.current && controlsVisibleRef.current) {
+                    hideControlsNow();
+                }
+            }, DOUBLE_TAP_WINDOW_MS);
         },
-        [focusShell, handleDoubleTapSeek, revealControls, resolveTapSide],
+        [
+            clearPendingTapHide,
+            focusShell,
+            handleDoubleTapSeek,
+            hideControlsNow,
+            revealControls,
+            resolveTapSide,
+        ],
     );
 
     const toggleShortcutsHelp = useCallback(() => {
@@ -314,6 +366,14 @@ export default function LearnVideoPlayer({
     useEffect(() => {
         shortcutsHelpVisibleRef.current = shortcutsHelpVisible;
     }, [shortcutsHelpVisible]);
+
+    useEffect(() => {
+        controlsVisibleRef.current = controlsVisible;
+    }, [controlsVisible]);
+
+    useEffect(() => {
+        isPlayingRef.current = isPlaying;
+    }, [isPlaying]);
 
     useVideoPlayerShortcuts({
         shellRef,
@@ -400,7 +460,8 @@ export default function LearnVideoPlayer({
         lastTapRef.current = { time: 0, side: null };
         setSeekHint(null);
         clearHideTimer();
-    }, [clearHideTimer, lessonKey, startAt]);
+        clearPendingTapHide();
+    }, [clearHideTimer, clearPendingTapHide, lessonKey, startAt]);
 
     useEffect(() => {
         const video = videoRef.current;
@@ -532,7 +593,10 @@ export default function LearnVideoPlayer({
         videoRef,
     ]);
 
-    useEffect(() => () => clearHideTimer(), [clearHideTimer]);
+    useEffect(() => () => {
+        clearHideTimer();
+        clearPendingTapHide();
+    }, [clearHideTimer, clearPendingTapHide]);
 
     const playedPercent = duration > 0 ? (currentTime / duration) * 100 : 0;
     const bufferedPercent = duration > 0 ? (bufferedEnd / duration) * 100 : 0;
@@ -726,7 +790,7 @@ export default function LearnVideoPlayer({
 
                         <button
                             type="button"
-                            className="learn-video-ui__btn"
+                            className="learn-video-ui__btn learn-video-ui__btn--desktop-only"
                             aria-label="Phím tắt"
                             title="Phím tắt (?)"
                             onClick={toggleShortcutsHelp}
@@ -734,18 +798,36 @@ export default function LearnVideoPlayer({
                             <Keyboard className="size-5" />
                         </button>
 
-                        <button
-                            type="button"
-                            className="learn-video-ui__btn"
-                            aria-label={isFullscreen ? 'Thoát toàn màn hình' : 'Toàn màn hình'}
-                            onClick={onToggleFullscreen}
-                        >
-                            {isFullscreen ? (
-                                <Minimize className="size-5" />
-                            ) : (
-                                <Maximize className="size-5" />
-                            )}
-                        </button>
+                        {isMobile ? (
+                            <button
+                                type="button"
+                                className="learn-video-ui__btn learn-video-ui__btn--mobile-landscape"
+                                aria-label={
+                                    isMobileLandscape ? 'Thoát chế độ ngang' : 'Xoay ngang / Toàn màn hình'
+                                }
+                                title={isMobileLandscape ? 'Thoát chế độ ngang' : 'Xoay ngang'}
+                                onClick={() => onToggleMobileLandscape?.()}
+                            >
+                                {isMobileLandscape ? (
+                                    <Minimize className="size-5" />
+                                ) : (
+                                    <RotateCw className="size-5" />
+                                )}
+                            </button>
+                        ) : (
+                            <button
+                                type="button"
+                                className="learn-video-ui__btn"
+                                aria-label={isFullscreen ? 'Thoát toàn màn hình' : 'Toàn màn hình'}
+                                onClick={onToggleFullscreen}
+                            >
+                                {isFullscreen ? (
+                                    <Minimize className="size-5" />
+                                ) : (
+                                    <Maximize className="size-5" />
+                                )}
+                            </button>
+                        )}
                     </div>
                 </div>
             </div>

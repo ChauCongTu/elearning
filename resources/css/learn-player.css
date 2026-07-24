@@ -448,8 +448,51 @@
         display: none;
     }
 
+    .learn-video-ui__btn--desktop-only {
+        display: none;
+    }
+
+    .learn-video-ui__btn--mobile-landscape {
+        width: 2.5rem;
+        height: 2.5rem;
+        background: rgb(255 255 255 / 0.1);
+    }
+
     .learn-video-ui__time {
         min-width: 5.5rem;
         font-size: 0.72rem;
     }
+}
+
+html.learn-video-mobile-landscape-active,
+html.learn-video-mobile-landscape-active body {
+    overflow: hidden;
+    height: 100%;
+}
+
+.learn-video-shell.learn-video-shell--mobile-landscape {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    z-index: 10000;
+    width: 100vh;
+    height: 100vw;
+    max-width: none;
+    border-radius: 0;
+    transform: translate(-50%, -50%) rotate(90deg);
+}
+
+.learn-video-shell.learn-video-shell--mobile-landscape .learn-video-shell__video {
+    width: 100%;
+    height: 100%;
+    aspect-ratio: auto;
+    object-fit: contain;
+}
+
+.learn-video-shell.learn-video-shell--mobile-landscape .learn-video-ui__seek-hint--left {
+    left: 22%;
+}
+
+.learn-video-shell.learn-video-shell--mobile-landscape .learn-video-ui__seek-hint--right {
+    left: 78%;
 }
