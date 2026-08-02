@@ -1,10 +1,6 @@
 # Học Viện Bông Nhài Trắng — E-Learning Platform
 
-Website bán khóa học online trên Laravel 13 + Inertia React, thay thế hệ thống legacy [hocvienbongnhaitrang.com](https://hocvienbongnhaitrang.com/).
-
-**Báo giá:** `Bao_Gia_Website_Khoa_Hoc_Tinh_Gon.pdf` (07/07/2026)  
-**Thời gian:** 20–30 ngày làm việc  
-**Tổng phí dev:** 6.500.000 VNĐ (trọn gói)
+Website bán khóa học online trên Laravel 13 + Inertia React, thay thế hệ thống legacy [hocvienbongnhaitrang.com](https://hocvienbongnhaitrang.com/). 
 
 ## Mục tiêu giai đoạn hiện tại (trong gói)
 
