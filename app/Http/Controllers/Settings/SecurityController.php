@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Settings;
 
+use App\Contracts\Auth\SingleSessionServiceInterface;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Settings\PasswordUpdateRequest;
 use App\Http\Requests\Settings\TwoFactorAuthenticationRequest;
@@ -12,6 +13,10 @@ use Inertia\Response;
 
 class SecurityController extends Controller
 {
+    public function __construct(
+        private SingleSessionServiceInterface $singleSessionService,
+    ) {}
+
     /**
      * Show the user's security settings page.
      */
@@ -29,10 +34,16 @@ class SecurityController extends Controller
      */
     public function update(PasswordUpdateRequest $request): RedirectResponse
     {
-        $request->user()->update([
+        $user = $request->user();
+
+        $user->update([
             'password' => $request->password,
             'must_change_password' => false,
         ]);
+
+        if ($this->singleSessionService->shouldEnforce($user)) {
+            $this->singleSessionService->activateSession($user, $request);
+        }
 
         Inertia::flash('toast', ['type' => 'success', 'message' => __('Password updated.')]);
 

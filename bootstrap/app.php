@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\EnsureSingleSession;
 use App\Http\Middleware\EnsureSiteIsOnline;
 use App\Http\Middleware\EnsurePasswordChanged;
 use App\Http\Middleware\EnsureUserIsAdmin;
@@ -32,6 +33,7 @@ return Application::configure(basePath: dirname(__DIR__))
             HandleInertiaRequests::class,
             AddLinkHeadersForPreloadedAssets::class,
             EnsurePasswordChanged::class,
+            EnsureSingleSession::class,
         ]);
 
         $middleware->validateCsrfTokens(except: [

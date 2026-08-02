@@ -1,24 +1,57 @@
 import { Form, Head, Link } from '@inertiajs/react';
+import { useEffect, useState } from 'react';
 import {
     Anchor,
     Button,
     Checkbox,
+    Group,
+    Modal,
     PasswordInput,
     Stack,
     Text,
     TextInput,
 } from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
 import AuthShell from '@/components/public/auth-shell';
 import { store } from '@/routes/login';
 import { request } from '@/routes/password';
 import { register } from '@/routes';
 
+type SessionTakeover = {
+    email: string;
+    device: string;
+};
+
 type Props = {
     status?: string;
     canResetPassword: boolean;
+    sessionTakeover?: SessionTakeover | null;
 };
 
-export default function Login({ status, canResetPassword }: Props) {
+export default function Login({
+    status,
+    canResetPassword,
+    sessionTakeover,
+}: Props) {
+    const [takeoverModal, takeoverHandlers] = useDisclosure(false);
+    const [takeover, setTakeover] = useState<SessionTakeover | null>(
+        sessionTakeover ?? null,
+    );
+    const [defaultEmail, setDefaultEmail] = useState(sessionTakeover?.email ?? '');
+
+    useEffect(() => {
+        if (sessionTakeover) {
+            setTakeover(sessionTakeover);
+            setDefaultEmail(sessionTakeover.email);
+            takeoverHandlers.open();
+        }
+    }, [sessionTakeover, takeoverHandlers]);
+
+    const closeTakeoverModal = () => {
+        takeoverHandlers.close();
+        setTakeover(null);
+    };
+
     return (
         <>
             <Head title="Đăng nhập" />
@@ -47,7 +80,9 @@ export default function Login({ status, canResetPassword }: Props) {
                                 name="email"
                                 type="email"
                                 required
-                                autoFocus
+                                autoFocus={!takeover}
+                                defaultValue={defaultEmail}
+                                key={defaultEmail}
                                 placeholder="email@example.com"
                                 error={errors.email}
                             />
@@ -82,6 +117,73 @@ export default function Login({ status, canResetPassword }: Props) {
                     )}
                 </Form>
             </AuthShell>
+
+            <Modal
+                opened={takeoverModal}
+                onClose={closeTakeoverModal}
+                title="Tài khoản đang được sử dụng"
+                centered
+            >
+                <Stack gap="md">
+                    <Text size="sm">
+                        Tài khoản của bạn đang đăng nhập trên{' '}
+                        <Text span fw={600}>
+                            {takeover?.device ?? 'thiết bị khác'}
+                        </Text>
+                        . Nếu tiếp tục, phiên đăng nhập trên thiết bị đó sẽ
+                        bị đăng xuất.
+                    </Text>
+                    <Text size="sm" c="dimmed">
+                        Bạn có muốn tiếp tục đăng nhập trên thiết bị này không?
+                    </Text>
+
+                    <Form {...store.form()} resetOnSuccess={['password']}>
+                        {({ processing, errors }) => (
+                            <Stack gap="md">
+                                <input
+                                    type="hidden"
+                                    name="confirm_session_takeover"
+                                    value="1"
+                                />
+                                <TextInput
+                                    label="Email"
+                                    name="email"
+                                    type="email"
+                                    required
+                                    readOnly
+                                    defaultValue={takeover?.email ?? ''}
+                                    error={errors.email}
+                                />
+                                <PasswordInput
+                                    label="Mật khẩu"
+                                    name="password"
+                                    required
+                                    autoFocus
+                                    placeholder="••••••••"
+                                    error={errors.password}
+                                />
+                                <Group justify="flex-end" gap="sm">
+                                    <Button
+                                        variant="default"
+                                        onClick={closeTakeoverModal}
+                                        disabled={processing}
+                                    >
+                                        Hủy
+                                    </Button>
+                                    <Button
+                                        type="submit"
+                                        color="pink"
+                                        loading={processing}
+                                        data-test="confirm-session-takeover-button"
+                                    >
+                                        Tiếp tục đăng nhập
+                                    </Button>
+                                </Group>
+                            </Stack>
+                        )}
+                    </Form>
+                </Stack>
+            </Modal>
         </>
     );
 }

@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Contracts\Auth\SingleSessionServiceInterface;
 use App\Contracts\Files\FileServiceInterface;
 use App\Contracts\Learning\EnrollmentProgressServiceInterface;
 use App\Contracts\Learning\LearningServiceInterface;
@@ -36,6 +37,7 @@ use App\Contracts\Content\PostCategoryServiceInterface;
 use App\Contracts\Content\PostServiceInterface;
 use App\Contracts\Content\SiteContentServiceInterface;
 use App\Contracts\Content\SiteSettingsServiceInterface;
+use App\Services\Auth\SingleSessionService;
 use App\Services\Files\FileService;
 use App\Services\Content\SiteSettingsService;
 use App\Services\Admin\AdminDashboardService;
@@ -58,7 +60,6 @@ use App\Services\Content\PostCategoryService;
 use App\Services\Content\PostService;
 use App\Services\Content\SiteContentService;
 use App\Listeners\SendRegistrationWelcomeEmail;
-use App\Listeners\RecordUserLogin;
 use App\Services\Enrollment\EnrollmentService;
 use App\Services\Learning\EnrollmentProgressService;
 use App\Services\Learning\LearningService;
@@ -76,7 +77,6 @@ use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
-use Illuminate\Auth\Events\Login;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\ServiceProvider;
 
@@ -89,6 +89,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        $this->app->bind(SingleSessionServiceInterface::class, SingleSessionService::class);
         $this->app->bind(FileServiceInterface::class, FileService::class);
         $this->app->bind(SiteSettingsServiceInterface::class, SiteSettingsService::class);
         $this->app->bind(SiteContentServiceInterface::class, SiteContentService::class);
@@ -130,7 +131,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        Event::listen(Login::class, RecordUserLogin::class);
         Event::listen(Registered::class, SendRegistrationWelcomeEmail::class);
 
         $this->configureDefaults();

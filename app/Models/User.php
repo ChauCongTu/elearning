@@ -34,6 +34,8 @@ use Illuminate\Support\Carbon;
  * @property string|null $preference
  * @property Carbon|null $last_login_at
  * @property string|null $last_login_ip
+ * @property string|null $current_session_id
+ * @property string|null $current_session_device
  * @property int|null $legacy_wp_id
  * @property Carbon|null $email_verified_at
  * @property string $password
