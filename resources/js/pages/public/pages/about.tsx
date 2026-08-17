@@ -1,4 +1,4 @@
-import { Head } from '@inertiajs/react';
+import SeoHead from '@/components/public/seo-head';
 import { Container, Stack } from '@mantine/core';
 import AboutAcademy from '@/components/public/sections/about-academy';
 import FounderSpotlight from '@/components/public/sections/founder-spotlight';
@@ -15,7 +15,11 @@ type Props = {
 export default function AboutPage({ siteContent }: Props) {
     return (
         <>
-            <Head title="Về chúng tôi" />
+            <SeoHead
+                title="Về chúng tôi"
+                description={siteContent.about.headline}
+                canonicalPath="/ve-chung-toi"
+            />
 
             <PageHero
                 title="Về chúng tôi"

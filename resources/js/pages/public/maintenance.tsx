@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { Head } from '@inertiajs/react';
+import SeoHead from '@/components/public/seo-head';
 import { Box, Button, Container, Group, Paper, Stack, Text, Title } from '@mantine/core';
 import { Phone, Wrench } from 'lucide-react';
 import BrandLogo from '@/components/public/brand-logo';
@@ -13,7 +13,12 @@ type Props = {
 export default function Maintenance({ maintenance, siteSettings }: Props) {
     return (
         <>
-            <Head title="Bảo trì" />
+            <SeoHead
+                title="Bảo trì"
+                description={maintenance.message}
+                canonicalPath="/"
+                noIndex
+            />
 
             <Box
                 mih="100vh"

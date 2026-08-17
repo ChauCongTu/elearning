@@ -1,4 +1,5 @@
-import { Head, Link } from '@inertiajs/react';
+import { Link } from '@inertiajs/react';
+import SeoHead from '@/components/public/seo-head';
 import {
     Badge,
     Box,
@@ -38,7 +39,16 @@ export default function PostShow({ post, relatedPosts }: Props) {
 
     return (
         <>
-            <Head title={post.title} />
+            <SeoHead
+                title={post.title}
+                description={
+                    post.excerpt ??
+                    'Tin tức và kiến thức thẩm mỹ từ Học Viện Bông Nhài Trắng.'
+                }
+                canonicalPath={`/tin-tuc/${post.slug}`}
+                image={featuredImage}
+                type="article"
+            />
 
             {featuredImage && (
                 <Box

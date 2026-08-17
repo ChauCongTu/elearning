@@ -1,4 +1,5 @@
-import { Head } from '@inertiajs/react';
+import { usePage } from '@inertiajs/react';
+import SeoHead from '@/components/public/seo-head';
 import AboutAcademy from '@/components/public/sections/about-academy';
 import ArticleTeasers from '@/components/public/sections/article-teasers';
 import CategoryShowcase from '@/components/public/sections/category-showcase';
@@ -32,9 +33,15 @@ export default function Home({
     siteContent,
     articleSections,
 }: Props) {
+    const { siteSettings } = usePage<{ siteSettings: { tagline: string } }>().props;
+
     return (
         <>
-            <Head title="Trang chủ" />
+            <SeoHead
+                title="Trang chủ"
+                description={siteSettings.tagline}
+                canonicalPath="/"
+            />
 
             <HeroBanner
                 banners={banners}

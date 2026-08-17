@@ -1,4 +1,5 @@
-import { Head, router } from '@inertiajs/react';
+import { router } from '@inertiajs/react';
+import SeoHead from '@/components/public/seo-head';
 import {
     Container,
     Group,
@@ -44,7 +45,11 @@ export default function CoursesIndex({ courses, categories, filters }: Props) {
 
     return (
         <>
-            <Head title="Khóa học" />
+            <SeoHead
+                title="Khóa học"
+                description="Tìm khóa học phù hợp — lọc theo danh mục, sắp xếp theo giá hoặc mới nhất tại Học Viện Bông Nhài Trắng."
+                canonicalPath="/courses"
+            />
 
             <Container size="xl" py={{ base: 32, md: 48 }}>
                 <Stack gap="xl">

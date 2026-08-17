@@ -1,4 +1,5 @@
-import { Head, Link, router, usePage } from '@inertiajs/react';
+import { Link, router, usePage } from '@inertiajs/react';
+import SeoHead from '@/components/public/seo-head';
 import {
     Accordion,
     Badge,
@@ -123,7 +124,16 @@ export default function CourseShow({
 
     return (
         <>
-            <Head title={course.title} />
+            <SeoHead
+                title={course.title}
+                description={
+                    course.excerpt ??
+                    'Khóa học thẩm mỹ online tại Học Viện Bông Nhài Trắng.'
+                }
+                canonicalPath={`/courses/${course.slug}`}
+                image={thumbnail}
+                type="website"
+            />
 
             <Box
                 py={{ base: 32, md: 48 }}

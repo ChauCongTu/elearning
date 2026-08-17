@@ -1,4 +1,4 @@
-import { Head } from '@inertiajs/react';
+import SeoHead from '@/components/public/seo-head';
 import { Container, Stack, Text } from '@mantine/core';
 import ContactChannels from '@/components/public/contact-channels';
 import ConsultationSection from '@/components/public/sections/consultation-section';
@@ -12,7 +12,11 @@ type Props = {
 export default function ContactPage({ siteContent }: Props) {
     return (
         <>
-            <Head title="Liên hệ" />
+            <SeoHead
+                title="Liên hệ"
+                description={siteContent.contact.intro}
+                canonicalPath="/lien-he"
+            />
 
             <PageHero title="Liên hệ" subtitle={siteContent.contact.intro} />
 

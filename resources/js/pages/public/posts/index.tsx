@@ -1,4 +1,5 @@
-import { Head, Link, router } from '@inertiajs/react';
+import { Link, router } from '@inertiajs/react';
+import SeoHead from '@/components/public/seo-head';
 import {
     Container,
     Group,
@@ -47,9 +48,22 @@ export default function PostsIndex({
         applyFilters({ q: value, page: 1 });
     }, 350);
 
+    const pageTitle = activeCategory ? activeCategory.name : 'Tin tức';
+    const pageDescription =
+        activeCategory?.description ??
+        'Cập nhật kiến thức, hướng nghiệp và tin tức từ Học Viện Bông Nhài Trắng.';
+    const canonicalPath =
+        posts.current_page > 1
+            ? `${basePath}?page=${posts.current_page}`
+            : basePath;
+
     return (
         <>
-            <Head title={activeCategory ? activeCategory.name : 'Tin tức'} />
+            <SeoHead
+                title={pageTitle}
+                description={pageDescription}
+                canonicalPath={canonicalPath}
+            />
 
             <PageHero
                 title={activeCategory?.name ?? 'Tin tức'}

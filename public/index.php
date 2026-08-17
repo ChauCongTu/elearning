@@ -1,5 +1,17 @@
 <?php
 
+$tmpDir = __DIR__.'/../storage/framework/tmp';
+
+if (! is_dir($tmpDir)) {
+    mkdir($tmpDir, 0775, true);
+}
+
+putenv('TMPDIR='.$tmpDir);
+putenv('TEMP='.$tmpDir);
+putenv('TMP='.$tmpDir);
+$_ENV['TMPDIR'] = $tmpDir;
+$_SERVER['TMPDIR'] = $tmpDir;
+
 use Illuminate\Foundation\Application;
 use Illuminate\Http\Request;
 

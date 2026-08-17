@@ -37,9 +37,11 @@ use App\Contracts\Content\PostCategoryServiceInterface;
 use App\Contracts\Content\PostServiceInterface;
 use App\Contracts\Content\SiteContentServiceInterface;
 use App\Contracts\Content\SiteSettingsServiceInterface;
+use App\Contracts\Content\SitemapServiceInterface;
 use App\Services\Auth\SingleSessionService;
 use App\Services\Files\FileService;
 use App\Services\Content\SiteSettingsService;
+use App\Services\Content\SitemapService;
 use App\Services\Admin\AdminDashboardService;
 use App\Services\Admin\AdminBannerService;
 use App\Services\Admin\AdminCategoryService;
@@ -91,6 +93,7 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->app->bind(SingleSessionServiceInterface::class, SingleSessionService::class);
         $this->app->bind(FileServiceInterface::class, FileService::class);
+        $this->app->bind(SitemapServiceInterface::class, SitemapService::class);
         $this->app->bind(SiteSettingsServiceInterface::class, SiteSettingsService::class);
         $this->app->bind(SiteContentServiceInterface::class, SiteContentService::class);
         $this->app->bind(CategoryServiceInterface::class, CategoryService::class);

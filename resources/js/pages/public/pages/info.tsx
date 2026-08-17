@@ -1,4 +1,4 @@
-import { Head } from '@inertiajs/react';
+import SeoHead from '@/components/public/seo-head';
 import { Container, Paper, Stack, Text, Title } from '@mantine/core';
 import HotlineCta from '@/components/public/sections/hotline-cta';
 import StudentLookupSection from '@/components/public/sections/student-lookup-section';
@@ -14,9 +14,12 @@ type Props = {
 export default function InfoPage({ siteContent, lookupQuery, lookupResults }: Props) {
     return (
         <>
-            <Head title="Thông tin">
-                {lookupQuery !== '' && <meta name="robots" content="noindex, nofollow" />}
-            </Head>
+            <SeoHead
+                title="Thông tin"
+                description={siteContent.info.intro}
+                canonicalPath="/thong-tin"
+                noIndex={lookupQuery !== ''}
+            />
 
             <PageHero title="Thông tin" subtitle={siteContent.info.intro} />
 

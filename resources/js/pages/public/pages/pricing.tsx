@@ -1,4 +1,5 @@
-import { Head, Link } from '@inertiajs/react';
+import { Link } from '@inertiajs/react';
+import SeoHead from '@/components/public/seo-head';
 import {
     Container,
     Paper,
@@ -24,7 +25,11 @@ type Props = {
 export default function PricingPage({ siteContent, courses }: Props) {
     return (
         <>
-            <Head title="Bảng giá" />
+            <SeoHead
+                title="Bảng giá"
+                description={siteContent.pricing.intro}
+                canonicalPath="/bang-gia"
+            />
 
             <PageHero
                 title="Bảng giá"

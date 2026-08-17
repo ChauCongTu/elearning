@@ -30,8 +30,12 @@ use App\Http\Controllers\Public\CourseController as PublicCourseController;
 use App\Http\Controllers\Public\HomeController;
 use App\Http\Controllers\Public\PageController;
 use App\Http\Controllers\Public\PostController as PublicPostController;
+use App\Http\Controllers\Public\SeoController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+
+Route::get('/sitemap.xml', [SeoController::class, 'sitemap'])->name('seo.sitemap');
+Route::get('/robots.txt', [SeoController::class, 'robots'])->name('seo.robots');
 
 Route::post('/webhooks/sepay', SePayWebhookController::class)->name('webhooks.sepay');
 

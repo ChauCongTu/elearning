@@ -17,6 +17,7 @@ declare module '@inertiajs/core' {
             sidebarOpen: boolean;
             navigation: NavLink[];
             siteSettings: SiteSettings;
+            appUrl: string;
             [key: string]: unknown;
         };
     }
