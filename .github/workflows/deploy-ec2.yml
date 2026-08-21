@@ -26,7 +26,9 @@ env:
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest
+    # Native arm64: EC2 lab is t4g. Compiling PHP extensions under QEMU on
+    # ubuntu-latest (amd64) routinely takes 15–30+ minutes.
+    runs-on: ubuntu-24.04-arm
     steps:
       - name: Checkout
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
@@ -100,9 +102,6 @@ jobs:
           echo "ecr_uri=${ECR_URI}" >> "$GITHUB_OUTPUT"
           echo "instance_id=${INSTANCE_ID}" >> "$GITHUB_OUTPUT"
           echo "tag=${TAG}" >> "$GITHUB_OUTPUT"
-
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
