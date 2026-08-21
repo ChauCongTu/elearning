@@ -117,6 +117,7 @@ Queue worker: nếu không có supervisor, dùng `database` queue + cron chạy 
 
 ## Docker (PHP-FPM + Nginx + Supervisor)
 
+
 Image **Alpine**: one `app` container (Nginx + PHP 8.3-FPM + queue + scheduler). Frontend is built with Bun in a multi-stage Dockerfile; runtime has no Node/Composer/git.
 
 Compose runs **two containers**: `app` + `mysql:8`. MySQL data lives in the named volume `mysql_data` (survives `compose down` and EC2 **stop**; lost on `compose down -v` or terminate instance).
