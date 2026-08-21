@@ -16,6 +16,7 @@ export class ElearningLabStack extends cdk.Stack {
     const githubRepo =
       (this.node.tryGetContext('githubRepo') as string | undefined) ??
       'ChauCongTu/elearning';
+    const githubOidcSubs = githubOidcSubPatterns(githubRepo);
     const allowedCidr =
       (this.node.tryGetContext('allowedCidr') as string | undefined) ??
       '0.0.0.0/0';
@@ -192,7 +193,10 @@ export class ElearningLabStack extends cdk.Stack {
           'token.actions.githubusercontent.com:aud': 'sts.amazonaws.com',
         },
         StringLike: {
-          'token.actions.githubusercontent.com:sub': `repo:${githubRepo}:*`,
+          // Legacy: repo:OWNER/REPO:*
+          // GitHub immutable sub (repos created / opted in after 2026-07-15):
+          // repo:OWNER@ownerId/REPO@repoId:*
+          'token.actions.githubusercontent.com:sub': githubOidcSubs,
         },
       }),
       maxSessionDuration: cdk.Duration.hours(1),
@@ -282,7 +286,7 @@ export class ElearningLabStack extends cdk.Stack {
       value: mediaBucket.bucketName,
     });
     new cdk.CfnOutput(this, 'GitHubRepoTrust', {
-      value: `repo:${githubRepo}:*`,
+      value: githubOidcSubs.join(', '),
     });
     new cdk.CfnOutput(this, 'SsmPrefix', {
       value: '/elearning/lab',
@@ -302,4 +306,19 @@ export class ElearningLabStack extends cdk.Stack {
     const b64 = contents.toString('base64');
     return `echo '${b64}' | base64 -d > ${dest}`;
   }
+}
+
+/** IAM StringLike patterns for GitHub Actions OIDC `sub` (legacy + immutable IDs). */
+export function githubOidcSubPatterns(githubRepo: string): string[] {
+  const [owner, name] = githubRepo.split('/');
+  if (!owner || !name || githubRepo.split('/').length !== 2) {
+    throw new Error(`githubRepo must be OWNER/REPO, got: ${githubRepo}`);
+  }
+  const patterns = [
+    `repo:${owner}/${name}:*`,
+    `repo:${owner.toLowerCase()}/${name.toLowerCase()}:*`,
+    `repo:${owner}@*/${name}@*:*`,
+    `repo:${owner.toLowerCase()}@*/${name.toLowerCase()}@*:*`,
+  ];
+  return [...new Set(patterns)];
 }

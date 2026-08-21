@@ -156,19 +156,23 @@ Không tạo IAM Access Key cho GitHub.
 1. Repo GitHub → **Settings → Secrets and variables → Actions**
 2. **Secrets** → New repository secret
    - Name: `AWS_ROLE_ARN`
-   - Value **đúng 55 ký tự**, hai dấu `:` sau `iam`:
+   - Value (54 ký tự, **hai** dấu `:` sau `iam`):
 
 ```text
 arn:aws:iam::502429879716:role/elearning-github-deploy
 ```
 
-Sai: `arn:aws:iam:502429879716:...` (một dấu `:` → AWS báo Request ARN is invalid).
+Sai: `arn:aws:iam:502429879716:...` (một dấu `:` sau `iam`). ARN đúng dài **54** ký tự.
 3. **Variables** (tuỳ chọn)
    - Name: `AWS_REGION`
    - Value: `ap-southeast-2`  
    (Workflow đã mặc định region này nếu không set.)
 
-Trust OIDC: `repo:ChauCongTu/elearning:*`. Repo khác / fork **không** assume được role.
+Trust OIDC (sau `cdk deploy`): `repo:ChauCongTu/elearning:*` **và** `repo:ChauCongTu@*/elearning@*:*`.
+
+Repo GitHub tạo sau **15/07/2026** (hoặc bật immutable subject) gửi JWT `sub` dạng `repo:OWNER@ownerId/REPO@repoId:ref:...`. Pattern cũ `repo:OWNER/REPO:*` **không** khớp → `Not authorized to perform sts:AssumeRoleWithWebIdentity`. Cần `cdk deploy` lại để cập nhật trust, rồi chạy lại workflow. Cảnh báo Node 20 trên Actions không phải nguyên nhân fail.
+
+Repo khác / fork **không** assume được role.
 
 ---
 
@@ -179,6 +183,8 @@ Trust OIDC: `repo:ChauCongTu/elearning:*`. Repo khác / fork **không** assume �
 3. Đợi build `linux/arm64` (lần đầu 10–20 phút) → push ECR → SSM `deploy.sh` trên EC2
 
 Push lên `main`/`develop` cũng chạy workflow này.
+
+**Nếu fail `Not authorized to perform sts:AssumeRoleWithWebIdentity`:** trust IAM chưa khớp JWT. `cdk deploy` lại (code đã gồm pattern immutable `sub`), rồi Run workflow lại. Step **Show GitHub OIDC claims** in `sub=` — đối chiếu với output CDK `GitHubRepoTrust`.
 
 **Nếu fail “instance not running / SSM timeout”:** máy còn cài Docker. Đợi 2–3 phút, Run workflow lại.
 
@@ -297,7 +303,7 @@ docker compose -f docker-compose.yml -f docker-compose.ec2.yml \
 
 | Context | Mặc định | Ý nghĩa |
 |---------|----------|---------|
-| `githubRepo` | `ChauCongTu/elearning` | Trust OIDC `repo:OWNER/REPO:*` |
+| `githubRepo` | `ChauCongTu/elearning` | Trust OIDC `repo:OWNER/REPO:*` và `repo:OWNER@*/REPO@*:*` |
 | `allowedCidr` | `0.0.0.0/0` | Ai vào `:80` — nên siết `/32` |
 | `githubOidcProviderArn` | tạo mới | Reuse OIDC GitHub đã có trong account |
 | `budgetEmail` | không | Mail khi đạt 80% budget $20 |

@@ -154,7 +154,7 @@ Cheap on/off lab: **one `t4g.small` ARM** in `ap-southeast-2`, Docker Compose `a
 
 **CI:** [`.github/workflows/deploy-ec2.yml`](../.github/workflows/deploy-ec2.yml) assumes the OIDC role, builds `linux/arm64`, pushes ECR, SSM-runs `deploy.sh` if the instance is **running**. If the instance is stopped, the image is still pushed.
 
-**OIDC (once):** `cdk deploy` creates the GitHub identity provider + role `elearning-github-deploy`. Paste output `GitHubDeployRoleArn` into GitHub secret `AWS_ROLE_ARN`. Do not create IAM access keys.
+**OIDC (once):** `cdk deploy` creates the GitHub identity provider + role `elearning-github-deploy`. Paste output `GitHubDeployRoleArn` into GitHub secret `AWS_ROLE_ARN`. Do not create IAM access keys. Repos created after 15 Jul 2026 use an immutable OIDC `sub` (`repo:OWNER@id/REPO@id:...`); trust must include that pattern or assume-role fails with `Not authorized to perform sts:AssumeRoleWithWebIdentity`.
 
 **Stop/start:**
 

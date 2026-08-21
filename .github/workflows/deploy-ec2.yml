@@ -39,8 +39,8 @@ jobs:
         run: |
           ROLE_ARN="$(printf '%s' "$ROLE_ARN" | tr -d '\r\n"' | sed "s/^[[:space:]]*//;s/[[:space:]]*$//")"
           EXPECTED='arn:aws:iam::502429879716:role/elearning-github-deploy'
-          if [[ "$ROLE_ARN" =~ ^arn:aws:iam::[0-9]{12}:role/.+ ]]; then
-            echo "ARN shape OK (length ${#ROLE_ARN}, expected ${#EXPECTED})"
+          if [[ "$ROLE_ARN" == "$EXPECTED" ]]; then
+            echo "ARN matches CDK output (length ${#ROLE_ARN})"
           else
             echo "::error::AWS_ROLE_ARN is invalid. Must be iam:: (TWO colons after iam) + 12-digit account + :role/name"
             echo "Paste exactly:"
@@ -50,12 +50,39 @@ jobs:
             exit 1
           fi
 
+      - name: Show GitHub OIDC claims
+        run: |
+          python3 - <<'PY'
+          import base64, json, os, urllib.request
+          url = os.environ["ACTIONS_ID_TOKEN_REQUEST_URL"]
+          sep = "&" if "?" in url else "?"
+          req = urllib.request.Request(
+              f"{url}{sep}audience=sts.amazonaws.com",
+              headers={"Authorization": "bearer " + os.environ["ACTIONS_ID_TOKEN_REQUEST_TOKEN"]},
+          )
+          token = json.load(urllib.request.urlopen(req))["value"]
+          payload = token.split(".")[1]
+          payload += "=" * (-len(payload) % 4)
+          claims = json.loads(base64.urlsafe_b64decode(payload))
+          for key in (
+              "iss",
+              "aud",
+              "sub",
+              "repository",
+              "repository_id",
+              "repository_owner",
+              "repository_owner_id",
+          ):
+              print(f"{key}={claims.get(key)}")
+          PY
+
       - name: Configure AWS credentials (OIDC)
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@v6
         with:
           role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
           aws-region: ${{ env.AWS_REGION }}
           audience: sts.amazonaws.com
+          role-session-name: elearning-gha-deploy
 
       - name: Login to Amazon ECR
         id: ecr
