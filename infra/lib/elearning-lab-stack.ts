@@ -53,7 +53,7 @@ export class ElearningLabStack extends cdk.Stack {
 
     const securityGroup = new ec2.SecurityGroup(this, 'AppSg', {
       vpc,
-      description: 'elearning lab — HTTP in, no MySQL to the internet',
+      description: 'elearning lab: HTTP in, no MySQL to the internet',
       allowAllOutbound: true,
     });
     securityGroup.addIngressRule(
@@ -186,7 +186,7 @@ export class ElearningLabStack extends cdk.Stack {
 
     const githubDeployRole = new iam.Role(this, 'GitHubDeployRole', {
       roleName: 'elearning-github-deploy',
-      description: 'GitHub Actions OIDC — push ECR and SSM deploy to lab EC2',
+      description: 'GitHub Actions OIDC: push ECR and SSM deploy to lab EC2',
       assumedBy: new iam.OpenIdConnectPrincipal(oidcProvider, {
         StringEquals: {
           'token.actions.githubusercontent.com:aud': 'sts.amazonaws.com',

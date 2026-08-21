@@ -145,9 +145,9 @@ docker compose -f docker-compose.yml -f docker-compose.ec2.yml up -d
 
 ## Lab EC2 (CDK + ECR + GitHub Actions)
 
-Cheap on/off lab: **one `t4g.small` ARM** in `ap-southeast-2`, Docker Compose `app` + `mysql`, image from ECR. No Fargate, ALB, NAT, or RDS.
+Cheap on/off lab: **one `t4g.small` ARM** in `ap-southeast-2`, Docker Compose `app` + `mysql`, image from ECR.
 
-Details: [`infra/README.md`](../infra/README.md). Stack: `infra/` (`bunx cdk deploy`).
+**Hướng dẫn từng bước:** [`infra/HUONG-DAN.md`](../infra/HUONG-DAN.md)
 
 **ENV:** SSM prefix `/elearning/lab/` → `/opt/elearning/.env` via `fetch-env.sh`. GitHub Secrets only store `AWS_ROLE_ARN` (OIDC). After changing SSM, recreate the app container (`sudo /opt/elearning/deploy.sh`).
 
