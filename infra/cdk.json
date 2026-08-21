@@ -1,0 +1,11 @@
+{
+  "app": "npx ts-node --prefer-ts-exts bin/app.ts",
+  "watch": {
+    "include": ["**"],
+    "exclude": ["README.md", "cdk*.json", "dist", "node_modules", "cdk.out"]
+  },
+  "context": {
+    "githubRepo": "ChauCongTu/elearning",
+    "@aws-cdk/aws-iam:minimizePolicies": true
+  }
+}

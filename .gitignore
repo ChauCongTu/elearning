@@ -27,3 +27,10 @@ yarn-error.log
 /.nova
 /.vscode
 /.zed
+
+# Local archives / dumps
+*.zip
+*.7z
+
+# Debug leftovers
+/tmp_php_upload.php

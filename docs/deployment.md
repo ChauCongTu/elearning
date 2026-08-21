@@ -115,6 +115,56 @@ Queue worker: nếu không có supervisor, dùng `database` queue + cron chạy 
 - Giữ bản `public/build/` trước đó
 - Legacy site giữ nguyên cho đến khi UAT xong
 
+## Docker (PHP-FPM + Nginx + Supervisor)
+
+Image **Alpine**: one `app` container (Nginx + PHP 8.3-FPM + queue + scheduler). Frontend is built with Bun in a multi-stage Dockerfile; runtime has no Node/Composer/git.
+
+Compose runs **two containers**: `app` + `mysql:8`. MySQL data lives in the named volume `mysql_data` (survives `compose down` and EC2 **stop**; lost on `compose down -v` or terminate instance).
+
+```bash
+cp .env.example .env
+php artisan key:generate
+# Set DB_PASSWORD (Compose defaults to elearning if unset)
+
+docker compose build
+RUN_MIGRATIONS=1 docker compose up -d
+```
+
+- Local URL: `http://localhost:8080` (`APP_PORT`)
+- Health: `GET /up`
+- Logs: `docker compose logs -f app`
+- `DB_HOST` inside Compose is the service name **`mysql`**, never `localhost`
+- Volume `storage_data` holds local uploads; lab/production media should use S3
+
+EC2 lab (pull-only, no build on the instance):
+
+```bash
+docker compose -f docker-compose.yml -f docker-compose.ec2.yml pull
+docker compose -f docker-compose.yml -f docker-compose.ec2.yml up -d
+```
+
+## Lab EC2 (CDK + ECR + GitHub Actions)
+
+Cheap on/off lab: **one `t4g.small` ARM** in `ap-southeast-1`, Docker Compose `app` + `mysql`, image from ECR. No Fargate, ALB, NAT, or RDS.
+
+Details: [`infra/README.md`](../infra/README.md). Stack: `infra/` (`npx cdk deploy`).
+
+**ENV:** SSM prefix `/elearning/lab/` → `/opt/elearning/.env` via `fetch-env.sh`. GitHub Secrets only store `AWS_ROLE_ARN` (OIDC). After changing SSM, recreate the app container (`sudo /opt/elearning/deploy.sh`).
+
+**CI:** [`.github/workflows/deploy-ec2.yml`](../.github/workflows/deploy-ec2.yml) assumes the OIDC role, builds `linux/arm64`, pushes ECR, SSM-runs `deploy.sh` if the instance is **running**. If the instance is stopped, the image is still pushed.
+
+**OIDC (once):** `cdk deploy` creates the GitHub identity provider + role `elearning-github-deploy`. Paste output `GitHubDeployRoleArn` into GitHub secret `AWS_ROLE_ARN`. Do not create IAM access keys.
+
+**Stop/start:**
+
+```bash
+aws ec2 stop-instances --instance-ids i-...   # keep EBS / MySQL
+aws ec2 start-instances --instance-ids i-...  # public IP may change
+aws ssm start-session --target i-...          # no SSH
+```
+
+Backup: `docker compose exec mysql mysqldump ...` on the instance.
+
 ## Checklist go-live
 
 - [ ] Domain trỏ đúng, SSL active

@@ -1,0 +1,16 @@
+# Override for the lab EC2 host. Do not build on the instance.
+# Usage:
+#   docker compose -f docker-compose.yml -f docker-compose.ec2.yml pull
+#   docker compose -f docker-compose.yml -f docker-compose.ec2.yml up -d
+services:
+  app:
+    image: ${APP_IMAGE:?APP_IMAGE must be the ECR URI}
+    pull_policy: always
+    build: !reset null
+    ports:
+      - "80:80"
+    extra_hosts: !reset []
+    environment:
+      RUN_MIGRATIONS: ${RUN_MIGRATIONS:-1}
+      APP_ENV: production
+      APP_DEBUG: "false"

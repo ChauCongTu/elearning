@@ -25,7 +25,7 @@ Xem [out-of-scope.md](./out-of-scope.md): MXH login, coupon, membership, affilia
 | [legacy-survey.md](./legacy-survey.md) | Khảo sát hệ thống cũ |
 | [architecture.md](./architecture.md) | Tech stack, kiến trúc, cấu trúc code |
 | [data-model.md](./data-model.md) | Schema database |
-| [deployment.md](./deployment.md) | Deploy Hostinger (không Node server) |
+| [deployment.md](./deployment.md) | Hostinger + lab EC2 (Compose/ECR/OIDC) |
 | [out-of-scope.md](./out-of-scope.md) | Backlog giai đoạn sau |
 | [phases/README.md](./phases/README.md) | **Lộ trình triển khai từng bước** |
 | [tong-ket-phase-0-1.md](./tong-ket-phase-0-1.md) | **Tổng kết Giai đoạn 0 & 1** (gửi khách) |
