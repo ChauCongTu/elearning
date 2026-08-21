@@ -2,7 +2,7 @@
 
 CDK stack for a cheap **on/off** lab: one `t4g.small` ARM instance running **app + MySQL** via Docker Compose. Image is built in GitHub Actions (`linux/arm64`) and pushed to ECR.
 
-Region default: `ap-southeast-1`. Package manager: **Bun** (`bun install` / `bunx cdk`). Node `npm` is not required in this folder.
+Region default: `ap-southeast-2` (Sydney). Package manager: **Bun** (`bun install` / `bunx cdk`). Node `npm` is not required in this folder.
 
 ## One-time setup
 
@@ -12,7 +12,7 @@ Region default: `ap-southeast-1`. Package manager: **Bun** (`bun install` / `bun
 
 ```bash
 bun install
-bunx cdk bootstrap aws://ACCOUNT/ap-southeast-1
+bunx cdk bootstrap aws://ACCOUNT/ap-southeast-2
 bunx cdk deploy \
   -c githubRepo=ChauCongTu/elearning \
   -c allowedCidr=YOUR.IP.V4.0/32
@@ -30,7 +30,7 @@ Optional context:
 4. Copy stack output **`GitHubDeployRoleArn`**.
 5. GitHub repo → Settings → Secrets and variables → Actions:
    - Secret `AWS_ROLE_ARN` = that ARN
-   - Variable `AWS_REGION` = `ap-southeast-1` (optional; workflow defaults to this)
+   - Variable `AWS_REGION` = `ap-southeast-2` (optional; workflow defaults to this)
 6. Do **not** add `AWS_ACCESS_KEY_ID`. Workflow uses OIDC (`id-token: write`).
 7. Run **Actions → Deploy lab EC2** (or push `develop`/`main`). If the instance is still booting Docker, wait and re-run.
 

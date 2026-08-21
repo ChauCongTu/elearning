@@ -7,7 +7,7 @@ const app = new cdk.App();
 new ElearningLabStack(app, 'ElearningLab', {
   env: {
     account: process.env.CDK_DEFAULT_ACCOUNT,
-    region: process.env.CDK_DEFAULT_REGION ?? 'ap-southeast-1',
+    region: process.env.CDK_DEFAULT_REGION ?? 'ap-southeast-2',
   },
   description: 'E-learning lab: EC2 + Compose (app + MySQL) + ECR + GitHub OIDC',
 });
