@@ -156,7 +156,13 @@ Không tạo IAM Access Key cho GitHub.
 1. Repo GitHub → **Settings → Secrets and variables → Actions**
 2. **Secrets** → New repository secret
    - Name: `AWS_ROLE_ARN`
-   - Value: `GitHubDeployRoleArn` (bước 4)
+   - Value **đúng 55 ký tự**, hai dấu `:` sau `iam`:
+
+```text
+arn:aws:iam::502429879716:role/elearning-github-deploy
+```
+
+Sai: `arn:aws:iam:502429879716:...` (một dấu `:` → AWS báo Request ARN is invalid).
 3. **Variables** (tuỳ chọn)
    - Name: `AWS_REGION`
    - Value: `ap-southeast-2`  
