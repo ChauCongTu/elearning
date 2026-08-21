@@ -59,7 +59,7 @@
         { "href": "/bang-gia", "label": "Bảng giá" },
         { "href": "/ve-chung-toi", "label": "Về chúng tôi" },
         { "href": "/lien-he", "label": "Liên hệ" },
-        { "href": "/thong-tin", "label": "Thông tin" }
+        { "href": "/thong-tin", "label": "Tra cứu" }
     ],
     "content": {
         "about": {
