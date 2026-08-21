@@ -33,11 +33,32 @@ jobs:
         with:
           persist-credentials: false
 
+      - name: Check AWS_ROLE_ARN secret
+        env:
+          ROLE_ARN: ${{ secrets.AWS_ROLE_ARN }}
+        run: |
+          ROLE_ARN="$(printf '%s' "$ROLE_ARN" | tr -d '\r\n"' | sed "s/^[[:space:]]*//;s/[[:space:]]*$//")"
+          case "$ROLE_ARN" in
+            arn:aws:iam::[0-9]*:role/*)
+              echo "ARN shape OK (length ${#ROLE_ARN})"
+              echo "AWS_ROLE_ARN=${ROLE_ARN}" >> "$GITHUB_ENV"
+              ;;
+            *)
+              echo "::error::AWS_ROLE_ARN is missing or not a valid IAM role ARN (Request ARN is invalid)."
+              echo "GitHub repo → Settings → Secrets and variables → Actions → Secrets (not Variables)."
+              echo "Name: AWS_ROLE_ARN"
+              echo "Value exactly (no quotes, no prefix, no trailing space):"
+              echo "arn:aws:iam::502429879716:role/elearning-github-deploy"
+              exit 1
+              ;;
+          esac
+
       - name: Configure AWS credentials (OIDC)
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          role-to-assume: ${{ env.AWS_ROLE_ARN }}
           aws-region: ${{ env.AWS_REGION }}
+          audience: sts.amazonaws.com
 
       - name: Login to Amazon ECR
         id: ecr
