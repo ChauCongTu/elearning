@@ -2,7 +2,7 @@
 
 CDK stack for a cheap **on/off** lab: one `t4g.small` ARM instance running **app + MySQL** via Docker Compose. Image is built in GitHub Actions (`linux/arm64`) and pushed to ECR.
 
-Region default: `ap-southeast-1`.
+Region default: `ap-southeast-1`. Package manager: **Bun** (`bun install` / `bunx cdk`). Node `npm` is not required in this folder.
 
 ## One-time setup
 
@@ -11,9 +11,9 @@ Region default: `ap-southeast-1`.
 3. From this directory:
 
 ```bash
-npm install
-npx cdk bootstrap aws://ACCOUNT/ap-southeast-1
-npx cdk deploy \
+bun install
+bunx cdk bootstrap aws://ACCOUNT/ap-southeast-1
+bunx cdk deploy \
   -c githubRepo=ChauCongTu/elearning \
   -c allowedCidr=YOUR.IP.V4.0/32
 ```
