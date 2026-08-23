@@ -1,0 +1,12 @@
+build:
+  extends: .build
+  stage: build
+  script:
+    - cp .env.example .env
+    - php artisan key:generate
+    - php artisan wayfinder:generate --with-form
+    - bun run build
+  artifacts:
+    expire_in: 1 day
+    paths:
+      - public/build/

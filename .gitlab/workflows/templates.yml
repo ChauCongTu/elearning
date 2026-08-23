@@ -1,37 +1,27 @@
-.php:
+.build:
   image: ubuntu:24.04
   cache:
     key:
       files:
         - composer.lock
+        - bun.lock
     paths:
       - vendor/
+      - node_modules/
       - .cache/composer/
+      - .cache/bun/
   before_script:
     - export DEBIAN_FRONTEND=noninteractive
+    - export BUN_INSTALL="$HOME/.bun"
+    - export PATH="$BUN_INSTALL/bin:$PATH"
     - apt-get update -qq
     - apt-get install -y -qq git unzip curl ca-certificates
         php-cli php-mbstring php-xml php-sqlite3 php-zip php-intl
         php-bcmath php-curl php-gd
     - curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
-    - composer install --prefer-dist --no-progress --optimize-autoloader
-
-.bun:
-  image: ubuntu:24.04
-  cache:
-    key:
-      files:
-        - bun.lock
-    paths:
-      - node_modules/
-      - .cache/bun/
-  before_script:
-    - export DEBIAN_FRONTEND=noninteractive
-    - apt-get update -qq
-    - apt-get install -y -qq curl unzip ca-certificates
     - curl -fsSL https://bun.sh/install | bash
-    - export BUN_INSTALL="$HOME/.bun"
-    - export PATH="$BUN_INSTALL/bin:$PATH"
+    - export PATH="$HOME/.bun/bin:$PATH"
+    - composer install --prefer-dist --no-progress --optimize-autoloader
     - bun install --frozen-lockfile
 
 .oidc_aws:

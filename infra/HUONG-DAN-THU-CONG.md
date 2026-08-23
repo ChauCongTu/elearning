@@ -259,7 +259,7 @@ http://PUBLIC_IP/up
 
 ## 8. GitLab CI/CD (OIDC + SSM)
 
-Pipeline: **lint → test → deploy**. Deploy chỉ chạy khi lint/test pass, trên `main`/`develop` (hoặc Run pipeline). MR chỉ lint + test.
+Pipeline: **build → deploy**. Deploy chỉ trên `main` (hoặc Run pipeline) sau khi `build` pass. MR chỉ `build`.
 
 OIDC + SSM gọi **`bash /deploy/elearning.sh`**. Không Access Key.
 

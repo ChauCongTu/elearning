@@ -6,9 +6,7 @@ deploy:production:
   environment:
     name: production
   needs:
-    - job: lint:php
-    - job: lint:frontend
-    - job: test:php
+    - job: build
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
       when: never
