@@ -64,7 +64,15 @@ while :; do
   echo "$PAGE" | python3 -c '
 import json, sys
 data = json.load(sys.stdin)
-skip = {"EC2_INSTANCE_ID", "ECR_URI", "GITHUB_DEPLOY_ROLE_ARN"}
+skip = {
+    "EC2_INSTANCE_ID",
+    "ECR_URI",
+    "GITHUB_DEPLOY_ROLE_ARN",
+    "GITLAB_DEPLOY_ROLE_ARN",
+    "GITLAB_DEPLOY_TOKEN",
+    "GITLAB_REPO",
+    "GITLAB_BRANCH",
+}
 for p in data.get("Parameters", []):
     key = p["Name"].rsplit("/", 1)[-1]
     if key in skip:
