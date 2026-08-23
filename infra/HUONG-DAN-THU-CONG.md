@@ -423,6 +423,48 @@ docker compose exec -T mysql mysqldump -u app -pelearning elearning > backup.sql
 
 ---
 
+## 12. DBeaver → MySQL trên EC2
+
+Không mở cổng **3306** trên Security Group. MySQL chỉ bind `127.0.0.1:3306` trên máy (SSM tunnel).
+
+Trên EC2 (một lần, sau khi `docker-compose.yml` đã có `127.0.0.1:3306:3306`):
+
+```bash
+cd /opt/elearning
+docker compose up -d
+ss -lnt | grep 3306
+# 127.0.0.1:3306
+```
+
+Laptop — giữ terminal này mở:
+
+```bash
+export AWS_REGION=ap-southeast-2
+export INSTANCE_ID=i-xxxxxxxx
+
+aws ssm start-session \
+  --target "$INSTANCE_ID" \
+  --document-name AWS-StartPortForwardingSession \
+  --parameters '{"portNumber":["3306"],"localPortNumber":["3306"]}' \
+  --region "$AWS_REGION"
+```
+
+`3306` local đang dùng → đổi `"localPortNumber":["13306"]`.
+
+DBeaver → **New Connection** → **MySQL**:
+
+| Field | Value |
+|-------|--------|
+| Host | `127.0.0.1` |
+| Port | `3306` (hoặc `13306`) |
+| Database | `elearning` |
+| Username | `app` |
+| Password | `DB_PASSWORD` trong `/opt/elearning/.env.lab` |
+
+Test Connection → Finish.
+
+---
+
 ## Checklist
 
 1. Console: S3 + IAM EC2 + SG + Launch EC2
