@@ -1,0 +1,52 @@
+.php:
+  image: ubuntu:24.04
+  cache:
+    key:
+      files:
+        - composer.lock
+    paths:
+      - vendor/
+      - .cache/composer/
+  before_script:
+    - export DEBIAN_FRONTEND=noninteractive
+    - apt-get update -qq
+    - apt-get install -y -qq git unzip curl ca-certificates
+        php-cli php-mbstring php-xml php-sqlite3 php-zip php-intl
+        php-bcmath php-curl php-gd
+    - curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+    - composer install --prefer-dist --no-progress --optimize-autoloader
+
+.bun:
+  image: ubuntu:24.04
+  cache:
+    key:
+      files:
+        - bun.lock
+    paths:
+      - node_modules/
+      - .cache/bun/
+  before_script:
+    - export DEBIAN_FRONTEND=noninteractive
+    - apt-get update -qq
+    - apt-get install -y -qq curl unzip ca-certificates
+    - curl -fsSL https://bun.sh/install | bash
+    - export BUN_INSTALL="$HOME/.bun"
+    - export PATH="$BUN_INSTALL/bin:$PATH"
+    - bun install --frozen-lockfile
+
+.oidc_aws:
+  image: ubuntu:24.04
+  id_tokens:
+    GITLAB_OIDC_TOKEN:
+      aud: https://gitlab.com
+  before_script:
+    - export DEBIAN_FRONTEND=noninteractive
+    - apt-get update -qq
+    - apt-get install -y -qq curl unzip ca-certificates
+    - curl -sS "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o /tmp/awscliv2.zip
+    - unzip -q /tmp/awscliv2.zip -d /tmp
+    - /tmp/aws/install
+    - umask 077
+    - printf '%s' "$GITLAB_OIDC_TOKEN" > /tmp/web-identity-token
+    - export AWS_WEB_IDENTITY_TOKEN_FILE=/tmp/web-identity-token
+    - aws sts get-caller-identity

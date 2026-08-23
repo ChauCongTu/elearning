@@ -1,0 +1,13 @@
+lint:php:
+  extends: .php
+  stage: lint
+  script:
+    - composer lint:check
+
+lint:frontend:
+  extends: .bun
+  stage: lint
+  script:
+    - bun run lint:check
+    - bun run format:check
+    - bun run types:check

@@ -29,6 +29,7 @@ storage/app/*
 .env
 .env.*
 !.env.example
+!.env.lab.example
 
 *.zip
 *.7z

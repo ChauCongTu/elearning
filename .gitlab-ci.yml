@@ -1,0 +1,28 @@
+workflow:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH && $CI_OPEN_MERGE_REQUEST_ID
+      when: never
+    - if: $CI_COMMIT_BRANCH
+    - if: $CI_PIPELINE_SOURCE == "web"
+
+stages:
+  - lint
+  - test
+  - deploy
+
+variables:
+  FF_USE_FASTZIP: "true"
+  COMPOSER_NO_INTERACTION: "1"
+  COMPOSER_CACHE_DIR: $CI_PROJECT_DIR/.cache/composer
+  BUN_INSTALL_CACHE_DIR: $CI_PROJECT_DIR/.cache/bun
+  AWS_DEFAULT_REGION: ap-southeast-2
+
+default:
+  interruptible: true
+
+include:
+  - local: .gitlab/workflows/templates.yml
+  - local: .gitlab/workflows/lint.yml
+  - local: .gitlab/workflows/test.yml
+  - local: .gitlab/workflows/deploy.production.yml
